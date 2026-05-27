@@ -80,31 +80,24 @@ description: 从 outline.md 生成 Vite+React+TS 幻灯片项目，含 narration
 
 ### 4. Scaffold 项目
 
-创建 Vite+React+TS 项目结构：
+调用 scaffold 脚本从模板创建项目：
 
+```bash
+bash skills/storyboard/scaffold.sh <workspace-dir> [theme-id]
 ```
-workspace/<id>/storyboard/
-├── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── src/
-│   ├── App.tsx            ← 主入口，管理全局 step
-│   ├── App.css
-│   ├── chapters.ts        ← 章节注册表
-│   ├── chapters/
-│   │   ├── 01-<id>/
-│   │   │   ├── Chapter.tsx
-│   │   │   ├── Chapter.css
-│   │   │   └── narrations.ts
-│   │   └── 02-<id>/
-│   │       ├── Chapter.tsx
-│   │       ├── Chapter.css
-│   │       └── narrations.ts
-│   └── theme.css          ← 11 token 定义
-└── public/
-    └── audio/             ← voice 输出目录（如有）
-```
+
+脚本自动完成：
+
+1. 从 `skills/storyboard/skeleton/` 复制项目骨架
+2. 安装 npm 依赖
+3. 解析 outline.md 提取章节结构
+4. 为每章创建目录 + narrations.ts + Chapter.tsx(占位) + Chapter.css
+5. 生成 chapters.ts 注册表
+6. 注入 main.tsx 的 CSS imports
+
+**不做手动文件创建。** 脚本失败时停下报告用户。
+
+输出：`workspace/<id>/storyboard/` — 完整 Vite+React+TS 项目
 
 ### 5. Chapter 1 主线程锚点
 
