@@ -50,7 +50,10 @@ python -m tools.ingest "<video-url>" -o workspace/<id>
 # 或由 using-recastory 自动调度
 ```
 
-产出：`article.md`（供 Phase 1 distill 使用）
+产出：`workspace/<id>/article.md`（供 Phase 1 distill 使用）
+子目录：`workspace/<id>/video/`（原始视频）、`workspace/<id>/audio/`（提取的音频）
+
+> **Note:** ingest 当前作为直接工具调用执行（`python -m tools.ingest`），不通过 plan.json 调度子 Skill。
 
 ---
 
