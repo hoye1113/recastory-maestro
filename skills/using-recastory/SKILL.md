@@ -1,6 +1,8 @@
 ---
 name: using-recastory
 description: Recastory Maestro 主入口 — 意图识别、路由、plan.json 生成、子 Skill 调度、检查点管理
+user-invocable: true
+argument-hint: "[craft|distill|voice|storyboard] <input> [--perspective <name>] [--register <brand|product>]"
 ---
 
 # Skill: using-recastory

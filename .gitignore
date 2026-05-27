@@ -1,0 +1,14 @@
+# Runtime output
+workspace/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
