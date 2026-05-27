@@ -185,8 +185,8 @@ get_last_end_timestamp_ms() {
 
     while IFS= read -r line || [ -n "$line" ]; do
         # Check if this is a timestamp line
-        if [[ "$line" =~ ^[0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}\ --\>\ ([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})$ ]]; then
-            last_timestamp="${BASH_REMATCH[1]}"
+        if [[ "$line" =~ ^([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})\ --\>\ ([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})$ ]]; then
+            last_timestamp="${BASH_REMATCH[2]}"
         fi
     done < "$srt_file"
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Test script for merge-srt.sh
 # Creates test data and validates merge logic
@@ -237,6 +237,10 @@ test_real_data() {
     # Backup existing merged files
     local backup_dir="$PROJECT_ROOT/.backup-merge-srt"
     mkdir -p "$backup_dir"
+
+    # Add trap for cleanup on failure
+    trap 'for f in "'"$backup_dir"'"/*.srt; do [ -f "$f" ] && cp "$f" "'"$real_workspace"'/voice/public/audio/$(basename "$f")"; done; rm -rf "'"$backup_dir"'"' EXIT
+
     for srt in "$real_workspace"/voice/public/audio/*.srt; do
         if [ -f "$srt" ]; then
             cp "$srt" "$backup_dir/$(basename "$srt")"
@@ -271,6 +275,9 @@ test_real_data() {
         local name=$(basename "$srt")
         cp "$srt" "$real_workspace/voice/public/audio/$name"
     done
+
+    # Remove the trap and clean up
+    trap - EXIT
     rm -rf "$backup_dir"
 }
 
@@ -279,7 +286,7 @@ test_argument_validation() {
     echo -e "\n${YELLOW}Test 6: Argument validation${NC}"
 
     # Test with no arguments
-    if bash "$MERGE_SCRIPT" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | grep -q "Usage"; then
+    if (set +o pipefail; bash "$MERGE_SCRIPT" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | grep -q "Usage"); then
         echo -e "${GREEN}PASS${NC}: No arguments shows usage"
         TESTS_PASSED=$((TESTS_PASSED + 1))
     else
@@ -288,7 +295,7 @@ test_argument_validation() {
     fi
 
     # Test with non-existent directory
-    if bash "$MERGE_SCRIPT" "/nonexistent/path" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | grep -q "ERROR.*not found"; then
+    if (set +o pipefail; bash "$MERGE_SCRIPT" "/nonexistent/path" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | grep -q "ERROR.*not found"); then
         echo -e "${GREEN}PASS${NC}: Non-existent directory error"
         TESTS_PASSED=$((TESTS_PASSED + 1))
     else
