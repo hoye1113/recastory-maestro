@@ -32,11 +32,19 @@ argument-hint: "[craft|distill|voice|storyboard] <input> [--perspective <name>] 
 | 输入类型 | 检测方式 | 默认命令 | skip 标志 |
 |---------|---------|---------|----------|
 | `/recastory <cmd>` | 显式命令 | 按命令路由 | 用户指定 |
-| 视频 URL | http/https 开头，指向视频平台 | `craft` | — |
-| 本地视频 | 扩展名 .mp4/.mov/.avi/.mkv | `craft` | — |
+| 视频 URL | http/https 开头，指向视频平台 | `craft`（自动走 ingest→transcribe 流水线） | — |
+| 本地视频 | 扩展名 .mp4/.mov/.avi/.mkv | `craft`（跳过下载，从 extract+transcribe 开始） | — |
 | 文章/脚本 | .md/.txt，无视频特征 | `craft` | `--skip-ingest --skip-transcribe` |
 | 仅音频 | .mp3/.wav/.m4a | `craft` | `--skip-ingest` |
 | 自然语言 | "帮我做个视频" 等语义匹配 | `craft` | 按输入类型推断 |
+
+**视频 URL ingest 流水线**：当输入为视频 URL 时，plan.json 中自动包含 `ingest` 和 `transcribe` 两个 Skill，按顺序执行：
+
+```text
+ingest（yt-dlp 下载 + FFmpeg 提取音频） → transcribe（Faster-Whisper 转写 → article.md） → distill → ...
+```
+
+CLI 独立运行：`python -m tools.ingest "<video-url>" -o workspace/<id>`
 
 如无法确定输入类型，用 `AskUserQuestion` 询问用户。
 

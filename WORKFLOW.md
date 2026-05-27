@@ -34,6 +34,26 @@
 
 ---
 
+## Phase 0.5: Ingest（导入）
+
+当用户提供视频 URL 时执行。
+
+1. 下载视频：`yt-dlp` 自动选择最佳质量
+2. 提取音频：FFmpeg → 16kHz mono WAV
+3. 语音转写：Faster-Whisper → article.md
+4. 输出：`workspace/<id>/article.md` + 原始视频 + 音频
+
+```bash
+# CLI 模式
+python -m tools.ingest "<video-url>" -o workspace/<id>
+
+# 或由 using-recastory 自动调度
+```
+
+产出：`article.md`（供 Phase 1 distill 使用）
+
+---
+
 ## Phase 1: Design（设计生成）
 
 ### 步骤
