@@ -64,6 +64,10 @@ main() {
     npx vite --port 5173 --host 127.0.0.1 &
     DEV_SERVER_PID=$!
     for i in $(seq 1 30); do curl -s "http://127.0.0.1:5173" >/dev/null 2>&1 && break; sleep 1; done
+    if ! curl -s "http://127.0.0.1:5173" >/dev/null 2>&1; then
+        log_error "Dev server failed to start within 30s"
+        exit 1
+    fi
     log_info "Dev server at http://127.0.0.1:5173"
 
     # Step 3: Extract chapters (same approach as merge-mp3.sh)
@@ -78,7 +82,7 @@ main() {
         exit 0
     fi
 
-    local chapter_videos=""
+    local chapter_videos=()
 
     for chapter in $chapters; do
         log_info "Rendering chapter: $chapter"
@@ -96,19 +100,19 @@ main() {
         # Get audio duration
         local audio_dur capture_dur
         audio_dur=$(ffprobe -v quiet -show_entries format=duration -of csv=p=0 "$chapter_mp3")
-        capture_dur=$(echo "$audio_dur + 3" | bc)
+        capture_dur=$(awk "BEGIN{printf \"%.0f\", $audio_dur + 3}")
 
         # Platform-specific screen capture
         local screen_input
         case "$(uname -s)" in
-            MINGW*|MSYS*|CYGWIN*|Windows*) screen_input="-f gdigrab -framerate 30 -video_size 1920x1080 -i desktop" ;;
-            Darwin*) screen_input="-f avfoundation -framerate 30 -i 1:0" ;;
-            *) screen_input="-f x11grab -framerate 30 -video_size 1920x1080 -i :0.0" ;;
+            MINGW*|MSYS*|CYGWIN*|Windows*) screen_input=(-f gdigrab -framerate 30 -video_size 1920x1080 -i desktop) ;;
+            Darwin*) screen_input=(-f avfoundation -framerate 30 -i 1:0) ;;
+            *) screen_input=(-f x11grab -framerate 30 -video_size 1920x1080 -i :0.0) ;;
         esac
 
         # Start FFmpeg recording (background)
         log_info "Starting screen capture (${capture_dur}s)..."
-        ffmpeg -y $screen_input -t "$capture_dur" -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p "$chapter_raw" &
+        ffmpeg -y "${screen_input[@]}" -t "$capture_dur" -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p "$chapter_raw" &
         FFMPEG_PID=$!
         sleep 1  # Let FFmpeg initialize
 
@@ -117,8 +121,9 @@ main() {
         node "$SCRIPT_DIR/puppeteer-launch.js" "http://127.0.0.1:5173/?auto=1" --headed
 
         # Wait for FFmpeg to finish
-        wait $FFMPEG_PID 2>/dev/null || true
+        wait $FFMPEG_PID 2>/dev/null || { log_error "FFmpeg capture failed for $chapter"; FFMPEG_PID=""; continue; }
         FFMPEG_PID=""
+        [ -f "$chapter_raw" ] || { log_error "Raw capture missing: $chapter_raw"; continue; }
 
         # Burn subtitles
         if [ -f "$chapter_srt" ]; then
@@ -134,20 +139,17 @@ main() {
         fi
 
         log_info "Chapter video: $chapter_video"
-        chapter_videos="$chapter_videos|$chapter_video"
+        chapter_videos+=("$chapter_video")
     done
 
     # Concatenate chapter videos
-    if [ -n "$chapter_videos" ]; then
+    if [ ${#chapter_videos[@]} -gt 0 ]; then
         local concat_file="$output_dir/final-concat.txt"
         > "$concat_file"
-        IFS='|' read -ra vids <<< "$chapter_videos"
-        for vid in "${vids[@]}"; do
-            if [ -n "$vid" ]; then
-                local abs_vid
-                abs_vid=$(ffmpeg_path "$vid")
-                echo "file '$abs_vid'" >> "$concat_file"
-            fi
+        for vid in "${chapter_videos[@]}"; do
+            local abs_vid
+            abs_vid=$(ffmpeg_path "$vid")
+            echo "file '$abs_vid'" >> "$concat_file"
         done
         ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$final_output" 2>/dev/null
         log_info "Final video: $final_output"
