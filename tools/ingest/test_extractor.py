@@ -24,13 +24,15 @@ class TestExtractAudio:
                 "-shortest", video_path,
             ], capture_output=True, timeout=30)
 
-            if os.path.exists(video_path):
-                result = extract_audio(video_path, tmpdir)
-                assert result.success is True
-                assert result.audio_path.endswith(".wav")
-                assert os.path.exists(result.audio_path)
-                assert result.duration_seconds is not None
-                assert result.duration_seconds > 0
+            if not os.path.exists(video_path):
+                pytest.skip("FFmpeg unavailable or video generation failed")
+
+            result = extract_audio(video_path, tmpdir)
+            assert result.success is True
+            assert result.audio_path.endswith(".wav")
+            assert os.path.exists(result.audio_path)
+            assert result.duration_seconds is not None
+            assert result.duration_seconds > 0
 
 
 class TestGetAudioDuration:

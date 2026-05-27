@@ -5,6 +5,14 @@ from dataclasses import dataclass
 from typing import Optional
 
 
+CODEC_MAP = {
+    "wav": "pcm_s16le",
+    "mp3": "libmp3lame",
+    "ogg": "libvorbis",
+    "flac": "flac",
+}
+
+
 @dataclass
 class ExtractResult:
     success: bool
@@ -18,7 +26,7 @@ def extract_audio(
     output_dir: Optional[str] = None,
     sample_rate: int = 16000,
     channels: int = 1,
-    format: str = "wav",
+    output_format: str = "wav",
 ) -> ExtractResult:
     """Extract audio from video using FFmpeg.
 
@@ -27,11 +35,14 @@ def extract_audio(
         output_dir: Directory for output audio (default: same as video).
         sample_rate: Audio sample rate (default 16kHz for speech recognition).
         channels: Number of audio channels (default 1 mono).
-        format: Output format (default wav for Whisper).
+        output_format: Output format (default wav for Whisper).
 
     Returns:
         ExtractResult with audio path or error.
     """
+    if output_format not in CODEC_MAP:
+        return ExtractResult(success=False, error=f"Unsupported format: {output_format}")
+
     if not os.path.exists(video_path):
         return ExtractResult(success=False, error=f"Video not found: {video_path}")
 
@@ -40,12 +51,12 @@ def extract_audio(
     os.makedirs(output_dir, exist_ok=True)
 
     base_name = os.path.splitext(os.path.basename(video_path))[0]
-    audio_path = os.path.join(output_dir, f"{base_name}.{format}")
+    audio_path = os.path.join(output_dir, f"{base_name}.{output_format}")
 
     cmd = [
         "ffmpeg", "-y", "-i", video_path,
         "-vn",  # No video
-        "-acodec", "pcm_s16le" if format == "wav" else "libmp3lame",
+        "-acodec", CODEC_MAP[output_format],
         "-ar", str(sample_rate),
         "-ac", str(channels),
         audio_path,
@@ -95,7 +106,12 @@ def get_audio_duration(audio_path: str) -> Optional[float]:
 def batch_extract(
     video_paths: list[str],
     output_dir: str,
-    **kwargs,
+    sample_rate: int = 16000,
+    channels: int = 1,
+    output_format: str = "wav",
 ) -> list[ExtractResult]:
     """Extract audio from multiple videos."""
-    return [extract_audio(v, output_dir, **kwargs) for v in video_paths]
+    return [
+        extract_audio(v, output_dir, sample_rate=sample_rate, channels=channels, output_format=output_format)
+        for v in video_paths
+    ]
