@@ -1,4 +1,6 @@
 """Ingest pipeline orchestrator: URL -> download -> extract -> transcribe -> article.md."""
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass, field
 from typing import Optional, Callable
@@ -51,6 +53,9 @@ def run_pipeline(
     if not validate_url(url):
         return PipelineResult(success=False, error=f"Unsupported URL: {url}")
 
+    if not config.workspace_dir or not config.workspace_dir.strip():
+        return PipelineResult(success=False, error="workspace_dir is required")
+
     workspace = config.workspace_dir
     os.makedirs(workspace, exist_ok=True)
 
@@ -98,8 +103,17 @@ def run_pipeline(
     title = dl_result.title or "Untitled"
     article_content = segments_to_article(trans_result.segments, title)
     article_path = os.path.join(workspace, "article.md")
-    with open(article_path, "w", encoding="utf-8") as f:
-        f.write(article_content)
+    try:
+        with open(article_path, "w", encoding="utf-8") as f:
+            f.write(article_content)
+    except OSError as e:
+        return PipelineResult(
+            success=False,
+            video_path=dl_result.file_path,
+            audio_path=ext_result.audio_path,
+            error=f"Failed to write article.md: {e}",
+            steps_completed=["download", "extract", "transcribe"],
+        )
     notify("article", 1.0)
 
     return PipelineResult(

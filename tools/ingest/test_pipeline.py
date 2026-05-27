@@ -36,3 +36,9 @@ class TestRunPipeline:
             result = run_pipeline("not-a-url", config)
             assert result.success is False
             assert "Unsupported URL" in result.error
+
+    def test_empty_workspace_dir_returns_error(self):
+        config = PipelineConfig(workspace_dir="")
+        result = run_pipeline("https://www.youtube.com/watch?v=test", config)
+        assert result.success is False
+        assert "workspace_dir" in result.error
