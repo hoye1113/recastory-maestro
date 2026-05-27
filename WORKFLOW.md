@@ -327,7 +327,7 @@ workspace/rm-20260527-001/
 │       ├── 01-intro/01.mp3
 │       └── ...
 ├── render/
-│   └── video.mp4
+│   └── final.mp4
 ├── design.md
 ├── plan.json
 └── manifest.json
