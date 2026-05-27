@@ -15,7 +15,7 @@ class TranscriptionSegment:
 @dataclass
 class TranscribeResult:
     success: bool
-    segments: list[TranscriptionSegment] = None
+    segments: Optional[list[TranscriptionSegment]] = None
     full_text: str = ""
     language: Optional[str] = None
     error: Optional[str] = None
@@ -106,6 +106,8 @@ def segments_to_article(segments: list[TranscriptionSegment], title: str = "Unti
     """
     if not segments:
         return f"# {title}\n\n(No content transcribed)\n"
+
+    segments = sorted(segments, key=lambda s: s.start)
 
     paragraphs = []
     current_para = [segments[0].text]

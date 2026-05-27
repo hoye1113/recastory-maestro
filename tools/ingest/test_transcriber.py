@@ -1,4 +1,6 @@
 """Tests for transcriber module."""
+from unittest.mock import patch, MagicMock
+
 import pytest
 from tools.ingest.transcriber import (
     clean_text,
@@ -65,3 +67,30 @@ class TestTranscribeAudio:
         )
         assert result.success is True
         assert len(result.segments) == 1
+
+
+class TestTranscribeAudioMock:
+    @patch("faster_whisper.WhisperModel")
+    def test_transcribe_success(self, mock_whisper_cls):
+        # Setup mock
+        mock_model = MagicMock()
+        mock_whisper_cls.return_value = mock_model
+
+        mock_seg = MagicMock()
+        mock_seg.start = 0.0
+        mock_seg.end = 1.0
+        mock_seg.text = "Hello world"
+
+        mock_info = MagicMock()
+        mock_info.language = "en"
+
+        mock_model.transcribe.return_value = ([mock_seg], mock_info)
+
+        with patch("os.path.exists", return_value=True):
+            result = transcribe_audio("/fake/audio.wav")
+
+        assert result.success is True
+        assert len(result.segments) == 1
+        assert result.segments[0].text == "Hello world"
+        assert result.full_text == "Hello world"
+        assert result.language == "en"
