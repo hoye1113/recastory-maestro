@@ -4,23 +4,24 @@ import { chapters } from './chapters'
 const params = new URLSearchParams(window.location.search)
 const isAutoMode = params.get('auto') === '1'
 
+function resolveStep(globalStep: number) {
+  let accumulated = 0
+  for (let i = 0; i < chapters.length; i++) {
+    if (globalStep < accumulated + chapters[i].stepCount) {
+      return { activeChapter: i, localStep: globalStep - accumulated }
+    }
+    accumulated += chapters[i].stepCount
+  }
+  return { activeChapter: chapters.length - 1, localStep: chapters[chapters.length - 1].stepCount - 1 }
+}
+
 function App() {
   const [globalStep, setGlobalStep] = useState(0)
   const [isStarted, setIsStarted] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const totalSteps = chapters.reduce((sum, ch) => sum + ch.stepCount, 0)
 
-  let accumulated = 0
-  let activeChapter = 0
-  let localStep = 0
-  for (let i = 0; i < chapters.length; i++) {
-    if (globalStep < accumulated + chapters[i].stepCount) {
-      activeChapter = i
-      localStep = globalStep - accumulated
-      break
-    }
-    accumulated += chapters[i].stepCount
-  }
+  const { activeChapter, localStep } = resolveStep(globalStep)
 
   const ChapterComponent = chapters[activeChapter].Component
 
@@ -35,7 +36,7 @@ function App() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isAutoMode, isStarted])
+  }, [isAutoMode])
 
   // Manual keyboard navigation (disabled in auto mode)
   useEffect(() => {
@@ -58,14 +59,7 @@ function App() {
   useEffect(() => {
     if (!isAutoMode || !isStarted) return
 
-    // Find chapter/localStep from globalStep
-    let acc = 0, chIdx = 0, local = 0
-    for (let i = 0; i < chapters.length; i++) {
-      if (globalStep < acc + chapters[i].stepCount) {
-        chIdx = i; local = globalStep - acc; break
-      }
-      acc += chapters[i].stepCount
-    }
+    const { activeChapter: chIdx, localStep: local } = resolveStep(globalStep)
 
     const chapterId = chapters[chIdx].id
     const stepNum = String(local + 1).padStart(2, '0')
@@ -74,15 +68,26 @@ function App() {
 
     const onEnded = () => {
       setTimeout(() => {
-        setGlobalStep(s => Math.min(s + 1, totalSteps - 1))
+        setGlobalStep(s => {
+          if (s >= totalSteps - 1) return s
+          return s + 1
+        })
       }, 200)
     }
+
+    const onError = () => {
+      console.error(`Audio failed: /audio/${chapterId}/${stepNum}.mp3`)
+      setTimeout(() => setGlobalStep(s => Math.min(s + 1, totalSteps - 1)), 200)
+    }
+
     audio.addEventListener('ended', onEnded)
+    audio.addEventListener('error', onError)
     audio.play().catch(console.error)
 
     return () => {
       audio.pause()
       audio.removeEventListener('ended', onEnded)
+      audio.removeEventListener('error', onError)
       audioRef.current = null
     }
   }, [globalStep, isAutoMode, isStarted, totalSteps])
