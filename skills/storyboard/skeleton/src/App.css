@@ -1,0 +1,11 @@
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, #root { width: 100%; height: 100%; overflow: hidden; background: var(--shell); }
+.cd-shell {
+  width: 1920px; height: 1080px; position: relative;
+  transform-origin: top left; background: var(--shell); color: var(--text);
+  font-family: var(--font-body); cursor: pointer; overflow: hidden;
+}
+@media (max-width: 1919px) { .cd-shell { transform: scale(calc(100vw / 1920)); } }
+.cd-progress { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--surface-3); opacity: 0; transition: opacity 0.3s; }
+.cd-shell:hover .cd-progress { opacity: 1; }
+.cd-progress-bar { height: 100%; background: var(--accent); transition: width 0.3s ease; }
