@@ -71,7 +71,14 @@ def main():
     print(f"Output: {args.output}")
     print()
 
-    result = run_pipeline(args.url, config, progress_callback=progress)
+    try:
+        result = run_pipeline(args.url, config, progress_callback=progress)
+    except KeyboardInterrupt:
+        print("\nInterrupted.", file=sys.stderr)
+        sys.exit(130)
+    except Exception as e:
+        print(f"\nUnexpected error: {e}", file=sys.stderr)
+        sys.exit(1)
 
     if result.success:
         print()
