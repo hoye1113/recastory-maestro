@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "用这篇文章生成口播稿和大纲（examples/hello-world/article.md）",
+    "expected": "产出 script.md（口语化、短句、第二人称）和 outline.md（双源参考、章节/步骤/信息池）"
+  },
+  {
+    "id": 2,
+    "prompt": "用费曼视角为这篇文章生成口播稿（examples/hello-world/article.md --perspective feynman）",
+    "expected": "script.md 注入 Feynman Expression DNA（类比、自嘲幽默、具体到抽象），风格一致"
+  },
+  {
+    "id": 3,
+    "prompt": "检查生成的 script.md 是否有 AI 味（SL-001~SL-006 违规）",
+    "expected": "无假共情/假深刻/自我标榜/万能模板/排比堆砌/套话结尾，发现违规 ≥1 条触发 humanizer-zh"
+  }
+]

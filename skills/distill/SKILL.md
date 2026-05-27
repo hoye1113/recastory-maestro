@@ -1,6 +1,7 @@
 ---
 name: distill
-description: 从文章或转写文本生成口播稿（script.md）和大纲（outline.md），注入视角风格
+version: 1.0.0
+description: 从文章或转写文本生成口播稿（script.md）和大纲（outline.md），注入视角风格。触发条件：/recastory distill 或被 using-recastory 调度。
 ---
 
 # Skill: distill
@@ -89,6 +90,14 @@ outline.md 是跨步骤记忆载体，必须同时参考 script.md 和 article.m
 **视角 Expression DNA 注入**（如有）：
 - 按视角 SKILL.md 的句式、词汇、节奏、幽默规则改写
 - 全文风格必须一致，不可中途切换
+
+**[Checkpoint: SCRIPT_PREVIEW]** — script.md 生成后，向用户展示：
+- 口播稿前 200 字（开场 Hook + 第一章）
+- 字数统计（总字数 / 章节数 / 每章字数）
+- SL-001~SL-006 自检结果（有无违规）
+- 视角注入状态（已注入 / 跳过 / 未指定）
+
+**必须收到用户确认才可继续生成 outline.md。** 用户可要求：修改风格 / 调整字数 / 换视角 / 重新生成 / 继续。
 
 ### 5. 生成 outline.md
 

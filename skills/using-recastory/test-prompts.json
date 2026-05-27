@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "/recastory craft examples/hello-world/article.md",
+    "expected": "生成 plan.json → 调度 distill → 产出 script.md + outline.md，在 DESIGN 检查点暂停"
+  },
+  {
+    "id": 2,
+    "prompt": "/recastory craft examples/hello-world/article.md --perspective feynman",
+    "expected": "plan.json 包含 perspective.source: recastory，distill 注入 Feynman DNA"
+  },
+  {
+    "id": 3,
+    "prompt": "/recastory craft examples/hello-world/article.md --skip-ingest --skip-transcribe",
+    "expected": "plan.json 的 skills 数组不含 ingest/transcribe，直接从 distill 开始"
+  }
+]

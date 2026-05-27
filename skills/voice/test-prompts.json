@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "把 script.md 的第一章口播稿合成为 mp3 + srt",
+    "expected": "产出 01.mp3 + 01.srt，文件存在且 >0 字节，SRT 格式正确"
+  },
+  {
+    "id": 2,
+    "prompt": "检查 mmx-cli 是否可用（auth status）",
+    "expected": "mmx auth status exit 0，不可用时停下报告"
+  },
+  {
+    "id": 3,
+    "prompt": "将多步 SRT 合并为章节级 SRT（cumulative_offset 链式偏移）",
+    "expected": "时间戳连续无重叠，条目从 1 重新编号，块间空行分隔"
+  }
+]

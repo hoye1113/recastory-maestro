@@ -1,6 +1,7 @@
 ---
 name: voice
-description: 从 script.md 生成 TTS 音频（MP3）和字幕（SRT），通过 mmx-config.json 配置调用 mmx-cli
+version: 1.0.0
+description: 从 script.md 生成 TTS 音频（MP3）和字幕（SRT），通过 mmx-config.json 配置调用 mmx-cli。触发条件：/recastory voice 或被 using-recastory 调度。
 ---
 
 # Skill: voice
@@ -19,6 +20,17 @@ description: 从 script.md 生成 TTS 音频（MP3）和字幕（SRT），通过
 - `distill/script.md` 已存在
 - `distill/outline.md` 已存在（用于步骤编号对照）
 - mmx-cli 已安装（不可用时步骤 3 阻断）
+
+## Agent-Tool 边界
+
+| 步骤 | 谁做 | 产物 |
+|------|------|------|
+| Step 1-2 | Agent（创作性） | audio-segments.json |
+| Step 3 | Agent（调用工具检查） | mmx auth 状态 |
+| Step 4 | Agent 调用 mmx-cli（工具执行） | MP3 + SRT 文件 |
+| Step 4.5 | Agent（展示 + 等确认） | 用户确认 |
+| Step 5 | Agent 调用合并逻辑（工具执行） | 章节级 SRT |
+| Step 6-7 | Agent（记录 + 报告） | plan.json 更新 |
 
 ## Steps
 
@@ -96,6 +108,14 @@ description: 从 script.md 生成 TTS 音频（MP3）和字幕（SRT），通过
 每步合成后验证：
 - MP3 文件存在且 >0 字节
 - SRT 文件存在且格式正确
+
+**[Checkpoint: VOICE_PREVIEW]** — 第一章全部步骤合成完成后，向用户报告：
+- 第一个 MP3 文件路径（用户自行试听）
+- 第一个 SRT 内容（前 5 条字幕）
+- 音色 ID、语速参数
+- 合成耗时
+
+**必须收到用户确认才可继续合并 SRT。** 用户可要求：调整音色 / 调整语速 / 重新合成 / 继续。
 
 ### 5. [正常路径] 合并 SRT
 

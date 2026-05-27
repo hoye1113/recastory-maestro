@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "根据 outline.md 的第一章生成 Chapter.tsx + Chapter.css + narrations.ts",
+    "expected": "产出完整 React 组件，使用 CSS token、16:9 舞台、step 驱动逻辑、无硬编码颜色"
+  },
+  {
+    "id": 2,
+    "prompt": "检查生成的 Chapter.tsx 是否有视觉 AI 味（SL-001~SL-006 视觉版）",
+    "expected": "无紫粉渐变/圆角彩色边框/emoji/全场 fade/套话过渡画面"
+  },
+  {
+    "id": 3,
+    "prompt": "用 midnight-press 主题为第一章生成分镜",
+    "expected": "主题 token 正确应用，深色调、电影感、衬线斜体 hero"
+  }
+]

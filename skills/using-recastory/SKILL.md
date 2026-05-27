@@ -1,6 +1,7 @@
 ---
 name: using-recastory
-description: Recastory Maestro 主入口 — 意图识别、路由、plan.json 生成、子 Skill 调度、检查点管理
+version: 1.0.0
+description: Recastory Maestro 主入口 — 意图识别、路由、plan.json 生成、子 Skill 调度、检查点管理。触发条件：/recastory 命令、视频 URL、音视频文件路径、"帮我做个视频"等。
 user-invocable: true
 argument-hint: "[craft|distill|voice|storyboard] <input> [--perspective <name>] [--register <brand|product>]"
 ---
@@ -89,23 +90,24 @@ argument-hint: "[craft|distill|voice|storyboard] <input> [--perspective <name>] 
 
 ```json
 {
-  "pipeline_id": "rm-<date>-<seq>",
-  "command": "/recastory craft ...",
-  "input_type": "<article|local-video|url|audio>",
-  "target_format": "<short-video|course|podcast|keynote>",
-  "register": "<brand|product>",
+  "pipeline_id": "rm-20260527-001",
+  "command": "/recastory craft article.md --perspective feynman",
+  "input_type": "article",
+  "target_format": "short-video",
+  "register": "product",
   "perspective": {
-    "name": "<perspective-name>",
-    "expression_dna": "<summary>"
+    "name": "feynman",
+    "source": "recastory",
+    "expression_dna": "colloquial, concrete-to-abstract, self-deprecating humor"
   },
-  "execution_mode": "<A|B|C>",
+  "execution_mode": "A",
   "double_source": {
-    "script": "workspace/<id>/distill/script.md",
-    "article": "workspace/<id>/raw/article.md",
-    "outline": "workspace/<id>/distill/outline.md"
+    "script": "workspace/rm-20260527-001/distill/script.md",
+    "article": "workspace/rm-20260527-001/raw/article.md",
+    "outline": "workspace/rm-20260527-001/distill/outline.md"
   },
-  "references_loaded": ["<list of loaded reference files>"],
-  "anti_patterns_enabled": ["<list of rule IDs>"],
+  "references_loaded": ["transcription/REFERENCE.md", "content-distillation/REFERENCE.md"],
+  "anti_patterns_enabled": ["CD-001", "CD-003", "SL-001", "SL-002", "SL-003", "SL-004", "SL-005", "SL-006"],
   "skills": [
     { "name": "distill", "depends_on": [] },
     { "name": "storyboard", "depends_on": ["distill"] },

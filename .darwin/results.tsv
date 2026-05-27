@@ -1,0 +1,9 @@
+timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
+2026-05-27T16:15	a6494c3	voice	73	77	keep	检查点设计	添加 VOICE_PREVIEW 音频试听检查点	dry_run
+2026-05-27T16:20	a6494c3	distill	77	82	keep	检查点设计	添加 SCRIPT_PREVIEW 脚本预览检查点	dry_run
+2026-05-27T16:25	a6494c3	using-recastory	80	83	keep	指令具体性	plan.json 模板补充 perspective.source + 具体示例值	dry_run
+2026-05-27T16:30	a6494c3	voice	77	79	keep	整体架构	添加 Agent-Tool 边界表，明确每步职责归属	dry_run
+2026-05-27T16:35	a6494c3	voice	79	81	keep	Frontmatter	补充 version + description 触发词	dry_run
+2026-05-27T16:35	a6494c3	distill	82	84	keep	Frontmatter	补充 version + description 触发词	dry_run
+2026-05-27T16:35	a6494c3	storyboard	86	87	keep	Frontmatter	补充 version + description 触发词	dry_run
+2026-05-27T16:35	a6494c3	using-recastory	83	84	keep	Frontmatter	补充 version + description 触发词	dry_run
