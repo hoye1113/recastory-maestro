@@ -27,6 +27,79 @@ Maestro **不直接处理内容**，只负责：
 - **Review before Proceed** — 双层检查：确定性规则（快）+ LLM 审查（深）
 - **Perspectives over Generic** — 通过人格化视角引擎（Perspective Engine）注入差异化创造力，对抗"AI 味"
 - **Double-Source over Single-Source** — 内容生产有两个真相源：script.md 定节拍，article.md 定画面密度，二者职责不可混淆
+- **Agent judges, Tools execute** — 创作性写入（口播稿/代码/配置）是 Agent 的职责；机械性操作（下载/转码/压缩/文件移动）交给工具。Agent 的创造力用在"怎么编排"，不是"怎么下载"。
+
+---
+
+## Agent-Tool 边界
+
+### 设计原则
+
+Agent（Claude Code）负责**判断和创作**，工具负责**执行和转换**。
+
+核心动机：
+1. **可靠性** — 工具做确定性操作，结果可预测
+2. **可维护性** — 工具脚本独立测试，不依赖 LLM 发挥
+3. **降级能力** — 工具不可用时停下报告，不自行替代
+
+### 创作性 vs 机械性
+
+| 类型 | 示例 | 谁做 |
+|------|------|------|
+| 创作性写入 | script.md、Chapter.tsx、plan.json | Agent |
+| 机械性操作 | 移动文件、校验存在性、压缩转格式 | 工具 |
+| 混合型 | audio-segments.json（Agent 写清单，mmx 执行） | 分工 |
+
+### 文件读写边界
+
+| 操作 | 内容产物 (.md/.json/.html) | 二进制 (.mp4/.wav/.mp3) | 目录管理 |
+|------|---------------------------|------------------------|---------|
+| 读取 | 可以（展示、判断） | 不碰 | — |
+| 写入 | 可以（创作） | 不碰 | 例外：可 mkdir -p 自己即将写入的目录 |
+
+### 目录初始化
+
+Agent 可以 `mkdir -p` 自己即将写入的内容产物目录（workspace/ 下的子目录）。其他目录操作（移动、复制、删除）仍交给工具。
+
+### 工具调用协议
+
+- **前置检查**: 运行 auth/status 确认可用
+- **结果处理**: 成功→继续，失败→停下报告（P0 不做自动降级）
+- **输出校验**: 检查产出文件存在性
+- **异常报告**: 记录到 plan.json
+
+### Skill 调度方式
+
+P0 单 Agent 顺序执行：读取子 Skill 的 SKILL.md，在当前会话中按步骤执行。不启动 subagent。
+
+### 配置管理边界
+
+| 职责 | 谁做 | 示例 |
+|------|------|------|
+| 语义映射 | Agent | "沉稳男声" → male-qn-qingse |
+| ID → CLI 参数 | config 模板 | mmx-config.json |
+| API Key | 工具读取 | MINIMAX_API_KEY，不暴露给 Agent |
+
+### 检查点展示
+
+P0 直接在对话中贴文本内容（如 script.md 前 200 字），用户看完回复"确认"。不生成 HTML 预览。
+
+### P0 工具清单
+
+| 工具 | 用途 | SKILL.md | 配置 |
+|------|------|----------|------|
+| mmx CLI | TTS 合成 | voice/SKILL.md | skills/voice/mmx-config.json |
+
+### P1+ 工具清单（预留）
+
+| 工具 | 用途 | 依赖 |
+|------|------|------|
+| yt-dlp | 视频下载 | ingest |
+| FFmpeg | 音频提取、视频编码 | ingest, render |
+| Whisper | 语音转写 | transcribe |
+| Puppeteer | 录屏 | render |
+
+P1 统一建 `bin/` 目录包装外部工具，每个工具一个脚本，内嵌 mkdir -p。
 
 ---
 

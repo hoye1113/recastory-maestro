@@ -1,0 +1,32 @@
+{
+  "pipeline_id": "rm-hello-world",
+  "command": "/recastory craft examples/hello-world/article.md --perspective feynman --register product",
+  "input_type": "article",
+  "target_format": "short-video",
+  "register": "product",
+  "perspective": {
+    "name": "feynman",
+    "expression_dna": "短锚长展、中文口语化、具体到抽象、自嘲幽默"
+  },
+  "execution_mode": "A",
+  "double_source": {
+    "script": "workspace/rm-hello-world/distill/script.md",
+    "article": "workspace/rm-hello-world/raw/article.md",
+    "outline": "workspace/rm-hello-world/distill/outline.md"
+  },
+  "references_loaded": [],
+  "skills": [
+    { "name": "distill", "depends_on": [] },
+    { "name": "storyboard", "depends_on": ["distill"] },
+    { "name": "voice", "depends_on": ["distill"] }
+  ],
+  "parallel_groups": [
+    { "skills": ["storyboard", "voice"], "after": "distill" }
+  ],
+  "anti_patterns_enabled": [
+    "CD-001", "CD-002", "CD-003", "CD-004", "CD-005", "CD-006",
+    "SB-001", "SB-002", "SB-003", "SB-004", "SB-005",
+    "SL-001", "SL-002", "SL-003", "SL-004", "SL-005", "SL-006",
+    "VO-001", "VO-002", "VO-003", "VO-004"
+  ]
+}
