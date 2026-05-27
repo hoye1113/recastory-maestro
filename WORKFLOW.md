@@ -100,6 +100,7 @@
   "register": "product",
   "perspective": {
     "name": "feynman",
+    "source": "recastory",
     "expression_dna": "colloquial, concrete-to-abstract, self-deprecating humor"
   },
   "execution_mode": "A",
@@ -140,7 +141,7 @@
 
 1. 读取 `plan.json`，构建依赖图
 2. 按依赖顺序调度 Skills
-3. 每个 Skill 由独立子 Agent 执行，执行前重新读取 `SKILL.md` + 领域参考文件
+3. P0 单 Agent 顺序执行：读取子 Skill 的 SKILL.md + 领域参考文件，在当前会话中按步骤执行（不启动 subagent）。P1 支持 Mode C subagent 并行
 4. 视角注入：`distill` 和 `storyboard` 阶段加载视角 Expression DNA
 
 ### 多章节并行

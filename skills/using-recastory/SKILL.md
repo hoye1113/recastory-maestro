@@ -48,7 +48,7 @@ argument-hint: "[craft|distill|voice|storyboard] <input> [--perspective <name>] 
 | `--format` | `short-video` | short-video / course / podcast / keynote |
 | `--style` | `explainer` | tech / science / explainer / business / casual |
 | `--register` | 从 brand/REGISTER.md 推断，否则询问 | brand（大胆/戏剧化）/ product（克制/信息密度） |
-| `--perspective` | 无 | feynman / mrbeast（P0 仅支持 feynman） |
+| `--perspective` | 无 | feynman / mrbeast / 任意 nuwa-skill 视角名 |
 | `--parallel` | `A` | A（逐章确认）/ B（顺序）/ C（并行） |
 | `--voice` | 默认 TTS 音色 | TTS 音色 ID |
 
@@ -60,7 +60,14 @@ argument-hint: "[craft|distill|voice|storyboard] <input> [--perspective <name>] 
 
 1. 全局加载：`transcription/REFERENCE.md` + `content-distillation/REFERENCE.md`（如存在）
 2. 命令对应领域参考（如 `storyboard/REFERENCE.md`、`voice/REFERENCE.md`）
-3. 视角 Expression DNA（如指定 `--perspective`）
+3. 视角 Expression DNA（如指定 `--perspective`）：
+   - 检查 `skills/perspectives/<name>/SKILL.md` 是否存在
+   - 如存在 → 直接使用
+   - 如不存在 → 检查 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`
+   - 如存在 → 用 Read 工具读入上下文，在 plan.json 中标记 `perspective.source: "nuwa-skill"`
+   - 如都不存在 → 报错："视角 <name> 未找到"
+   - **格式适配**: nuwa-skill 视角为问答式格式，需从中提取表达风格特征（句式、词汇、节奏、幽默方式）用于内容生产，而非直接使用其角色扮演逻辑。参考 `skills/perspectives/feynman/SKILL.md` 的 Expression DNA 结构做适配。
+   - **前提**: P0 单 Agent 会话共享上下文（已读入的 nuwa-skill 视角内容在 distill 执行时可用）。P1 subagent 模式时需在 dispatch 前将 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md` 复制到 `skills/perspectives/<name>/SKILL.md`，因为 subagent 不继承主 Agent 的上下文。
 4. 品牌注册表 `brand/REGISTER.md`（最后加载）
 
 ### 4. 生成 design.md

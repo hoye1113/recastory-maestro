@@ -118,7 +118,13 @@ SRT 格式：
 第二句口播文本
 ```
 
-合并逻辑：按时间排序，重新编号（从 1 开始），保留原始时间值。
+合并逻辑：
+1. 按步骤顺序（01.srt, 02.srt, ...）依次读取
+2. 维护 cumulative_offset（初始 0ms）
+3. 每个步骤的所有条目：start += cumulative_offset, end += cumulative_offset
+4. 每个步骤处理完后：cumulative_offset = 该步骤最后一条的 end 值
+5. 全部条目按序重新编号（从 1 开始）
+6. 块之间用空行分隔
 
 ### 6. 失败处理
 

@@ -64,7 +64,34 @@ anti_patterns: ./anti-patterns.ts
 
 ---
 
-## 三、Schema 契约（L1 测试）
+## 三、Agent-Tool 边界
+
+创建新 Skill 时必须遵守 [AGENT.md](AGENT.md) 中定义的 Agent-Tool 边界原则。
+
+### 写入边界
+
+| 内容产物 (.md/.json/.html) | 二进制 (.mp4/.wav/.mp3) | 目录管理 |
+|---------------------------|------------------------|---------|
+| Agent 可以读写 | Agent 不碰 | 例外：Agent 可 mkdir -p 自己即将写入的目录（workspace/ 下） |
+
+### 创作性 vs 机械性
+
+| 类型 | 示例 | 谁做 |
+|------|------|------|
+| 创作性写入 | script.md、Chapter.tsx、plan.json | Agent |
+| 机械性操作 | 移动文件、校验存在性、压缩转格式 | 工具 |
+| 混合型 | audio-segments.json（Agent 写清单，mmx 执行） | 分工 |
+
+### 工具调用协议
+
+- **前置检查**: 运行 auth/status 确认可用
+- **结果处理**: 成功→继续，失败→停下报告（不做自动降级）
+- **输出校验**: 检查产出文件存在性
+- **异常报告**: 记录到 plan.json
+
+---
+
+## 四、Schema 契约（L1 测试）
 
 ### 每个 Skill 必须定义 InputSchema 和 OutputSchema
 
@@ -111,7 +138,7 @@ describe('<skill-name> schema', () => {
 
 ---
 
-## 四、反模式规则模板
+## 五、反模式规则模板
 
 ```typescript
 // anti-patterns.ts
@@ -131,7 +158,7 @@ export const rules = [
 
 ---
 
-## 五、评分体系（MVP 简化版）
+## 六、评分体系（MVP 简化版）
 
 MVP 阶段使用 4 维评分（满分 100），替代完整的 8 维体系：
 
@@ -163,7 +190,7 @@ MVP 阶段使用 4 维评分（满分 100），替代完整的 8 维体系：
 
 ---
 
-## 六、Roadmap（v2.0 扩展）
+## 七、Roadmap（v2.0 扩展）
 
 MVP 之后根据实际需求扩展：
 
@@ -175,7 +202,7 @@ MVP 之后根据实际需求扩展：
 
 ---
 
-## 七、事件信封（Event Envelope）
+## 八、事件信封（Event Envelope）
 
 每个 Skill 执行完成后，输出标准化事件：
 
