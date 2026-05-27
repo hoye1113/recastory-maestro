@@ -10,7 +10,10 @@ set -euo pipefail
 #
 # Uses FFmpeg concat demuxer for lossless merging (no re-encoding).
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Cleanup trap for temp files
+TEMP_FILES=()
+cleanup() { for f in "${TEMP_FILES[@]}"; do rm -f "$f"; done; }
+trap cleanup EXIT
 
 # Color codes
 RED='\033[0;31m'
@@ -119,6 +122,7 @@ main() {
         # Build concat list file
         local concat_file
         concat_file=$(mktemp /tmp/merge-mp3-XXXXXX.txt)
+        TEMP_FILES+=("$concat_file")
         local file_count=0
 
         while IFS= read -r step; do
@@ -127,6 +131,8 @@ main() {
                 if [ -f "$step_file" ]; then
                     local abs_path
                     abs_path=$(ffmpeg_path "$step_file")
+                    # Single quotes required: FFmpeg concat demuxer treats backslashes
+                    # as escape characters in double-quoted paths (breaks Windows paths)
                     echo "file '$abs_path'" >> "$concat_file"
                     file_count=$((file_count + 1))
                 else
@@ -142,13 +148,14 @@ main() {
         fi
 
         # Merge using FFmpeg concat demuxer (lossless, no re-encoding)
+        local output_path
+        output_path=$(ffmpeg_path "$output_file")
         local ffmpeg_output
-        ffmpeg_output=$(ffmpeg_path "$output_file")
-        if ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$ffmpeg_output" 2>/dev/null; then
+        if ffmpeg_output=$(ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$output_path" 2>&1); then
             log_info "Created: $output_file ($file_count steps)"
             merge_count=$((merge_count + 1))
         else
-            log_error "FFmpeg failed to merge chapter: $chapter"
+            log_error "FFmpeg failed to merge chapter $chapter: $ffmpeg_output"
         fi
 
         rm -f "$concat_file"
