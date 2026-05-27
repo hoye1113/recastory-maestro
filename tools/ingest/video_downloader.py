@@ -16,8 +16,8 @@ class DownloadResult:
 
 
 def validate_url(url: str) -> bool:
-    """Validate if URL is a supported video URL."""
-    pattern = r'^https?://(www\.)?(youtube\.com|youtu\.be|bilibili\.com|vimeo\.com|dailymotion\.com)/'
+    """Validate if URL is a supported video URL (first-pass check before yt-dlp)."""
+    pattern = r'^https?://(www\.)?(youtube\.com|youtu\.be|bilibili\.com|b23\.tv|vimeo\.com|dailymotion\.com|dai\.ly)(/|$)'
     return bool(re.match(pattern, url))
 
 
@@ -56,6 +56,12 @@ def download_video(
             file_path = ydl.prepare_filename(info)
             if not file_path.endswith('.mp4'):
                 file_path = os.path.splitext(file_path)[0] + '.mp4'
+
+            if not os.path.exists(file_path):
+                return DownloadResult(
+                    success=False,
+                    error=f"Download completed but file not found at {file_path}",
+                )
 
             return DownloadResult(
                 success=True,
