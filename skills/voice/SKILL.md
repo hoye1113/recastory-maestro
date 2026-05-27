@@ -119,32 +119,20 @@ description: 从 script.md 生成 TTS 音频（MP3）和字幕（SRT），通过
 
 ### 5. [正常路径] 合并 SRT
 
-将每个步骤的独立 SRT 合并为章节级 SRT：
+调用确定性脚本合并章节级 SRT：
 
-```
-voice/public/audio/01-what.srt    ← 合并 01-what/01.srt + 01-what/02.srt + ...
-voice/public/audio/02-how.srt
-voice/public/audio/03-why.srt
+```bash
+bash tools/merge-srt.sh <workspace-dir>
 ```
 
-SRT 格式：
-```
-1
-00:00:01,000 --> 00:00:04,000
-第一句口播文本
+脚本自动完成：
 
-2
-00:00:05,000 --> 00:00:08,500
-第二句口播文本
-```
+1. 读取 `voice/audio-segments.json` 获取章节结构
+2. 遍历每章的步骤级 SRT
+3. 计算 cumulative offset
+4. 输出章节级 `<chapter>.srt`
 
-合并逻辑：
-1. 按步骤顺序（01.srt, 02.srt, ...）依次读取
-2. 维护 cumulative_offset（初始 0ms）
-3. 每个步骤的所有条目：start += cumulative_offset, end += cumulative_offset
-4. 每个步骤处理完后：cumulative_offset = 该步骤最后一条的 end 值
-5. 全部条目按序重新编号（从 1 开始）
-6. 块之间用空行分隔
+**不做手动计算。** 脚本失败时停下报告用户。
 
 ### 6. 失败处理
 
