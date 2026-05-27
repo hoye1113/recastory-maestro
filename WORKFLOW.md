@@ -237,10 +237,17 @@ Audit 通过后，运行 LLM 深度审查（6 个维度）：
 
 ## Phase 7: Deliver（交付）
 
-1. 汇总所有输出文件
-2. 生成 `manifest.json`
-3. 运行最终 `polish` 检查
-4. 清理临时文件（可选）
+1. 合并章节级音频：`bash tools/merge-mp3.sh <workspace-dir>`
+2. 渲染视频：`bash tools/render-video.sh <workspace-dir>`
+
+脚本自动完成：
+
+- 启动 Vite dev server
+- 合并步骤级 MP3 → 章节级 MP3
+- Puppeteer 打开浏览器 + 按 SPACE 启动自动播放
+- FFmpeg 录屏
+- 烧入章节级 SRT 字幕
+- 合并为最终 MP4 + 生成 manifest.json
 
 ---
 
