@@ -5,6 +5,7 @@ Implemented rule groups:
 - CD-001~003, CD-005~006: Content distillation rules (CD-004 not yet implemented)
 - VO-001~004: Voice rules
 - SL-001~006: AI Slop rules
+- VV-001~005: Visual Verification rules (via mmx vision, in vision_rules.py)
 
 Defined in docs but not yet implemented:
 - DS-001~006: Distill-Style oral rules (content-distillation/REFERENCE.md)
@@ -777,11 +778,20 @@ ALL_RULES: list[Rule] = [
 ]
 
 
+# VV rule IDs are handled separately by vision_rules.py (different calling convention)
+# but we recognize them here so --rule VV-001 doesn't raise ValueError
+VV_RULE_IDS = {'VV-001', 'VV-002', 'VV-003', 'VV-004', 'VV-005'}
+
+
 def get_rules_by_ids(rule_ids: list[str]) -> list[Rule]:
-    """Get rules by their IDs. Raises ValueError for unknown IDs."""
+    """Get rules by their IDs. Raises ValueError for unknown IDs.
+
+    VV-xxx IDs are recognized but not returned (they're handled by vision_rules.py).
+    """
     id_set = set(rule_ids)
     found = [r for r in ALL_RULES if r.id in id_set]
-    missing = id_set - {r.id for r in found}
+    known = {r.id for r in found} | VV_RULE_IDS
+    missing = id_set - known
     if missing:
         raise ValueError(f'Unknown rule IDs: {", ".join(sorted(missing))}')
     return found

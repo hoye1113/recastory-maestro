@@ -2,10 +2,11 @@
 import json
 import os
 import tempfile
+from unittest.mock import patch, MagicMock
 
 import pytest
 
-from tools.audit.scanner import scan_workspace, format_report, AuditReport
+from tools.audit.scanner import scan_workspace, scan_screenshots, format_report, AuditReport
 
 
 # ============================================================================
@@ -227,3 +228,109 @@ class TestCLI:
                 main([tmpdir, '--rule', 'CD-003'])
             # CD-003 is warning, not critical, so exit 0
             assert exc_info.value.code == 0
+
+
+# ============================================================================
+# scan_screenshots tests
+# ============================================================================
+
+class TestScanScreenshots:
+    def test_empty_dir(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = scan_screenshots(tmpdir)
+            assert result == []
+
+    def test_finds_png_files(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            ss_dir = os.path.join(tmpdir, 'storyboard', 'screenshots')
+            os.makedirs(ss_dir)
+            for name in ['step-01.png', 'step-00.png', 'step-02.png']:
+                with open(os.path.join(ss_dir, name), 'wb') as f:
+                    f.write(b'\x89PNG')
+            result = scan_screenshots(tmpdir)
+            assert len(result) == 3
+            # Should be sorted
+            assert 'step-00' in result[0]
+            assert 'step-01' in result[1]
+            assert 'step-02' in result[2]
+
+    def test_ignores_non_png(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            ss_dir = os.path.join(tmpdir, 'storyboard', 'screenshots')
+            os.makedirs(ss_dir)
+            with open(os.path.join(ss_dir, 'step-00.png'), 'wb') as f:
+                f.write(b'\x89PNG')
+            with open(os.path.join(ss_dir, 'readme.txt'), 'w') as f:
+                f.write('not a screenshot')
+            result = scan_screenshots(tmpdir)
+            assert len(result) == 1
+
+    def test_no_screenshots_dir(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # workspace exists but no storyboard/screenshots/
+            result = scan_screenshots(tmpdir)
+            assert result == []
+
+
+# ============================================================================
+# VV rule integration in scan_workspace
+# ============================================================================
+
+class TestVVIntegration:
+    @patch('tools.audit.scanner._run_vv_rules')
+    def test_vv_rules_called_when_screenshots_exist(self, mock_vv):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report = scan_workspace(tmpdir)
+            # _run_vv_rules should be called (no rule_ids filter)
+            mock_vv.assert_called_once()
+
+    @patch('tools.audit.scanner._run_vv_rules')
+    def test_vv_rules_called_with_vv_filter(self, mock_vv):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report = scan_workspace(tmpdir, rule_ids=['VV-001'])
+            mock_vv.assert_called_once()
+
+    @patch('tools.audit.scanner._run_vv_rules')
+    def test_vv_rules_skipped_with_non_vv_filter(self, mock_vv):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report = scan_workspace(tmpdir, rule_ids=['TR-001'])
+            mock_vv.assert_not_called()
+
+    @patch('tools.audit.vision_rules._mmx_available', return_value=False)
+    def test_vv_skip_when_mmx_unavailable(self, mock_a):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report = scan_workspace(tmpdir)
+            vv_results = [r for r in report.results if r.rule_id.startswith('VV')]
+            assert len(vv_results) == 1
+            assert 'mmx CLI not available' in vv_results[0].message
+
+    @patch('tools.audit.vision_rules._mmx_available', return_value=True)
+    @patch('tools.audit.vision_rules._call_vision')
+    def test_vv_results_in_report(self, mock_v, mock_a):
+        # VV-001/003/004 expect PASS/FAIL; VV-002/005 expect numbers
+        mock_v.side_effect = lambda img, prompt: (
+            '5' if 'Count the number' in prompt or 'Estimate the total' in prompt
+            else 'PASS. All clear.'
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            ss_dir = os.path.join(tmpdir, 'storyboard', 'screenshots')
+            os.makedirs(ss_dir)
+            with open(os.path.join(ss_dir, 'step-00.png'), 'wb') as f:
+                f.write(b'\x89PNG')
+            report = scan_workspace(tmpdir)
+            vv_results = [r for r in report.results if r.rule_id.startswith('VV')]
+            assert len(vv_results) == 5
+            assert all(r.severity == 'warning' for r in vv_results)
+
+    @patch('tools.audit.vision_rules._mmx_available', return_value=True)
+    @patch('tools.audit.vision_rules._call_vision', return_value='FAIL. Purple gradient.')
+    def test_vv_fail_counts_as_critical(self, mock_v, mock_a):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            ss_dir = os.path.join(tmpdir, 'storyboard', 'screenshots')
+            os.makedirs(ss_dir)
+            with open(os.path.join(ss_dir, 'step-00.png'), 'wb') as f:
+                f.write(b'\x89PNG')
+            report = scan_workspace(tmpdir)
+            # VV-001 fail = critical, VV-002/005 skip (can't parse number from FAIL text)
+            assert report.critical_count > 0
+            assert report.passed is False

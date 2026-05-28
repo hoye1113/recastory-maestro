@@ -5,11 +5,13 @@ runs applicable rules, and produces an AuditReport.
 """
 from __future__ import annotations
 
+import glob
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .rules import Rule, RuleResult, ALL_RULES, get_rules_by_ids
+from .rules import Rule, RuleResult, ALL_RULES, VV_RULE_IDS, get_rules_by_ids
 
 
 @dataclass
@@ -23,6 +25,19 @@ class AuditReport:
     @property
     def passed(self) -> bool:
         return self.critical_count == 0
+
+
+def scan_screenshots(workspace_dir: str) -> list[str]:
+    """Scan for screenshot files in storyboard/screenshots/.
+
+    Args:
+        workspace_dir: Path to workspace directory.
+
+    Returns:
+        Sorted list of screenshot file paths.
+    """
+    pattern = os.path.join(workspace_dir, 'storyboard', 'screenshots', '*.png')
+    return sorted(glob.glob(pattern))
 
 
 def scan_workspace(
@@ -89,7 +104,39 @@ def scan_workspace(
             content = file_path.read_text(encoding='utf-8', errors='replace')
             _apply_rules(file_path, content, vo_rules)
 
+    # Run VV vision rules on screenshots (if any VV rule IDs requested)
+    requested_vv = rule_ids is None or any(rid.startswith('VV-') for rid in rule_ids)
+    if requested_vv:
+        _run_vv_rules(workspace, report)
+
     return report
+
+
+def _run_vv_rules(workspace: Path, report: AuditReport) -> None:
+    """Run VV vision rules on screenshots and append results to report."""
+    try:
+        from .vision_rules import run_vv_rules, VisionResult
+    except ImportError:
+        return  # vision_rules module not available
+
+    screenshot_dir = str(workspace / 'storyboard' / 'screenshots')
+    vv_results = run_vv_rules(screenshot_dir)
+
+    for vr in vv_results:
+        # Convert VisionResult to RuleResult for unified reporting
+        severity = 'critical' if vr.status == 'fail' else 'warning'
+        report.results.append(RuleResult(
+            rule_id=vr.rule_id,
+            name=f'VV visual check',
+            severity=severity,
+            file_path=vr.file or screenshot_dir,
+            message=vr.message,
+        ))
+        if vr.status == 'fail':
+            report.critical_count += 1
+        elif vr.status == 'warn':
+            report.warning_count += 1
+        # 'pass' and 'skip' don't increment counters
 
 
 def format_report(report: AuditReport, output_json: bool = False) -> str:
