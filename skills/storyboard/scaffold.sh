@@ -9,8 +9,10 @@ WORKSPACE="${1:?Usage: scaffold.sh <workspace-dir> [theme-id]}"
 THEME="${2:-paper-press}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKELETON="$SCRIPT_DIR/skeleton"
-STORYBOARD_DIR="$WORKSPACE/storyboard"
-OUTLINE="$WORKSPACE/distill/outline.md"
+# Resolve absolute paths before any cd
+WORKSPACE_ABS="$(cd "$WORKSPACE" && pwd)"
+STORYBOARD_DIR="$WORKSPACE_ABS/storyboard"
+OUTLINE="$WORKSPACE_ABS/distill/outline.md"
 
 if [ ! -f "$OUTLINE" ]; then
   echo "ERROR: $OUTLINE not found" >&2

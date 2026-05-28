@@ -194,7 +194,7 @@ perspective/
 
 | 阶段 | 注入方式 | 效果 |
 |------|---------|------|
-| `/recastory distill` | 选择视角的 Expression DNA 生成口播稿 | 脚本风格差异化 |
+| `/recastory distill` | Expression DNA + Narrative Heuristics，影响词汇、句式、章节结构、Hook 策略 | 脚本风格 + 叙事结构差异化 |
 | `/recastory storyboard` | 选择视角的 Mental Models 决定叙事结构 | 故事架构差异化 |
 | `/recastory critique` | 用视角的 Decision Heuristics 审查内容 | 审查维度差异化 |
 | `/recastory research` | 用视角的研究维度指导深度分析 | 研究角度差异化 |
@@ -400,6 +400,7 @@ bash tools/capture-screenshots.sh workspace/<pipeline-id> --audit  # 截图 + VV
 - **Phase 5 Review** 中作为独立审查维度（`AI Slop Check`）
 - **Phase 4 Audit** 中对 `SL-001`~`SL-006` 运行确定性检测
 - 两阶反射检测仅在 Review 阶段由 LLM 执行（无法确定性检测）
+- **distill 阶段**将 SL-001/SL-004/SL-006 + humanizer-zh 10 条规则作为**生成约束**（proactive），在 script.md 写入时即时遵守，而非事后检测（reactive）。其余规则仍为 Phase C 事后检查
 
 ---
 
@@ -439,7 +440,7 @@ Maestro 必须在启动时判断输入类型，选择对应的 Pipeline（Route 
 
 | 阶段 | 读取哪个源 | 用途 |
 |------|-----------|------|
-| `distill` 生成 script.md | article.md | 提取核心信息，转化为口语化脚本 |
+| `distill` 生成 script.md | article.md | 提取核心信息，转化为口语化脚本（三阶段：结构化阅读 → 逐章生成 → 大纲+质量门控）|
 | `distill` 生成 outline.md | script.md + article.md | script 定章节切分和 step，article 定信息池 |
 | `storyboard` 渲染每章 | outline.md（回溯到两个源） | 口播文本来自 script 段落，屏幕内容来自 article 细节 |
 | `voice` 合成音频 | script.md | 严格按 script 顺序和节奏合成 |
@@ -533,7 +534,8 @@ Maestro 必须在启动时判断输入类型，选择对应的 Pipeline（Route 
 2. 按依赖顺序调度 Skills
 3. **并行规则**：`parallel_groups` 中的 Skills 满足依赖后可同时调度
 4. P0 单 Agent 顺序执行：读取子 Skill 的 SKILL.md，在当前会话中按步骤执行。P1 支持 Mode C subagent 并行（每个 subagent 执行前必须重新读取 `SKILL.md` 和领域参考文件）
-5. **视角注入**：在 `distill` 和 `storyboard` 阶段，加载 `--perspective` 指定的视角 Skill，注入 Expression DNA
+5. **视角注入**：在 `distill` 和 `storyboard` 阶段，加载 `--perspective` 指定的视角 Skill，注入 Expression DNA + Narrative Heuristics
+6. **distill 内部结构**：distill SKILL 内部分为 Phase A（结构化阅读）→ Phase B（逐章生成，视角 + 人类化约束）→ Phase C（大纲 + 五维质量门控）三个阶段。plan.json 不需要感知 distill 的内部结构
 
 #### 多章节并行模式
 

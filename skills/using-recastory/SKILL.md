@@ -70,6 +70,7 @@ CLI 独立运行：`python -m tools.ingest "<video-url>" -o workspace/<id>`
 
 1. 全局加载：`transcription/REFERENCE.md` + `content-distillation/REFERENCE.md`（如存在）
 2. 命令对应领域参考（如 `storyboard/REFERENCE.md`、`voice/REFERENCE.md`）；`/recastory research` 加载 `research/REFERENCE.md`
+   - `/recastory distill` 时，`skills/humanizer-zh/SKILL.md` 的 10 条生成约束规则作为**必须加载项**（非可选），因为它们是 Phase B 的前置条件
 3. 视角 Expression DNA（如指定 `--perspective`）：
    - 检查 `skills/perspectives/<name>/SKILL.md` 是否存在
    - 如存在 → 直接使用

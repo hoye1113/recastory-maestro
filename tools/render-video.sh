@@ -51,6 +51,15 @@ main() {
     command -v ffmpeg >/dev/null 2>&1 || { log_error "FFmpeg not installed"; exit 1; }
     command -v ffprobe >/dev/null 2>&1 || { log_error "FFprobe not installed"; exit 1; }
 
+    # Resolve to absolute paths (needed because we cd into storyboard_dir later)
+    workspace="$(cd "$workspace" && pwd)"
+    storyboard_dir="$workspace/storyboard"
+    voice_dir="$workspace/voice"
+    segments_file="$voice_dir/audio-segments.json"
+    audio_dir="$voice_dir/public/audio"
+    output_dir="$workspace/render"
+    final_output="$output_dir/final.mp4"
+
     log_info "Starting render pipeline"
     mkdir -p "$output_dir"
 
@@ -74,7 +83,7 @@ main() {
     local chapters
     chapters=$(grep -o '"chapter"[[:space:]]*:[[:space:]]*"[^"]*"\|"chapterIndex"[[:space:]]*:[[:space:]]*[0-9]*' "$segments_file" | \
                paste - - | \
-               sed 's/.*"chapter"[[:space:]]*:[[:space:]]*"\([^"]*\)".*"chapterIndex"[[:space:]]*:[[:space:]]*\([0-9]*\).*/\2 \1/' | \
+               sed 's/[^"]*"chapter"[[:space:]]*:[[:space:]]*"\([^"]*\)"[^"]*"chapterIndex"[[:space:]]*:[[:space:]]*\([0-9]*\).*/\2 \1/' | \
                sort -n | awk '{print $2}' | uniq)
 
     if [ -z "$chapters" ]; then
@@ -114,7 +123,7 @@ main() {
         log_info "Starting screen capture (${capture_dur}s)..."
         ffmpeg -y "${screen_input[@]}" -t "$capture_dur" -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p "$chapter_raw" &
         FFMPEG_PID=$!
-        sleep 1  # Let FFmpeg initialize
+        sleep 3  # Let FFmpeg initialize + browser settle into fullscreen
 
         # Puppeteer opens browser + presses SPACE
         log_info "Launching browser for auto-play..."

@@ -20,7 +20,7 @@
 | `/recastory voice` | `voice/REFERENCE.md` | — |
 | `/recastory render` | `render/REFERENCE.md` | — |
 | `/recastory transcribe` | —（全局已覆盖）| — |
-| `/recastory distill` | —（全局已覆盖）| `skills/humanizer-zh/SKILL.md`（深度去 AI 味）, `skills/perspectives/<name>/SKILL.md`（视角解析时，不存在时回退 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`） |
+| `/recastory distill` | `skills/humanizer-zh/SKILL.md`（生成约束，Phase B 前置加载）| `skills/perspectives/<name>/SKILL.md`（视角解析时，不存在时回退 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`） |
 | `/recastory research` | `research/REFERENCE.md` | — |
 | `/recastory audit` | —（使用 anti-patterns.ts）| — |
 | `/recastory critique` | —（LLM 审查，无需参考文件）| — |

@@ -6,16 +6,63 @@ const puppeteer = require('puppeteer')
 const path = require('path')
 const fs = require('fs')
 
+// Detect available browser: Chrome → Edge (Chromium-based) → default
+function detectBrowserPath() {
+  const candidates = [
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+    'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+  ]
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p
+  }
+  return undefined
+}
+
 async function launch(url, headed = false, options = {}) {
   const { screenshotSteps = false, screenshotOnly = false, screenshotDir = null } = options
 
-  const browser = await puppeteer.launch({
+  const launchOptions = {
     headless: headed ? false : 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  })
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--start-fullscreen',
+      '--kiosk',
+      '--disable-infobars',
+      '--no-first-run',
+    ],
+    defaultViewport: null,
+  }
+  const browserPath = process.env.PUPPETEER_EXECUTABLE_PATH || detectBrowserPath()
+  if (browserPath) {
+    launchOptions.executablePath = browserPath
+    console.log(`Using browser: ${browserPath}`)
+  }
+
+  const browser = await puppeteer.launch(launchOptions)
 
   try {
     const page = await browser.newPage()
+
+    // Force window to cover entire screen via CDP
+    try {
+      const session = await page.target().createCDPSession()
+      const { windowId } = await session.send('Browser.getWindowForTarget')
+      await session.send('Browser.setWindowBounds', {
+        windowId,
+        bounds: { left: 0, top: 0, width: 1920, height: 1080, windowState: 'fullscreen' }
+      })
+      console.log('Browser set to fullscreen via CDP')
+    } catch (e) {
+      console.warn('CDP fullscreen failed, trying alternative:', e.message)
+      // Fallback: use page.evaluate to request fullscreen
+      await page.evaluate(() => {
+        document.documentElement.requestFullscreen?.()
+      })
+    }
+
     await page.setViewport({ width: 1920, height: 1080 })
 
     console.log(`Opening: ${url}`)

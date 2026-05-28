@@ -85,7 +85,7 @@ main() {
     local chapters
     chapters=$(grep -o '"chapter"[[:space:]]*:[[:space:]]*"[^"]*"\|"chapterIndex"[[:space:]]*:[[:space:]]*[0-9]*' "$segments_file" | \
                paste - - | \
-               sed 's/.*"chapter"[[:space:]]*:[[:space:]]*"\([^"]*\)".*"chapterIndex"[[:space:]]*:[[:space:]]*\([0-9]*\).*/\2 \1/' | \
+               sed 's/[^"]*"chapter"[[:space:]]*:[[:space:]]*"\([^"]*\)"[^"]*"chapterIndex"[[:space:]]*:[[:space:]]*\([0-9]*\).*/\2 \1/' | \
                sort -n | awk '{print $2}' | uniq)
 
     if [ -z "$chapters" ]; then
@@ -109,7 +109,7 @@ main() {
 
         # Find step-level MP3 files for this chapter
         local steps
-        steps=$(grep "\"chapter\"[[:space:]]*:[[:space:]]*\"$chapter\"" "$segments_file" | \
+        steps=$(grep -A3 "\"chapter\"[[:space:]]*:[[:space:]]*\"$chapter\"" "$segments_file" | \
                 grep -o '"stepIndex"[[:space:]]*:[[:space:]]*[0-9]*' | \
                 sed 's/.*"stepIndex"[[:space:]]*:[[:space:]]*\([0-9]*\).*/\1/' | \
                 sort -n)
@@ -127,7 +127,7 @@ main() {
 
         while IFS= read -r step; do
             if [ -n "$step" ]; then
-                local step_file="$chapter_dir/$(printf "%02d" "$step").mp3"
+                local step_file="$chapter_dir/$(printf "%02d" $((step + 1))).mp3"
                 if [ -f "$step_file" ]; then
                     local abs_path
                     abs_path=$(ffmpeg_path "$step_file")

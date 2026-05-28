@@ -109,7 +109,7 @@ python -m tools.ingest "<video-url>" -o workspace/<id>
 
 1. 基于 `design.md` 生成 `plan.json`
 2. 双源产出（如输入为视频）：
-   - `script.md`：从转写文本生成口播稿（口语化、短句、第二人称）
+   - `script.md`：distill 执行三阶段内部流程（结构化阅读 → 逐章生成 → 大纲+质量门控），产出口语化口播稿
    - `outline.md`：同时参考 script.md + article.md，切章节/步骤/信息池
 
 ### plan.json 结构
@@ -298,7 +298,7 @@ Phase 2: Plan
 Phase 3: Dispatch
 ├─ ingest: 本地文件，跳过下载
 ├─ transcribe: FFmpeg 提取音频 + Whisper 转写
-├─ distill: 注入 Feynman Expression DNA，生成口播稿 + 大纲
+├─ distill: Phase A 结构化阅读 → Phase B 逐章生成（Feynman DNA + 人类化约束） → Phase C 大纲 + 五维评分门控
 ├─ 第 1 章 storyboard + voice（主线程）
 │   └─ [Checkpoint STORYBOARD_PREVIEW] → 用户验收
 ├─ 第 2~N 章（按 Mode A 逐章确认）

@@ -99,6 +99,14 @@ bash skills/storyboard/scaffold.sh <workspace-dir> [theme-id]
 
 输出：`workspace/<id>/storyboard/` — 完整 Vite+React+TS 项目
 
+**启动 Vite 开发服务器**：
+
+```bash
+cd workspace/<id>/storyboard && npx vite --host
+```
+
+⚠️ **必须 `cd` 到 storyboard 目录再运行**。在 repo 根目录运行 `npx vite` 会启动其他项目的服务器，导致页面空白或内容错误。端口被占用时 Vite 会自动递增（5173 → 5174...），注意检查实际输出的端口号。
+
 ### 4.5 生成图片资产（可选）
 
 如 outline.md 中包含图片描述标记（`<!-- img: 描述 -->`），自动生成图片：
