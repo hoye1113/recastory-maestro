@@ -43,6 +43,9 @@ Recastory/
 | vision_rules.py | Python | VV 系列视觉审查规则（mmx vision 集成） |
 | mix-bgm.sh | Bash | BGM 生成 + FFmpeg 混音 |
 | capture-screenshots.sh | Bash | Puppeteer 逐步骤截图 + 可选 VV 审计 |
+| search-config.json | JSON | 工具配置模板（research 搜索专用） |
+| research-search.sh | Bash | mmx search 查询 → 结构化 JSON |
+| research-search.test.sh | Bash | research-search.sh 测试 |
 
 ---
 
