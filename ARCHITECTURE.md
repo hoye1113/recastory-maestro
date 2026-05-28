@@ -727,7 +727,7 @@ skills/
 | 层 | 方法 | 覆盖范围 | 执行时机 |
 |----|------|---------|---------|
 | **L1: Schema 测试** | 验证输入输出符合 Zod Schema | 数据格式正确性 | 每次 Skill 执行后自动运行 |
-| **L2: 确定性规则测试** | 验证 anti-patterns.ts 的规则覆盖 | 技术质量 | Phase 4 Audit |
+| **L2: 确定性规则测试** | 验证 SKILL.md Anti-Patterns 段落的规则覆盖 | 技术质量 | Phase 4 Audit |
 | **L3: LLM 质量测试** | 用 golden samples 对比 LLM 输出质量 | 内容质量 | 开发阶段 + 版本发布前 |
 
 #### L1: Schema 测试（必须）
@@ -830,12 +830,12 @@ npx recastory-score --skill distill --input test/fixtures/distill/input.json --o
 
 | Recastory Skill | 复用来源 | 对应模块 | 需添加 |
 |----------------|---------|---------|--------|
-| `ingest` | ClipScribe | `video_downloader.py` + `video_parser.py` + yt-dlp | `anti-patterns.ts` |
-| `transcribe` | ClipScribe | `audio_extractor.py` + `audio_to_text.py` | `anti-patterns.ts` |
-| `distill` | ClipScribe + SlideNarrator | `text_polish.py` + `script-generator` + `outline-generator` | `anti-patterns.ts` + 视角注入 |
-| `storyboard` | SlideNarrator | `web-video-presentation`（23 套主题） | `anti-patterns.ts` |
-| `voice` | SlideNarrator | `subtitle-generator` + TTS | `anti-patterns.ts` |
-| `render` | SlideNarrator | `ffmpeg-encoder` + `puppeteer-recorder` | `anti-patterns.ts` |
+| `ingest` | ClipScribe | `video_downloader.py` + `video_parser.py` + yt-dlp | — |
+| `transcribe` | ClipScribe | `audio_extractor.py` + `audio_to_text.py` | — |
+| `distill` | ClipScribe + SlideNarrator | `text_polish.py` + `script-generator` + `outline-generator` | 视角注入 |
+| `storyboard` | SlideNarrator | `web-video-presentation`（23 套主题） | — |
+| `voice` | SlideNarrator | `subtitle-generator` + TTS | — |
+| `render` | SlideNarrator | `ffmpeg-encoder` + `puppeteer-recorder` | — |
 | `review` | 新建 | — | 完整实现 |
 | `research` | SlideNarrator + skill-collection | `deep-research` + `hv-analysis` | 横纵分析法 |
 | `perspectives` | skill-collection | `nuwa-skill` 视角库 | 视角提取工厂 |

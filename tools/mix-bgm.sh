@@ -32,27 +32,27 @@ get_style_preset() {
         if command -v python3 >/dev/null 2>&1; then
             preset=$(python3 -c "
 import json, sys
-with open('$BGM_CONFIG') as f:
+with open(sys.argv[1]) as f:
     cfg = json.load(f)
 presets = cfg.get('style_presets', {})
-cat = '$category'
+cat = sys.argv[2]
 if cat in presets:
     print(presets[cat], end='')
 elif '默认' in presets:
     print(presets['默认'], end='')
-" 2>/dev/null || true)
+" "$BGM_CONFIG" "$category" 2>/dev/null || true)
         elif command -v python >/dev/null 2>&1; then
             preset=$(python -c "
 import json, sys
-with open('$BGM_CONFIG') as f:
+with open(sys.argv[1]) as f:
     cfg = json.load(f)
 presets = cfg.get('style_presets', {})
-cat = '$category'
+cat = sys.argv[2]
 if cat in presets:
     print(presets[cat], end='')
 elif '默认' in presets:
     print(presets['默认'], end='')
-" 2>/dev/null || true)
+" "$BGM_CONFIG" "$category" 2>/dev/null || true)
         elif command -v jq >/dev/null 2>&1; then
             preset=$(jq -r ".style_presets[\"$category\"] // .style_presets[\"默认\"] // \"\"" "$BGM_CONFIG" 2>/dev/null || true)
         fi
@@ -69,8 +69,8 @@ derive_prompt_from_plan() {
     if [ -f "$plan_file" ]; then
         if command -v python3 >/dev/null 2>&1; then
             category=$(python3 -c "
-import json
-with open('$plan_file') as f:
+import json, sys
+with open(sys.argv[1]) as f:
     plan = json.load(f)
 reg = plan.get('register', '')
 style = plan.get('target_format', '')
@@ -90,7 +90,7 @@ for key, val in mapping.items():
         break
 else:
     print('默认', end='')
-" 2>/dev/null || echo "默认")
+" "$plan_file" 2>/dev/null || echo "默认")
         elif command -v jq >/dev/null 2>&1; then
             category=$(jq -r '
                 (.register // "") as $reg |

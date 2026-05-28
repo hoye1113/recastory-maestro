@@ -4,8 +4,6 @@
 
 [English](./README.md)
 
-![Web Video Presentation Skill](../../dist/imgs/web-video-presentation-skill.png)
-
 ---
 
 ## 这是什么？
@@ -122,7 +120,7 @@ bash skills/web-video-presentation/scripts/scaffold.sh --list-themes
 
 Skill 内置 **23 套**主题，每套都有独立的设计 DNA —— 不是简单换色版。下面按底色分两组浏览，挑一套接近目标气质的，或者把任意一格当作派生新主题的起点。点击任意预览图可放大查看 1920×1080 原帧。
 
-> 所有截图都是真实的 16:9 舞台，来自 [`demo/web-video-presentation-demo`](../../demo/web-video-presentation-demo/) 现场画廊。
+> 所有截图都是真实的 16:9 舞台，来自现场画廊。
 
 ### 深色 · 8 套
 

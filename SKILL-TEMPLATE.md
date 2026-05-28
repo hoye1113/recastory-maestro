@@ -8,9 +8,8 @@
 
 ```
 skills/<skill-name>/
-├── SKILL.md              # 技能定义（YAML frontmatter + 指令）
+├── SKILL.md              # 技能定义（YAML frontmatter + 指令 + Anti-Patterns 段落）
 ├── schema.ts             # Zod Schema（输入/输出契约）
-├── anti-patterns.ts      # 该 Skill 的确定性规则
 ├── index.ts              # 实现入口
 └── test/
     ├── fixtures/
@@ -31,7 +30,6 @@ description: <one-line description>
 version: 1.0.0
 input_schema: ./schema.ts#InputSchema
 output_schema: ./schema.ts#OutputSchema
-anti_patterns: ./anti-patterns.ts
 ---
 
 # Skill: <name>
@@ -140,21 +138,18 @@ describe('<skill-name> schema', () => {
 
 ## 五、反模式规则模板
 
-```typescript
-// anti-patterns.ts
-export const rules = [
-  {
-    id: 'XX-001',
-    name: '<rule-name>',
-    detect: (output: any): boolean => {
-      // 检测逻辑
-      return false;
-    },
-    severity: 'critical' | 'warning',
-    fix: '<修复建议>',
-  },
-];
+反模式规则定义在 SKILL.md 的 `## Anti-Patterns` 段落中：
+
+```markdown
+## Anti-Patterns
+
+| ID | 规则 | 级别 | 检测方式 | 修复建议 |
+|----|------|------|---------|---------|
+| XX-001 | <规则名称> | critical | <如何检测> | <修复建议> |
+| XX-002 | <规则名称> | warning | <如何检测> | <修复建议> |
 ```
+
+**ID 命名规范**：2 位大写字母前缀（Skill 缩写）+ 3 位数字。例如：`TR-001`、`CD-003`、`RR-002`。
 
 ---
 

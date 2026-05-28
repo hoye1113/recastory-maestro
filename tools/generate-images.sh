@@ -30,23 +30,23 @@ get_prompt_prefix() {
         if command -v python3 >/dev/null 2>&1; then
             python3 -c "
 import json, sys
-with open('$config') as f:
+with open(sys.argv[1]) as f:
     cfg = json.load(f)
 pp = cfg.get('promptPrefix') or cfg.get('prompt_prefix') or ''
 if isinstance(pp, dict):
     pp = pp.get('default') or pp.get('hero') or ''
 print(pp, end='')
-" 2>/dev/null || true
+" "$config" 2>/dev/null || true
         elif command -v python >/dev/null 2>&1; then
             python -c "
 import json, sys
-with open('$config') as f:
+with open(sys.argv[1]) as f:
     cfg = json.load(f)
 pp = cfg.get('promptPrefix') or cfg.get('prompt_prefix') or ''
 if isinstance(pp, dict):
     pp = pp.get('default') or pp.get('hero') or ''
 print(pp, end='')
-" 2>/dev/null || true
+" "$config" 2>/dev/null || true
         elif command -v jq >/dev/null 2>&1; then
             jq -r '(.promptPrefix // .prompt_prefix // "") | if type == "object" then (.default // .hero // "") else . end' "$config" 2>/dev/null || true
         fi

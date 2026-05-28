@@ -4,8 +4,6 @@
 
 [中文文档](./README.zh-CN.md) · [Back to collection root](../../README.md)
 
-![Web Video Presentation Skill](../../dist/imgs/web-video-presentation-skill.png)
-
 ---
 
 ## What Is This?
@@ -122,7 +120,7 @@ The generated `presentation/` project is a normal Vite + React + TypeScript app.
 
 The skill ships **23 themes**, each with its own design DNA — not a simple color swap. Browse the gallery below by canvas tone, pick one that fits the topic, or use any tile as a starting point for a derived theme. Click any preview to open the full-size 1920×1080 frame.
 
-> Frames are real 16:9 stages rendered by the live demo gallery at [`demo/web-video-presentation-demo`](../../demo/web-video-presentation-demo/).
+> Frames are real 16:9 stages rendered by the live demo gallery.
 
 ### Dark · 8 themes
 
