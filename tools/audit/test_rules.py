@@ -359,10 +359,15 @@ class TestSL002:
         assert len(results) > 0
         assert results[0].rule_id == 'SL-002'
 
-    def test_detects_faner(self):
-        content = '反而让事情变得更复杂了。'
+    def test_detects_faner_in_long_sentence(self):
+        content = '反而让整个事情变得更加复杂了，我们需要重新考虑这个问题。'
         results = detect_sl002(content, 'script.md')
         assert len(results) > 0
+
+    def test_no_false_positive_faner_short(self):
+        content = '凉了反而更苦。'
+        results = detect_sl002(content, 'script.md')
+        assert len(results) == 0
 
     def test_no_false_positive_direct_statement(self):
         content = '咖啡凉了会更苦。这是科学事实。'

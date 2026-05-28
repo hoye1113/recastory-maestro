@@ -75,7 +75,7 @@ class TestScanWorkspace:
             report = scan_workspace(tmpdir)
             assert report.total_files_scanned >= 1
 
-    def test_scans_json_files(self):
+    def test_scans_audio_segments_json(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             audio = os.path.join(tmpdir, 'audio-segments.json')
             data = {'segments': [{'text': 'test', 'start': 0, 'end': 3}]}
@@ -83,6 +83,15 @@ class TestScanWorkspace:
                 json.dump(data, f)
             report = scan_workspace(tmpdir)
             assert report.total_files_scanned >= 1
+
+    def test_ignores_non_audio_json(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # package-lock.json should not be scanned by VO rules
+            pkg = os.path.join(tmpdir, 'package-lock.json')
+            with open(pkg, 'w', encoding='utf-8') as f:
+                json.dump({'name': 'test', 'dependencies': {}}, f)
+            report = scan_workspace(tmpdir)
+            assert report.total_files_scanned == 0
 
     def test_critical_exit_logic(self):
         with tempfile.TemporaryDirectory() as tmpdir:

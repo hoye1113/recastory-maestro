@@ -49,30 +49,45 @@ def scan_workspace(
     report = AuditReport(workspace_dir=str(workspace), total_files_scanned=0)
 
     # Map file patterns to applicable rule categories
-    file_rule_map = {
-        '*.md': [r for r in rules if r.id.startswith(('TR-', 'CD-', 'SL-'))],
-        '*.srt': [r for r in rules if r.id.startswith('TR-')],
-        '*.json': [r for r in rules if r.id.startswith('VO-')],
-    }
+    # VO rules only apply to audio-segments.json, not all JSON files
+    md_rules = [r for r in rules if r.id.startswith(('TR-', 'CD-', 'SL-'))]
+    srt_rules = [r for r in rules if r.id.startswith('TR-')]
+    vo_rules = [r for r in rules if r.id.startswith('VO-')]
 
-    for pattern, applicable_rules in file_rule_map.items():
-        if not applicable_rules:
-            continue
-        for file_path in workspace.rglob(pattern):
-            # Skip node_modules and .git
-            parts = file_path.parts
-            if 'node_modules' in parts or '.git' in parts:
+    def _apply_rules(file_path: Path, content: str, applicable_rules: list[Rule]) -> None:
+        report.total_files_scanned += 1
+        for rule in applicable_rules:
+            violations = rule.detect(content, str(file_path))
+            report.results.extend(violations)
+            for v in violations:
+                if v.severity == 'critical':
+                    report.critical_count += 1
+                else:
+                    report.warning_count += 1
+
+    # Scan .md files with TR/CD/SL rules
+    if md_rules:
+        for file_path in workspace.rglob('*.md'):
+            if 'node_modules' in file_path.parts or '.git' in file_path.parts:
                 continue
-            report.total_files_scanned += 1
             content = file_path.read_text(encoding='utf-8', errors='replace')
-            for rule in applicable_rules:
-                violations = rule.detect(content, str(file_path))
-                report.results.extend(violations)
-                for v in violations:
-                    if v.severity == 'critical':
-                        report.critical_count += 1
-                    else:
-                        report.warning_count += 1
+            _apply_rules(file_path, content, md_rules)
+
+    # Scan .srt files with TR rules
+    if srt_rules:
+        for file_path in workspace.rglob('*.srt'):
+            if 'node_modules' in file_path.parts or '.git' in file_path.parts:
+                continue
+            content = file_path.read_text(encoding='utf-8', errors='replace')
+            _apply_rules(file_path, content, srt_rules)
+
+    # Scan audio-segments.json files with VO rules (not all .json files)
+    if vo_rules:
+        for file_path in workspace.rglob('audio-segments.json'):
+            if 'node_modules' in file_path.parts or '.git' in file_path.parts:
+                continue
+            content = file_path.read_text(encoding='utf-8', errors='replace')
+            _apply_rules(file_path, content, vo_rules)
 
     return report
 

@@ -565,14 +565,22 @@ def detect_sl001(content: str, file_path: str) -> list[RuleResult]:
 
 
 def detect_sl002(content: str, file_path: str) -> list[RuleResult]:
-    """SL-002: Fake depth — "恰恰/反而/正是" wrapping."""
+    """SL-002: Fake depth — "恰恰/反而/正是" wrapping.
+
+    For "反而" and "正是", only flag lines >15 chars to avoid false positives
+    on short meaningful sentences like "凉了反而更苦".
+    """
     results: list[RuleResult] = []
-    patterns = ['恰恰是', '恰恰相反', '反而', '正是', '恰恰说明']
+    # Patterns that are almost always fake depth regardless of length
+    strong_patterns = ['恰恰是', '恰恰相反', '恰恰说明']
+    # Patterns that can be meaningful in short sentences
+    weak_patterns = ['反而', '正是']
+
     for i, line in enumerate(content.splitlines(), 1):
         stripped = line.strip()
         if not stripped or stripped.startswith('#') or stripped == '---':
             continue
-        for pat in patterns:
+        for pat in strong_patterns:
             if pat in stripped:
                 results.append(RuleResult(
                     rule_id='SL-002',
@@ -582,6 +590,18 @@ def detect_sl002(content: str, file_path: str) -> list[RuleResult]:
                     message=f'检测到假深刻 "{pat}"，建议去掉转折直接说结论',
                     line_number=i,
                 ))
+        # Only flag weak patterns in longer lines (likely empty decoration)
+        if len(stripped) > 15:
+            for pat in weak_patterns:
+                if pat in stripped:
+                    results.append(RuleResult(
+                        rule_id='SL-002',
+                        name='假深刻',
+                        severity='critical',
+                        file_path=file_path,
+                        message=f'检测到假深刻 "{pat}"，建议去掉转折直接说结论',
+                        line_number=i,
+                    ))
     return results
 
 
