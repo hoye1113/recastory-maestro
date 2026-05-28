@@ -62,7 +62,7 @@ def main():
     )
 
     def progress(step: str, pct: float):
-        bar = "█" * int(pct * 20) + "░" * (20 - int(pct * 20))
+        bar = "#" * int(pct * 20) + "-" * (20 - int(pct * 20))
         print(f"\r  {step}: [{bar}] {pct:.0%}", end="", flush=True)
         if pct >= 1.0:
             print()

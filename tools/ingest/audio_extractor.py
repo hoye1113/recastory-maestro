@@ -67,6 +67,8 @@ def extract_audio(
             cmd,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=300,
         )
         if result.returncode != 0:
@@ -94,6 +96,8 @@ def get_audio_duration(audio_path: str) -> Optional[float]:
              "-of", "csv=p=0", audio_path],
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=10,
         )
         if result.returncode == 0:
