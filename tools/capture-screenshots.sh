@@ -31,6 +31,7 @@ log_info "Starting Vite dev server..."
 cd "$STORYBOARD_DIR"
 npx vite --port 5174 --host 127.0.0.1 &
 VITE_PID=$!
+trap 'kill $VITE_PID 2>/dev/null || true' EXIT
 sleep 3
 
 # Capture screenshots
@@ -41,8 +42,7 @@ node "$SCRIPT_DIR/puppeteer-launch.js" \
     --screenshot-dir "$SCREENSHOT_DIR" \
     || log_error "Screenshot capture failed"
 
-# Stop Vite
-kill $VITE_PID 2>/dev/null || true
+# Vite process is cleaned up by EXIT trap
 
 log_info "Screenshots saved to: $SCREENSHOT_DIR"
 ls -la "$SCREENSHOT_DIR"/*.png 2>/dev/null | wc -l | xargs -I{} echo "  {} screenshots captured"

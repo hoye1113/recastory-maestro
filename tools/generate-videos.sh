@@ -16,6 +16,7 @@ log_skip()  { echo -e "${YELLOW}[SKIP]${NC} $1"; }
 # ── Defaults from video-config.json ─────────────────────────────────────────
 POLL_INTERVAL=10
 MAX_WAIT_SECONDS=300
+VIDEO_PROMPT_PREFIX=""
 
 usage() {
     echo "Usage: bash generate-videos.sh <workspace-dir> [--force] [--dry-run]"
@@ -34,8 +35,11 @@ load_config() {
         interval=$(node -e "const c=JSON.parse(require('fs').readFileSync('$config','utf8')); process.stdout.write(String(c.defaults?.poll_interval||10))" 2>/dev/null || echo "10")
         local max_wait
         max_wait=$(node -e "const c=JSON.parse(require('fs').readFileSync('$config','utf8')); process.stdout.write(String(c.defaults?.max_wait_seconds||300))" 2>/dev/null || echo "300")
+        local prefix
+        prefix=$(node -e "const c=JSON.parse(require('fs').readFileSync('$config','utf8')); const p=c.prompt_prefix||{}; process.stdout.write(p.scene||p.transition||p.motion||'')" 2>/dev/null || echo "")
         POLL_INTERVAL="$interval"
         MAX_WAIT_SECONDS="$max_wait"
+        VIDEO_PROMPT_PREFIX="$prefix"
     fi
 }
 
@@ -211,8 +215,9 @@ main() {
             total=$((total + 1))
 
             if [ "$dry_run" = true ]; then
+                local dry_prompt="${VIDEO_PROMPT_PREFIX}${desc}"
                 echo -e "  ${YELLOW}[DRY-RUN]${NC} Would generate: $out_path"
-                echo -e "           Prompt: $desc"
+                echo -e "           Prompt: $dry_prompt"
                 continue
             fi
 
@@ -227,10 +232,11 @@ main() {
             mkdir -p "$(dirname "$out_path")"
 
             # Generate video (async)
+            local full_prompt="${VIDEO_PROMPT_PREFIX}${desc}"
             log_info "Submitting video generation: $out_path"
             local gen_json
             gen_json=$(mmx video generate \
-                --prompt "$desc" \
+                --prompt "$full_prompt" \
                 --async \
                 --output json \
                 --quiet 2>/dev/null) || {

@@ -39,6 +39,12 @@ Recastory/
 | REFERENCE.md | Markdown | 领域参考文件，≤3000 tokens，按 INDEX.md 注册 |
 | mmx-config.json | JSON | 工具配置模板（voice Skill 专用） |
 | image-config.json | JSON | 工具配置模板（storyboard 图片生成专用） |
+| bgm-config.json | JSON | 工具配置模板（storyboard BGM 音乐生成专用） |
+| video-config.json | JSON | 工具配置模板（storyboard 视频补充素材专用） |
+| vision_rules.py | Python | VV 系列视觉审查规则（mmx vision 集成） |
+| generate-videos.sh | Bash | 扫描 outline 视频标记 → mmx 异步生成视频 |
+| mix-bgm.sh | Bash | BGM 生成 + FFmpeg 混音 |
+| capture-screenshots.sh | Bash | Puppeteer 逐步骤截图 + 可选 VV 审计 |
 
 ---
 

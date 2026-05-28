@@ -335,3 +335,17 @@ if (step === 2) return (
 | mmx auth 失败 | 跳过视频生成 |
 | 生成超时（>5min） | 记录警告，继续 |
 | 单个视频失败 | 记录警告，继续 |
+
+---
+
+## BGM 背景音乐（render 阶段）
+
+storyboard 完成后，render 阶段可选用 mmx music generate 生成 BGM 并混入最终视频。详见 [render REFERENCE.md](../render/REFERENCE.md) 的 BGM 混音指南。
+
+```bash
+# 快速启用
+ENABLE_BGM=true BGM_PROMPT="Cinematic orchestral" bash tools/render-video.sh workspace/<id>
+
+# 独立调用
+bash tools/mix-bgm.sh workspace/<id> --prompt "Warm acoustic" --volume 0.2
+```
