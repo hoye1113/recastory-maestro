@@ -32,7 +32,7 @@
 
 ## 核心原则
 
-1. **SKILL.md 就是实现** — Claude Code 按自然语言指令执行
+1. **SKILL.md 就是实现** — AI Agent 按自然语言指令执行
 2. **无 plan.json 不执行** — 必须先生成计划再调度
 3. **检查点不可跳过** — 4 个人类审批门（DESIGN / STORYBOARD_PREVIEW / VOICE_PREVIEW / FINAL）
 4. **双源原则** — script.md 定节拍，article.md 定画面密度

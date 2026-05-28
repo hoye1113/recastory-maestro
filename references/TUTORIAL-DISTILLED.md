@@ -139,9 +139,9 @@
 
 | 工具 | 用途 | 备注 |
 |------|------|------|
-| **Claude Code** | 核心执行 agent | Cursor/Codex 等支持 skill 的 agent 均可 |
+| **AI Agent** | 核心执行 agent | 任何支持 skill 的 agent harness 均可 |
 | **MiniMax Token Plan** | 国产模型替代方案 | Plus 极速版，速度快，量大管够 |
-| **CC Switch** | 桌面配置工具，切换 agent 为任意模型 | 支持 Claude Code/Codex/Gemini CLI |
+| **CC Switch** | 桌面配置工具，切换 agent 为任意模型 | 支持 AI Agent/Codex/Gemini CLI |
 | **MMX CLI** | MiniMax 官方 CLI，语音合成 | 每天 9000 字额度，做两篇文章够用 |
 
 ### 多 Agent 能力

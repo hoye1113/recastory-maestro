@@ -9,14 +9,7 @@
 ```
 skills/<skill-name>/
 ├── SKILL.md              # 技能定义（YAML frontmatter + 指令 + Anti-Patterns 段落）
-├── schema.ts             # Zod Schema（输入/输出契约）
-├── index.ts              # 实现入口
-└── test/
-    ├── fixtures/
-    │   ├── input-valid.json
-    │   ├── input-invalid.json
-    │   └── output-golden.json
-    └── schema.test.ts    # L1 Schema 测试
+└── references/           # 可选：参考文件（按需加载）
 ```
 
 ---

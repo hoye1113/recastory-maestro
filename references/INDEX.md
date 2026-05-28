@@ -23,7 +23,7 @@
 | `/recastory transcribe` | —（全局已覆盖）| — |
 | `/recastory distill` | `skills/humanizer-zh/SKILL.md`（生成约束，Phase B 前置加载）| `skills/perspectives/<name>/SKILL.md`（视角解析时，不存在时回退 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`） |
 | `/recastory research` | `research/REFERENCE.md` | — |
-| `/recastory audit` | —（使用 anti-patterns.ts）| — |
+| `/recastory audit` | —（使用 SKILL.md Anti-Patterns 段落） | — |
 | `/recastory critique` | —（LLM 审查，无需参考文件）| — |
 
 ## 品牌覆盖（最后加载）
