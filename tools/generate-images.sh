@@ -202,13 +202,13 @@ main() {
 
             # Generate image
             log_info "Generating: $out_path"
+            MMX_EXIT=0
             mmx image generate \
                 --prompt "$full_prompt" \
                 --aspect-ratio 16:9 \
                 --prompt-optimizer \
                 --out "$out_path" \
-                --quiet 2>/dev/null
-            MMX_EXIT=$?
+                --quiet 2>/dev/null || MMX_EXIT=$?
             if [ $MMX_EXIT -eq 0 ]; then
                 # Validate output
                 if [ -f "$out_path" ] && [ -s "$out_path" ]; then
