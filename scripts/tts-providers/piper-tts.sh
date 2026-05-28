@@ -18,11 +18,17 @@ tts_synthesize() {
   local voice="${3:-zh_CN-huayan-medium}"
 
   if [ -z "$text" ] || [ -z "$out" ]; then
-    echo "Usage: tts_synthesize <text> <output_path> [model_name]" >&2
+    echo "Usage: tts_synthesize <text> <output_path> [voice]" >&2
     return 1
   fi
 
+  mkdir -p "$(dirname "$out")"
   echo "$text" | piper --model "$voice" --output_file "$out"
+
+  if [ ! -s "$out" ]; then
+    echo "Error: TTS synthesis failed, output file missing or empty: $out" >&2
+    return 1
+  fi
 }
 
 if [ "$(basename "$0")" = "piper-tts.sh" ] && [ -n "$1" ]; then

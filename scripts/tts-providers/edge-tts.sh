@@ -18,12 +18,18 @@ tts_synthesize() {
   local voice="${3:-zh-CN-XiaoxiaoNeural}"
 
   if [ -z "$text" ] || [ -z "$out" ]; then
-    echo "Usage: tts_synthesize <text> <output_path> [voice_id]" >&2
+    echo "Usage: tts_synthesize <text> <output_path> [voice]" >&2
     return 1
   fi
 
   local srt="${out%.mp3}.srt"
+  mkdir -p "$(dirname "$out")"
   uvx edge-tts --text "$text" --voice "$voice" --write-media "$out" --write-subtitles "$srt"
+
+  if [ ! -s "$out" ]; then
+    echo "Error: TTS synthesis failed, output file missing or empty: $out" >&2
+    return 1
+  fi
 }
 
 if [ "$(basename "$0")" = "edge-tts.sh" ] && [ -n "$1" ]; then

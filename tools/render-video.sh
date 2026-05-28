@@ -50,6 +50,10 @@ main() {
     [ -f "$segments_file" ] || { log_error "audio-segments.json not found: $segments_file"; exit 1; }
     command -v ffmpeg >/dev/null 2>&1 || { log_error "FFmpeg not installed"; exit 1; }
     command -v ffprobe >/dev/null 2>&1 || { log_error "FFprobe not installed"; exit 1; }
+    if [ ! -f "$SCRIPT_DIR/puppeteer-launch.js" ]; then
+        log_error "puppeteer-launch.js not found in $SCRIPT_DIR"
+        exit 1
+    fi
 
     # Resolve to absolute paths (needed because we cd into storyboard_dir later)
     workspace="$(cd "$workspace" && pwd)"
