@@ -23,5 +23,15 @@
     "hero": "Cinematic, high quality, 16:9 aspect ratio, ",
     "icon": "Clean icon design, minimalist, ",
     "diagram": "Clean infographic style, data visualization, "
+  },
+  "quota": {
+    "daily_limit": 50,
+    "check_before_batch": true,
+    "exhausted_action": "stop_and_use_placeholders"
+  },
+  "retry": {
+    "max_retries": 1,
+    "retry_on": ["timeout", "network_error"],
+    "do_not_retry_on": ["quota_exhausted", "auth_error"]
   }
 }

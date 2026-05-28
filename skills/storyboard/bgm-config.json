@@ -25,5 +25,15 @@
     "人文故事": "Warm acoustic, gentle piano, emotional, slow tempo",
     "商业分析": "Corporate ambient, confident, steady rhythm, moderate tempo",
     "默认": "Cinematic ambient, moderate tempo, subtle tension, orchestral"
+  },
+  "quota": {
+    "daily_limit": 100,
+    "check_before_batch": true,
+    "exhausted_action": "skip_continue_without_bgm"
+  },
+  "retry": {
+    "max_retries": 1,
+    "retry_on": ["timeout", "network_error"],
+    "do_not_retry_on": ["quota_exhausted", "auth_error"]
   }
 }

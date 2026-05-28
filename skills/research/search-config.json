@@ -19,5 +19,15 @@
     "data_search": "数据统计：",
     "case_study": "案例：",
     "background": ""
+  },
+  "quota": {
+    "daily_limit": 1500,
+    "check_before_batch": true,
+    "exhausted_action": "report_partial_results"
+  },
+  "retry": {
+    "max_retries": 1,
+    "retry_on": ["timeout", "network_error"],
+    "do_not_retry_on": ["quota_exhausted", "auth_error"]
   }
 }
