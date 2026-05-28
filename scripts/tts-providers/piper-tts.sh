@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Piper TTS provider (离线，CPU 实时)
 # 优先级 4：离线兜底，无需网络和 GPU，质量中等
+set -euo pipefail
 
 tts_check() {
   piper --version 2>/dev/null

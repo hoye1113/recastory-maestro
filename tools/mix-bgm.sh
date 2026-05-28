@@ -233,11 +233,11 @@ main() {
             --out "$bgm_mp3" \
             --quiet 2>/dev/null
         MMX_EXIT=$?
-        if [ $MMX_EXIT -ne 0 ]; then
-            if [ $MMX_EXIT -eq 4 ]; then
+        if [ "$MMX_EXIT" -ne 0 ]; then
+            if [ "$MMX_EXIT" -eq 4 ]; then
                 log_warn "BGM generation quota exhausted. Proceeding without background music."
                 log_info "Tip: Retry tomorrow or use --dry-run to preview without generating."
-            elif [ $MMX_EXIT -eq 3 ]; then
+            elif [ "$MMX_EXIT" -eq 3 ]; then
                 log_warn "mmx authentication failed. Run 'mmx auth login'. Proceeding without BGM."
             else
                 log_warn "BGM generation failed (exit code: $MMX_EXIT). Skipping BGM mixing."

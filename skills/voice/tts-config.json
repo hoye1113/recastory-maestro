@@ -27,8 +27,8 @@
     "qwen3-tts": {
       "priority": 2,
       "type": "local-gpu",
-      "auth_check": "python -c \"from qwen_tts import QwenTTS; print('ok')\"",
-      "synthesize_template": "python -c \"from qwen_tts import QwenTTS; m=QwenTTS.from_pretrained('Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice'); a=m.generate_custom_voice(text='{{text}}', voice='{{voice_id}}'); a.save('{{output_path}}')\"",
+      "auth_check": "python -c \"from qwen_tts import Qwen3TTSModel; print('ok')\"",
+      "synthesize_template": "python -c \"from qwen_tts import Qwen3TTSModel; m=Qwen3TTSModel.from_pretrained('Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice'); a=m.generate_custom_voice(text='{{text}}', voice='{{voice_id}}'); a.save('{{output_path}}')\"",
       "voice_map": {
         "沉稳男声": "male-deep",
         "活力女声": "female-bright",

@@ -1,5 +1,6 @@
 ---
 name: humanizer-zh
+version: 1.0.0
 description: |
   去除文本中的 AI 生成痕迹，使其听起来更自然、更像人类书写。
   触发词：「去 AI 味」「人性化」「AI 痕迹」「太 AI 了」「写得像人」「humanize」。

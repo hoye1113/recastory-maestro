@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # edge-tts provider (免费，微软云)
 # 优先级 3：无 GPU 时降级，走微软 Edge 云端，免费无额度限制
+set -euo pipefail
 
 tts_check() {
   uvx edge-tts --version 2>/dev/null || pip show edge-tts >/dev/null 2>&1

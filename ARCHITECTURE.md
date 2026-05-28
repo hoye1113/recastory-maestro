@@ -1,4 +1,4 @@
-# ARCHITECTURE.md — Recastory Maestro v2.2.0
+# ARCHITECTURE.md — Recastory Maestro v3.0.0
 
 > **本文件是架构蓝图，供深入理解设计决策时参考。** Agent 每次会话应读取 [AGENT.md](AGENT.md)（主入口）。
 >
@@ -752,12 +752,14 @@ test/
 
 #### L2: 确定性规则测试（必须）
 
-```bash
-# 测试单条规则
-npx recastory-test --rule TR-001 --fixture test/fixtures/transcribe/
+> **TODO**: 实现 `recastory-test` CLI 工具。当前使用 `tools/audit/scanner.py` 进行规则检查。
 
-# 测试全部规则
-npx recastory-test --all --fixture test/fixtures/
+```bash
+# 测试单条规则（规划中）
+# npx recastory-test --rule TR-001 --fixture test/fixtures/transcribe/
+
+# 测试全部规则（规划中）
+# npx recastory-test --all --fixture test/fixtures/
 ```
 
 每个 anti-pattern 规则必须有对应的测试 fixture，包含：
@@ -783,11 +785,13 @@ npx recastory-test --all --fixture test/fixtures/
 
 **执行方式**：
 
-```bash
-# 运行 LLM 质量评分
-npx recastory-score --skill distill --input test/fixtures/distill/input.json --output workspace/distill/result.json
+> **TODO**: 实现 `recastory-score` CLI 工具。当前使用 LLM 直接评分。
 
-# 输出 JSON 评分报告
+```bash
+# 运行 LLM 质量评分（规划中）
+# npx recastory-score --skill distill --input test/fixtures/distill/input.json --output workspace/distill/result.json
+
+# 输出 JSON 评分报告（示例）
 {
   "skill": "distill",
   "total_score": 82,

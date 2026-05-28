@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # minimax TTS provider (mmx-cli)
 # 优先级 1：中文首选，质量最高，需付费额度
+set -euo pipefail
 
 tts_check() {
   mmx auth status 2>/dev/null

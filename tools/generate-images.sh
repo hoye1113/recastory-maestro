@@ -209,7 +209,7 @@ main() {
                 --prompt-optimizer \
                 --out "$out_path" \
                 --quiet 2>/dev/null || MMX_EXIT=$?
-            if [ $MMX_EXIT -eq 0 ]; then
+            if [ "$MMX_EXIT" -eq 0 ]; then
                 # Validate output
                 if [ -f "$out_path" ] && [ -s "$out_path" ]; then
                     log_info "OK: $out_path"
@@ -218,7 +218,7 @@ main() {
                     log_error "File missing or empty after generation: $out_path"
                     failed=$((failed + 1))
                 fi
-            elif [ $MMX_EXIT -eq 4 ]; then
+            elif [ "$MMX_EXIT" -eq 4 ]; then
                 QUOTA_EXHAUSTED=true
                 log_error "Image generation quota exhausted. Stopping further attempts."
                 log_info "Generated $generated of $total images. Remaining will use placeholder cards."

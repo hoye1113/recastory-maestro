@@ -17,6 +17,7 @@
 | 4 | 2026-05-29 | E | E-001 (broken refs × 3) | 0/4/3 | 0 | — | Remove broken file references in docs. Commit: 54bdce7 |
 | 5 | 2026-05-29 | A+C+E | C-004, A-004, E-002 | 0/0/3 | 0 | — | anti-patterns.ts phantom refs + shell injection + broken links. Commit: f72943f |
 | 6 | 2026-05-29 | C+F | C-005, C-006, F-004 | 0/0/1 | 0 | — | phantom schema.ts refs + IDE-specific names. Commit: d7e10b8 |
+| 7 | 2026-05-29 | A+B+G | A-001~007, B-003, B-004, G-001~003 | 0/0/0 | 0 | — | Qwen3-TTS install + set -euo pipefail + versions. Commit: (pending) |
 
 ## Darwin-Skill Score Trend
 

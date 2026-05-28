@@ -1,5 +1,6 @@
 ---
 name: web-video-presentation
+version: 1.0.0
 description: |
   把文章或口播稿做成"看起来像视频"的 16:9 网页演示，可选合成口播音频。
   触发词：「做视频」「做个演示」「网页视频」「动态PPT」「录屏教程」「口播稿转视频」「presentation」。
