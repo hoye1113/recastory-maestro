@@ -1,10 +1,16 @@
 """Anti-pattern rules for Recastory audit.
 
-Rule groups:
+Implemented rule groups:
 - TR-001~005: Transcription rules
-- CD-001~003, CD-005~006: Content distillation rules
+- CD-001~003, CD-005~006: Content distillation rules (CD-004 not yet implemented)
 - VO-001~004: Voice rules
 - SL-001~006: AI Slop rules
+
+Defined in docs but not yet implemented:
+- DS-001~006: Distill-Style oral rules (content-distillation/REFERENCE.md)
+- CH-001~006: Visual chapter rules (storyboard/REFERENCE.md)
+- SB-001~005: Storyboard design rules (ARCHITECTURE.md)
+- RD-001~004: Render rules (ARCHITECTURE.md)
 """
 from __future__ import annotations
 

@@ -26,6 +26,9 @@
 | storyboard | `skills/storyboard/SKILL.md` | 被 using-recastory 调度 |
 | perspectives/feynman | `skills/perspectives/feynman/SKILL.md` | 被 distill/storyboard 按需调用 |
 | perspectives/mrbeast | `skills/perspectives/mrbeast/SKILL.md` | 被 distill/storyboard 按需调用 |
+| humanizer-zh | `skills/humanizer-zh/SKILL.md` | SL-001~006 违规时被 distill 按需加载 |
+| nuwa-skill | `skills/nuwa-skill/SKILL.md` | 视角工厂，15 个 nuwa-skill 视角按需加载 |
+| web-video-presentation | `skills/web-video-presentation/SKILL.md` | 分镜方法论参考，被 storyboard 按需加载 |
 
 ## 核心原则
 
