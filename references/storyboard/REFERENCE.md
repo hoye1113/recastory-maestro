@@ -234,3 +234,67 @@ if (step === 1) return (
 | mmx auth 失败 | 跳过图片生成，警告用户 |
 | 单张图片失败 | 记录警告，继续生成其他图片 |
 | 全部失败 | 使用占位卡片，警告用户 |
+
+---
+
+## 视频补充素材指南
+
+### mmx video generate 集成
+
+storyboard 支持使用 mmx-cli 生成短视频片段作为补充素材。
+
+**重要限制：** mmx video 生成时长有限（几秒到十几秒），仅适用于补充素材，不替代录屏流程。
+
+#### 视频标记规范
+
+在 `distill/outline.md` 的步骤描述后添加 HTML 注释：
+
+```markdown
+### 步骤 3
+屏幕：咖啡豆研磨过程
+<!-- video: 咖啡豆在研磨机中被慢慢研磨，特写镜头，慢动作，电影感 -->
+```
+
+#### 使用方式
+
+```bash
+# 扫描标记并生成
+bash tools/generate-videos.sh <workspace-dir>
+
+# 仅查看清单
+bash tools/generate-videos.sh <workspace-dir> --dry-run
+
+# 强制重新生成
+bash tools/generate-videos.sh <workspace-dir> --force
+```
+
+#### 输出路径
+
+视频输出到 `storyboard/public/video/<chapter>/<step>.mp4`，在 Chapter.tsx 中使用：
+
+```tsx
+if (step === 2) return (
+  <div className="cd-stage">
+    <video src="/video/01-what/03.mp4" autoPlay loop muted className="cd-bg-video" />
+  </div>
+);
+```
+
+#### 适用场景
+
+| 场景 | 适用性 |
+| ------ | ------ |
+| 章节过渡（2-3s） | 适合 |
+| 场景插图（配合口播） | 适合 |
+| 片头/片尾动效 | 适合 |
+| 完整叙事视频 | 不适合（时长限制） |
+| 替代录屏 | 不适合 |
+
+#### 视频降级策略
+
+| 场景 | 处理 |
+|------|------|
+| mmx-cli 未安装 | 跳过视频生成 |
+| mmx auth 失败 | 跳过视频生成 |
+| 生成超时（>5min） | 记录警告，继续 |
+| 单个视频失败 | 记录警告，继续 |
