@@ -116,6 +116,7 @@ main() {
     local skipped=0
     local failed=0
     local total=0
+    local QUOTA_EXHAUSTED=false
 
     # Parse outline.md
     local current_chapter="misc"
@@ -201,12 +202,14 @@ main() {
 
             # Generate image
             log_info "Generating: $out_path"
-            if mmx image generate \
+            mmx image generate \
                 --prompt "$full_prompt" \
                 --aspect-ratio 16:9 \
                 --prompt-optimizer \
                 --out "$out_path" \
-                --quiet 2>/dev/null; then
+                --quiet 2>/dev/null
+            MMX_EXIT=$?
+            if [ $MMX_EXIT -eq 0 ]; then
                 # Validate output
                 if [ -f "$out_path" ] && [ -s "$out_path" ]; then
                     log_info "OK: $out_path"
@@ -215,6 +218,11 @@ main() {
                     log_error "File missing or empty after generation: $out_path"
                     failed=$((failed + 1))
                 fi
+            elif [ $MMX_EXIT -eq 4 ]; then
+                QUOTA_EXHAUSTED=true
+                log_error "Image generation quota exhausted. Stopping further attempts."
+                log_info "Generated $generated of $total images. Remaining will use placeholder cards."
+                break
             else
                 log_error "mmx generation failed for: $out_path"
                 failed=$((failed + 1))
@@ -235,6 +243,12 @@ main() {
     echo -e "  Generated:     ${GREEN}$generated${NC}"
     echo -e "  Skipped:       ${YELLOW}$skipped${NC}"
     echo -e "  Failed:        ${RED}$failed${NC}"
+
+    if [ "$QUOTA_EXHAUSTED" = true ]; then
+        log_warn "Image generation quota exhausted. $generated images generated, $((total - generated - skipped)) skipped."
+        log_warn "   Remaining images will use placeholder cards. Retry tomorrow for remaining images."
+        log_warn "   Tip: Use --dry-run first to plan image allocation within quota."
+    fi
 
     if [ $failed -gt 0 ]; then
         exit 1
