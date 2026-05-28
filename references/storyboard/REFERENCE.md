@@ -140,6 +140,43 @@
 
 ---
 
+## 视觉审查（VV 规则）
+
+mmx vision 支持自动检测 storyboard 截图中的视觉质量问题。
+
+### 运行方式
+
+```bash
+# 截图 + 自动审查
+bash tools/capture-screenshots.sh workspace/<id> --audit
+
+# 仅截图
+bash tools/capture-screenshots.sh workspace/<id>
+
+# 仅审查（截图已存在）
+python -m tools.audit workspace/<id> --rule VV
+```
+
+### VV 规则列表
+
+| 规则 | 检查内容 | 对应规则 |
+|------|---------|---------|
+| VV-001 | AI 味指纹（紫粉渐变/圆角彩色边框/emoji 当图标） | CH-001, CH-003 |
+| VV-002 | 信息密度（视觉元素数是否过于均匀） | CH-003 |
+| VV-003 | 占位卡片未替换 | SB-005 |
+| VV-004 | 总结式结尾（大号"谢谢"） | CH-004 |
+| VV-005 | 文字过多（> 80 字） | SB-001 |
+
+### 降级策略
+
+| 场景 | 处理 |
+|------|------|
+| mmx vision 不可用 | 跳过 VV 规则，其他规则正常运行 |
+| 截图不存在 | 跳过 VV 规则 |
+| mmx vision 调用失败 | 单条规则 skip |
+
+---
+
 ## 图片生成指南
 
 ### mmx image generate 集成
