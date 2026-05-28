@@ -1,0 +1,65 @@
+{
+  "providers": {
+    "minimax": {
+      "priority": 1,
+      "type": "cloud-paid",
+      "cli": "mmx",
+      "auth_check": "mmx auth status",
+      "synthesize_template": "mmx speech synthesize --text \"{{text}}\" --voice {{voice_id}} --out {{output_path}} --subtitles",
+      "voice_map": {
+        "沉稳男声": "male-qn-qingse",
+        "活力女声": "female-shaonv",
+        "专业播音": "presenter_male",
+        "默认": "male-qn-qingse"
+      },
+      "quota": {
+        "daily_limit": 4000,
+        "check_before_batch": true,
+        "exhausted_action": "fallback"
+      },
+      "retry": {
+        "max_retries": 1,
+        "retry_on": ["timeout", "network_error"],
+        "do_not_retry_on": ["quota_exhausted", "auth_error"]
+      }
+    },
+    "qwen3-tts": {
+      "priority": 2,
+      "type": "local-gpu",
+      "auth_check": "python -c \"from qwen_tts import QwenTTS; print('ok')\"",
+      "synthesize_template": "python -c \"from qwen_tts import QwenTTS; m=QwenTTS.from_pretrained('Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice'); a=m.generate_custom_voice(text='{{text}}', voice='{{voice_id}}'); a.save('{{output_path}}')\"",
+      "voice_map": {
+        "沉稳男声": "male-deep",
+        "活力女声": "female-bright",
+        "专业播音": "female-calm",
+        "默认": "female-calm"
+      }
+    },
+    "edge-tts": {
+      "priority": 3,
+      "type": "cloud-free",
+      "auth_check": "uvx edge-tts --version",
+      "synthesize_template": "uvx edge-tts --text \"{{text}}\" --voice {{voice_id}} --write-media {{output_path}} --write-subtitles {{srt_path}}",
+      "voice_map": {
+        "沉稳男声": "zh-CN-YunjianNeural",
+        "活力女声": "zh-CN-XiaoxiaoNeural",
+        "专业播音": "zh-CN-YunjianNeural",
+        "默认": "zh-CN-XiaoxiaoNeural"
+      }
+    },
+    "piper-tts": {
+      "priority": 4,
+      "type": "local-cpu",
+      "auth_check": "piper --version",
+      "synthesize_template": "piper --model zh_CN-huayan-medium --text \"{{text}}\" --output_file {{output_path}}",
+      "voice_map": {
+        "默认": "zh_CN-huayan-medium"
+      }
+    }
+  },
+  "defaults": {
+    "speed": 1.0,
+    "language": "zh"
+  },
+  "fallback_order": ["minimax", "qwen3-tts", "edge-tts", "piper-tts"]
+}

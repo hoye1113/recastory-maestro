@@ -1,6 +1,10 @@
 ---
 name: perspectives/feynman
-description: Feynman 视角注入 — Expression DNA（口播风格）+ Mental Models（视觉设计）+ Decision Heuristics（审查）
+description: |
+  Feynman 视角注入，用于口播稿风格改写和视觉设计指导。
+  触发词：「费曼视角」「feynman」「费曼风格」「像费曼一样解释」「用费曼的方式」。
+  注入内容：Expression DNA（口播风格）+ Mental Models（视觉设计）+ Decision Heuristics（审查）。
+  调用方式：被 distill 和 storyboard 按需调用，不独立运行。
 ---
 
 # Skill: perspectives/feynman
@@ -30,6 +34,16 @@ description: Feynman 视角注入 — Expression DNA（口播风格）+ Mental M
 distill 执行时 → Skill("perspectives/feynman") → 提取 Expression DNA → 注入 script.md
 storyboard 执行时 → Skill("perspectives/feynman") → 提取 Mental Models → 注入视觉设计
 ```
+
+## 边界条件
+
+| 场景 | 处理方式 |
+|------|---------|
+| 输入内容是技术/学术文本 | 降低口语化程度，保留必要术语，但仍然避免学术腔 |
+| 输入内容与物理学无关 | 保留费曼的思维方式（好奇心、反自欺、具体思维），但不强行使用物理学类比 |
+| distill 未调用本 Skill | 不主动注入，等待调度 |
+| Expression DNA 与原文风格冲突 | 以费曼风格为主，但保留原文的核心观点和结构 |
+| Mental Models 无法映射到视觉 | 跳过该模型，不强行实现，标注「视觉待定」 |
 
 ## Expression DNA（注入 distill 阶段）
 
@@ -180,11 +194,50 @@ storyboard 执行时 → Skill("perspectives/feynman") → 提取 Mental Models 
 
 ## 注入点表
 
-| 阶段 | 注入内容 | 调用方式 |
-|------|---------|---------|
-| `distill` | Expression DNA（句式、词汇、节奏、幽默） | distill SKILL.md 的步骤 3 |
-| `storyboard` | Mental Models（5 个模型的视觉含义） | storyboard SKILL.md 的步骤 2 |
-| `critique` | Decision Heuristics（8 个审查问题） | P2 暂不实现 |
+| 阶段 | 注入内容 | 调用方式 | 验证方式 |
+|------|---------|---------|---------|
+| `distill` | Expression DNA（句式、词汇、节奏、幽默） | distill SKILL.md 的步骤 3 | 检查 script.md 是否包含费曼式句式（短锚长展、反问、口语化） |
+| `storyboard` | Mental Models（5 个模型的视觉含义） | storyboard SKILL.md 的步骤 2 | 检查视觉设计是否使用了具体隐喻而非抽象图示 |
+| `critique` | Decision Heuristics（8 个审查问题） | P2 暂不实现 | — |
+
+**注入后自检**：
+- Expression DNA 注入后：随机抽取 3 句，检查是否符合「短锚长展」和「口语化」规则
+- Mental Models 注入后：检查每个视觉设计是否至少映射到 1 个心智模型
+
+## 参考来源
+
+| 类型 | 来源 | 用途 |
+|------|------|------|
+| 核心著作 | 《别闹了，费曼先生》《发现的乐趣》 | 表达风格、幽默策略、态度光谱 |
+| 学术思想 | 《费曼物理学讲义》 | 心智模型（命名≠理解、具体思维） |
+| 公开访谈 | BBC、Cornell Messenger Lectures | 口语化句式、节奏模式 |
+| 生成工具 | nuwa-skill（女娲造人术） | 原始框架提炼方法论 |
+
+## 与其他 Skill 的关系
+
+- **被 distill 调用**：注入 Expression DNA，改写口播稿风格
+- **被 storyboard 调用**：注入 Mental Models，指导视觉设计
+- **被 nuwa-skill 生成**：本 Skill 由 nuwa-skill 的蒸馏流程产出
+- **与 mrbeast 互补**：费曼重深度/好奇心，MrBeast 重注意力/数据
+
+## 使用示例
+
+**场景**：用户有一篇关于「量子计算」的文章，要用费曼风格做成口播视频。
+
+**distill 阶段注入**：
+```
+原文：量子比特可以同时处于0和1的叠加态，这使得量子计算机能够并行处理大量计算。
+费曼风格改写：你想想啊——一个硬币，正面和反面同时存在。不是旋转，是真的同时存在。
+你观测它的一面，另一面就消失了。量子比特就是这么个东西。
+就这么回事。
+```
+
+**storyboard 阶段注入**：
+```
+视觉设计：用一个半透明硬币的3D动画，正面和反面同时可见。
+当用户"点击"硬币时，一面变实心，另一面消失。
+映射心智模型：Model 1（命名≠理解）——用视觉隐喻替代术语定义。
+```
 
 ## 诚实边界
 

@@ -1,6 +1,10 @@
 ---
 name: perspectives/mrbeast
-description: MrBeast 视角注入 — Expression DNA（口播风格）+ Mental Models（视觉设计）+ Decision Heuristics（审查）
+description: |
+  MrBeast 视角注入，用于口播稿风格改写和视觉设计指导。
+  触发词：「MrBeast 视角」「mrbeast 风格」「beast 模式」「爆款思维」「注意力工程」。
+  注入内容：Expression DNA（口播风格）+ Mental Models（视觉设计）+ Decision Heuristics（审查）。
+  调用方式：被 distill 和 storyboard 按需调用，不独立运行。
 ---
 
 # Skill: perspectives/mrbeast
@@ -30,6 +34,16 @@ description: MrBeast 视角注入 — Expression DNA（口播风格）+ Mental M
 distill 执行时 → Skill("perspectives/mrbeast") → 提取 Expression DNA → 注入 script.md
 storyboard 执行时 → Skill("perspectives/mrbeast") → 提取 Mental Models → 注入视觉设计
 ```
+
+## 边界条件
+
+| 场景 | 处理方式 |
+|------|---------|
+| 输入内容是教育/科普类 | 保留 MrBeast 的节奏和 hook 策略，但降低极端化表达 |
+| 输入内容是中文平台（B站/抖音） | 标题公式需本地化：中文标题节奏、文化梗、平台算法规则不同 |
+| 预算有限（无法做大规模制作） | 保留核心原则（CTR×AVD、简单概念），执行方式按预算调整 |
+| distill 未调用本 Skill | 不主动注入，等待调度 |
+| Expression DNA 与原文风格冲突 | 以 MrBeast 风格为主，但保留原文的核心信息和准确性 |
 
 ## Expression DNA（注入 distill 阶段）
 
@@ -185,11 +199,53 @@ storyboard 执行时 → Skill("perspectives/mrbeast") → 提取 Mental Models 
 
 ## 注入点表
 
-| 阶段 | 注入内容 | 调用方式 |
-|------|---------|---------|
-| `distill` | Expression DNA（句式、词汇、节奏、幽默） | distill SKILL.md 的步骤 3 |
-| `storyboard` | Mental Models（5 个模型的视觉含义） | storyboard SKILL.md 的步骤 2 |
-| `critique` | Decision Heuristics（8 个审查问题） | P2 暂不实现 |
+| 阶段 | 注入内容 | 调用方式 | 验证方式 |
+|------|---------|---------|---------|
+| `distill` | Expression DNA（句式、词汇、节奏、幽默） | distill SKILL.md 的步骤 3 | 检查 script.md 是否包含 MrBeast 式句式（零铺垫、极端具体、悬念驱动） |
+| `storyboard` | Mental Models（5 个模型的视觉含义） | storyboard SKILL.md 的步骤 2 | 检查视觉设计是否有 hook（前3秒）和阶梯递进 |
+| `critique` | Decision Heuristics（8 个审查问题） | P2 暂不实现 | — |
+
+**注入后自检**：
+- Expression DNA 注入后：检查标题是否 ≤8 词、是否数字前置、是否有悬念
+- Mental Models 注入后：检查前 30 秒是否包含「前提 + 赌注 + 预告 + 行动」四要素
+
+## 参考来源
+
+| 类型 | 来源 | 用途 |
+|------|------|------|
+| 核心方法论 | MrBeast 公开访谈（Lex Fridman、Colin and Samir） | CTR×AVD、阶梯递进、前30秒法则 |
+| 内容策略 | YouTube Creator Academy、MrBeast 团队分享 | 标题公式、缩略图设计、re-engagement |
+| 数据分析 | Social Blade、第三方分析报告 | 订阅增长、播放量趋势 |
+| 生成工具 | nuwa-skill（女娲造人术） | 原始框架提炼方法论 |
+
+## 与其他 Skill 的关系
+
+- **被 distill 调用**：注入 Expression DNA，改写口播稿风格
+- **被 storyboard 调用**：注入 Mental Models，指导视觉设计
+- **被 nuwa-skill 生成**：本 Skill 由 nuwa-skill 的蒸馏流程产出
+- **与 feynman 互补**：MrBeast 重注意力/数据，费曼重深度/好奇心
+
+## 使用示例
+
+**场景**：用户有一篇关于「锂电池回收」的文章，要用 MrBeast 风格做成口播视频。
+
+**distill 阶段注入**：
+```
+原文：锂电池回收行业近年来发展迅速，市场规模不断扩大。
+MrBeast 风格改写：一块废旧锂电池，能提炼出价值 3000 块的稀有金属。
+但 90% 的电池被直接扔掉了。这不是浪费——这是犯罪。
+下一个数据更炸裂。
+```
+
+**storyboard 阶段注入**：
+```
+视觉设计：
+0-3秒：一个废旧电池特写，数字"$3000"从电池中飞出（hook）
+3-8秒：90%的电池被扔进垃圾桶的动画（赌注声明）
+8-15秒：快速闪过后面要展示的提炼工厂和稀有金属（视觉预告）
+15-30秒：开始讲解第一个提炼方法（立即行动）
+映射心智模型：Model 5（前30秒法则）——四要素完整覆盖。
+```
 
 ## 诚实边界
 

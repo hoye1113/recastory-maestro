@@ -7,3 +7,22 @@ timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
 2026-05-27T16:35	a6494c3	distill	82	84	keep	Frontmatter	补充 version + description 触发词	dry_run
 2026-05-27T16:35	a6494c3	storyboard	86	87	keep	Frontmatter	补充 version + description 触发词	dry_run
 2026-05-27T16:35	a6494c3	using-recastory	83	84	keep	Frontmatter	补充 version + description 触发词	dry_run
+2026-05-28T21:00	HEAD	ingest	83	85	keep	检查点设计	添加导入结果确认检查点	dry_run
+2026-05-28T21:01	HEAD	ingest	85	86	keep	指令具体性	补充 article.md 输出格式示例和规则	dry_run
+2026-05-28T21:02	HEAD	ingest	86	87	keep	资源集成	添加 tools/ingest/ 模块引用和安装命令	dry_run
+2026-05-28T21:03	HEAD	transcribe	86	88	keep	检查点设计	添加转写质量确认检查点	dry_run
+2026-05-28T21:04	HEAD	transcribe	88	89	keep	资源集成	添加 tools/ingest/transcriber.py 模块引用	dry_run
+2026-05-28T21:05	HEAD	transcribe	89	90	keep	边界条件	添加音频文件损坏失败模式	dry_run
+2026-05-28T21:06	HEAD	render	74	77	keep	检查点设计	添加渲染结果确认检查点含同步偏差检查	dry_run
+2026-05-28T21:07	HEAD	render	77	80	keep	指令具体性	添加子步骤预期产物验证表	dry_run
+2026-05-28T21:08	HEAD	render	80	81	keep	资源集成	添加 tools 脚本引用到前置条件	dry_run
+2026-05-28T21:09	HEAD	audit	79	81	keep	检查点设计	添加审计摘要确认检查点	dry_run
+2026-05-28T21:10	HEAD	audit	81	83	keep	指令具体性	添加规则组具体检测示例	dry_run
+2026-05-28T21:11	HEAD	audit	83	84	keep	边界条件	添加审计工具输出格式异常失败模式	dry_run
+2026-05-28T21:12	HEAD	critique	88	90	keep	边界条件	添加 article.md 缺失和报告格式回退	dry_run
+2026-05-28T21:13	HEAD	critique	90	91	keep	资源集成	添加 perspective SKILL.md 路径和 article.md 前置条件	dry_run
+2026-05-28T21:14	HEAD	critique	91	92	keep	Frontmatter	description 补充 8 维度列表和自评失真对抗	dry_run
+2026-05-28T22:00	HEAD	voice	81	95	keep	全维度	5轮 hill-climbing：Frontmatter+Specificity+Performance+Boundary+Architecture	dry_run
+2026-05-28T22:05	HEAD	distill	84	91	keep	全维度	5轮 hill-climbing：Performance+Boundary+Specificity+Checkpoints+Runtime中立	dry_run
+2026-05-28T22:10	HEAD	storyboard	87	95	keep	全维度	5轮 hill-climbing：Boundary+Checkpoints+Specificity+Performance+Architecture	dry_run
+2026-05-28T22:15	HEAD	using-recastory	84	93	keep	全维度	5轮 hill-climbing：Architecture+Boundary+Specificity+Performance+Runtime中立	dry_run

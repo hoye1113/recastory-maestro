@@ -37,7 +37,7 @@ Recastory/
 | test-prompts.json | JSON 数组 | 每个 Skill 的验收测试用例（id / prompt / expected） |
 | plan.json | JSON | 运行时执行计划，由 using-recastory 生成 |
 | REFERENCE.md | Markdown | 领域参考文件，≤3000 tokens，按 INDEX.md 注册 |
-| mmx-config.json | JSON | 工具配置模板（voice Skill 专用） |
+| tts-config.json | JSON | TTS 多 Provider 配置（voice Skill 专用） |
 | image-config.json | JSON | 工具配置模板（storyboard 图片生成专用） |
 | bgm-config.json | JSON | 工具配置模板（storyboard BGM 音乐生成专用） |
 | vision_rules.py | Python | VV 系列视觉审查规则（mmx vision 集成） |
@@ -208,7 +208,7 @@ Agent({
 | docs | AGENT.md / ARCHITECTURE.md / WORKFLOW.md / CLAUDE.md |
 | tools | tools/ 下的工具脚本 |
 | references | references/ 下的 REFERENCE.md |
-| config | mmx-config.json 等配置 |
+| config | tts-config.json 等配置 |
 | perspectives | skills/perspectives/ 下的视角 Skill |
 | audit | tools/audit/ 下的反模式检测 |
 

@@ -19,6 +19,7 @@
 | `/recastory storyboard` | `storyboard/REFERENCE.md` | `storyboard/themes/`, `skills/web-video-presentation/SKILL.md`, `skills/perspectives/<name>/SKILL.md`（视角解析时，不存在时回退 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`） |
 | `/recastory voice` | `voice/REFERENCE.md` | — |
 | `/recastory render` | `render/REFERENCE.md` | — |
+| `/recastory ingest` | —（全局已覆盖）| — |
 | `/recastory transcribe` | —（全局已覆盖）| — |
 | `/recastory distill` | `skills/humanizer-zh/SKILL.md`（生成约束，Phase B 前置加载）| `skills/perspectives/<name>/SKILL.md`（视角解析时，不存在时回退 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`） |
 | `/recastory research` | `research/REFERENCE.md` | — |
