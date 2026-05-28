@@ -2,6 +2,28 @@
   "name": "recastory-maestro",
   "private": true,
   "dependencies": {
-    "puppeteer": "^24.0.0"
-  }
+    "puppeteer": "^24.43.1"
+  },
+  "version": "1.0.0",
+  "description": "> 内容重铸引擎：将原始内容通过可组合的 Skill 流水线，重铸为结构化视频输出。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hoye1113/recastory-maestro.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hoye1113/recastory-maestro/issues"
+  },
+  "homepage": "https://github.com/hoye1113/recastory-maestro#readme"
 }
