@@ -150,6 +150,67 @@ STUB
     fi
 }
 
+# ── Test 7: Quota exhaustion (exit code 4) stops gracefully ─────────────────
+test_quota_exhaustion() {
+    echo -e "\n${YELLOW}Test 7: Quota exhaustion (exit code 4)${NC}"
+
+    cleanup
+    mkdir -p "$TEST_DIR/distill"
+
+    # Create a minimal outline with one image marker
+    cat > "$TEST_DIR/distill/outline.md" << 'OUTLINE'
+## 第1章：intro — 引言
+
+### 步骤 1
+
+<!-- img: A beautiful sunset over the mountains -->
+OUTLINE
+
+    # Create a stub mmx where 'image generate' exits with code 4 (quota exhausted)
+    mkdir -p "$TEST_DIR/bin"
+    cat > "$TEST_DIR/bin/mmx" << 'STUB'
+#!/bin/bash
+if [ "${1:-}" = "auth" ] && [ "${2:-}" = "status" ]; then
+    exit 0
+fi
+if [ "${1:-}" = "image" ] && [ "${2:-}" = "generate" ]; then
+    echo "quota exhausted" >&2
+    exit 4
+fi
+exit 0
+STUB
+    chmod +x "$TEST_DIR/bin/mmx"
+
+    local exit_code=0
+    local output
+    output=$(PATH="$TEST_DIR/bin:$PATH" bash "$GEN_SCRIPT" "$TEST_DIR" 2>&1) || exit_code=$?
+
+    # The script should NOT crash (exit 0 or 1, not a signal/other code)
+    local no_crash=false
+    if [ "$exit_code" -eq 0 ] || [ "$exit_code" -eq 1 ]; then
+        no_crash=true
+    fi
+
+    # stderr (now merged) should contain "quota" (case insensitive)
+    local has_quota=false
+    if echo "$output" | grep -qi "quota"; then
+        has_quota=true
+    fi
+
+    if [ "$no_crash" = true ] && [ "$has_quota" = true ]; then
+        echo -e "${GREEN}PASS${NC}: Quota exhaustion handled gracefully (exit=$exit_code, quota message found)"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    else
+        if [ "$no_crash" = false ]; then
+            echo -e "${RED}FAIL${NC}: Script crashed with exit code $exit_code"
+        fi
+        if [ "$has_quota" = false ]; then
+            echo -e "${RED}FAIL${NC}: Expected 'quota' in output, got: $output"
+        fi
+        TESTS_FAILED=$((TESTS_FAILED + 1))
+    fi
+}
+
 # ── Main test runner ─────────────────────────────────────────────────────────
 main() {
     echo -e "${YELLOW}Running generate-images.sh tests...${NC}"
@@ -160,6 +221,7 @@ main() {
     test_nonexistent_dir
     test_missing_outline
     test_dry_run
+    test_quota_exhaustion
 
     # Summary
     echo -e "\n${YELLOW}Test Summary:${NC}"
