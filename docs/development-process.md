@@ -155,7 +155,7 @@ Recastory 的修改可按**文件隔离性**分组并行执行。
 
 问题标签：`[Required]` 阻断合并 / `[Optional]` 建议改进 / `[Question]` 需澄清 / `[FYI]` 信息同步。
 
-详见 [code-review skill](../.claude/skills/code-review/SKILL.md) 完整规范。
+详见已安装的 `code-review` skill 完整规范（通过 `/code-review` 调用）。
 
 ---
 

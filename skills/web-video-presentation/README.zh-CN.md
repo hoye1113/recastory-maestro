@@ -2,7 +2,7 @@
 
 **把文章或口播稿做成点击驱动的 16:9 网页演示，并通过录屏产出有电影感视频的 Agent Skill。**
 
-[English](./README.md) · [返回集合首页](../../README.zh-CN.md)
+[English](./README.md)
 
 ![Web Video Presentation Skill](../../dist/imgs/web-video-presentation-skill.png)
 
@@ -69,7 +69,6 @@ skills/web-video-presentation/
 ├── SKILL.md
 ├── README.md / README.zh-CN.md
 ├── references/
-│   ├── PRINCIPLES.md
 │   ├── CHAPTER-CRAFT.md
 │   ├── OUTLINE-FORMAT.md
 │   ├── SCRIPT-STYLE.md
@@ -311,11 +310,9 @@ Skill 内置 **23 套**主题，每套都有独立的设计 DNA —— 不是简
 
 ## Reference Map
 
-- [PRINCIPLES.md](./references/PRINCIPLES.md)：视频感网页演示的核心原则
 - [CHAPTER-CRAFT.md](./references/CHAPTER-CRAFT.md)：章节实现规则与视觉 checklist
 - [OUTLINE-FORMAT.md](./references/OUTLINE-FORMAT.md)：outline 必须遵循的结构
 - [SCRIPT-STYLE.md](./references/SCRIPT-STYLE.md)：文章转口播稿规则
-- [PATTERNS.md](./references/PATTERNS.md)：可选视觉 primitive 配方
 - [AUDIO.md](./references/AUDIO.md)：可选口播音频合成流程（provider-agnostic）
 - [tts-providers/README.md](./templates/scripts/tts-providers/README.md)：TTS provider 三函数契约 + 内置 2 个 (minimax / openai) + ElevenLabs / edge-tts / Azure / Google / macOS say 的现成代码片段
 - [RECORDING.md](./references/RECORDING.md)：录屏与后期注意事项

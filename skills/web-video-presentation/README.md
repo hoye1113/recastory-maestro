@@ -69,7 +69,6 @@ skills/web-video-presentation/
 ├── SKILL.md
 ├── README.md / README.zh-CN.md
 ├── references/
-│   ├── PRINCIPLES.md
 │   ├── CHAPTER-CRAFT.md
 │   ├── OUTLINE-FORMAT.md
 │   ├── SCRIPT-STYLE.md
@@ -311,11 +310,9 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 
 ## Reference Map
 
-- [PRINCIPLES.md](./references/PRINCIPLES.md) — core rules for video-like web presentations
 - [CHAPTER-CRAFT.md](./references/CHAPTER-CRAFT.md) — chapter implementation rules and visual checklist
 - [OUTLINE-FORMAT.md](./references/OUTLINE-FORMAT.md) — required outline structure
 - [SCRIPT-STYLE.md](./references/SCRIPT-STYLE.md) — article-to-narration rewrite guidance
-- [PATTERNS.md](./references/PATTERNS.md) — optional visual primitive recipes
 - [AUDIO.md](./references/AUDIO.md) — optional narration synthesis workflow (provider-agnostic)
 - [tts-providers/README.md](./templates/scripts/tts-providers/README.md) — TTS provider contract + 2 built-ins (minimax / openai) + ready-to-paste snippets for ElevenLabs / edge-tts / Azure / Google Cloud / macOS say
 - [RECORDING.md](./references/RECORDING.md) — screen recording and post-production notes
