@@ -16,7 +16,7 @@
 | 3 | 2026-05-29 | C+D | C-001, C-002, C-003, D-001 | 0/4/5 | 0 | — | ID conflict resolution + polling. Commit: 46a1b0f |
 | 4 | 2026-05-29 | E | E-001 (broken refs × 3) | 0/4/3 | 0 | — | Remove broken file references in docs. Commit: 54bdce7 |
 | 5 | 2026-05-29 | A+C+E | C-004, A-004, E-002 | 0/0/3 | 0 | — | anti-patterns.ts phantom refs + shell injection + broken links. Commit: f72943f |
-| 6 | 2026-05-29 | C+F | C-005, C-006, F-004 | 0/0/1 | 0 | — | phantom schema.ts refs + IDE-specific names. Commit: (pending) |
+| 6 | 2026-05-29 | C+F | C-005, C-006, F-004 | 0/0/1 | 0 | — | phantom schema.ts refs + IDE-specific names. Commit: d7e10b8 |
 
 ## Darwin-Skill Score Trend
 
