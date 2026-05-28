@@ -77,6 +77,74 @@ else
 fi
 rm -rf "$tmpdir"
 
+# ── Test 7: mmx music generate returns exit code 4 (quota exhaustion) ─────
+echo -e "${YELLOW}[Test 7]${NC} mmx music generate exit code 4 (quota exhaustion)"
+tmpdir=$(mktemp -d)
+mkdir -p "$tmpdir/render"
+touch "$tmpdir/render/final.mp4"
+
+mock_bin=$(mktemp -d)
+cat > "$mock_bin/mmx" << 'MOCK_EOF'
+#!/bin/bash
+if [ "$1" = "auth" ] && [ "$2" = "status" ]; then exit 0; fi
+if [ "$1" = "music" ] && [ "$2" = "generate" ]; then exit 4; fi
+exit 0
+MOCK_EOF
+chmod +x "$mock_bin/mmx"
+printf '#!/bin/bash\nexit 0\n' > "$mock_bin/ffmpeg" && chmod +x "$mock_bin/ffmpeg"
+printf '#!/bin/bash\nexit 0\n' > "$mock_bin/ffprobe" && chmod +x "$mock_bin/ffprobe"
+
+exit_code=0
+output=$(PATH="$mock_bin:$PATH" bash "$SCRIPT" "$tmpdir" --prompt "Test ambient" 2>&1) || exit_code=$?
+
+if [ "$exit_code" -eq 0 ]; then
+    pass "Script exits 0 on quota exhaustion"
+else
+    fail "Script exited $exit_code, expected 0"
+fi
+
+if echo "$output" | grep -qi "quota"; then
+    pass "Output contains 'quota' warning"
+else
+    fail "Output missing 'quota' keyword: $output"
+fi
+
+rm -rf "$tmpdir" "$mock_bin"
+
+# ── Test 8: mmx music generate returns exit code 3 (auth failure) ────────
+echo -e "${YELLOW}[Test 8]${NC} mmx music generate exit code 3 (auth failure)"
+tmpdir=$(mktemp -d)
+mkdir -p "$tmpdir/render"
+touch "$tmpdir/render/final.mp4"
+
+mock_bin=$(mktemp -d)
+cat > "$mock_bin/mmx" << 'MOCK_EOF'
+#!/bin/bash
+if [ "$1" = "auth" ] && [ "$2" = "status" ]; then exit 0; fi
+if [ "$1" = "music" ] && [ "$2" = "generate" ]; then exit 3; fi
+exit 0
+MOCK_EOF
+chmod +x "$mock_bin/mmx"
+printf '#!/bin/bash\nexit 0\n' > "$mock_bin/ffmpeg" && chmod +x "$mock_bin/ffmpeg"
+printf '#!/bin/bash\nexit 0\n' > "$mock_bin/ffprobe" && chmod +x "$mock_bin/ffprobe"
+
+exit_code=0
+output=$(PATH="$mock_bin:$PATH" bash "$SCRIPT" "$tmpdir" --prompt "Test ambient" 2>&1) || exit_code=$?
+
+if [ "$exit_code" -eq 0 ]; then
+    pass "Script exits 0 on auth failure"
+else
+    fail "Script exited $exit_code, expected 0"
+fi
+
+if echo "$output" | grep -qi "auth"; then
+    pass "Output contains 'auth' warning"
+else
+    fail "Output missing 'auth' keyword: $output"
+fi
+
+rm -rf "$tmpdir" "$mock_bin"
+
 # ── Summary ─────────────────────────────────────────────────────────────────
 echo ""
 echo -e "${YELLOW}=== mix-bgm.test.sh Results ===${NC}"
