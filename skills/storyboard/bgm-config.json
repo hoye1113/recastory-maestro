@@ -1,0 +1,29 @@
+{
+  "provider": "minimax",
+  "cli": "mmx",
+  "auth_check": "mmx auth status",
+  "generate_template": {
+    "command": "mmx music generate",
+    "params": {
+      "prompt": "{{prompt}}",
+      "instrumental": true,
+      "use-case": "background music for video",
+      "out": "{{output_path}}",
+      "quiet": true
+    }
+  },
+  "defaults": {
+    "model": "music-2.6-free",
+    "volume": 0.2,
+    "fade_in_seconds": 3,
+    "fade_out_seconds": 3
+  },
+  "style_presets": {
+    "知识科普": "Cinematic orchestral, building tension, intellectual, moderate tempo",
+    "产品介绍": "Upbeat electronic, modern, clean, positive energy",
+    "科技评测": "Tech ambient, futuristic, minimal beats, moderate tempo",
+    "人文故事": "Warm acoustic, gentle piano, emotional, slow tempo",
+    "商业分析": "Corporate ambient, confident, steady rhythm, moderate tempo",
+    "默认": "Cinematic ambient, moderate tempo, subtle tension, orchestral"
+  }
+}
