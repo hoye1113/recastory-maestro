@@ -3,7 +3,7 @@ name: using-recastory
 version: 1.0.0
 description: Recastory Maestro 主入口 — 意图识别、路由、plan.json 生成、子 Skill 调度、检查点管理。触发条件：/recastory 命令、视频 URL、音视频文件路径、"帮我做个视频"等。
 user-invocable: true
-argument-hint: "[craft|distill|voice|storyboard] <input> [--perspective <name>] [--register <brand|product>]"
+argument-hint: "[craft|distill|voice|storyboard|research] <input> [--perspective <name>] [--register <brand|product>]"
 ---
 
 # Skill: using-recastory
@@ -32,6 +32,7 @@ argument-hint: "[craft|distill|voice|storyboard] <input> [--perspective <name>] 
 | 输入类型 | 检测方式 | 默认命令 | skip 标志 |
 |---------|---------|---------|----------|
 | `/recastory <cmd>` | 显式命令 | 按命令路由 | 用户指定 |
+| `/recastory research` | 显式命令 | `research`（主题调研） | — |
 | 视频 URL | http/https 开头，指向视频平台 | `craft`（自动走 ingest→transcribe 流水线） | — |
 | 本地视频 | 扩展名 .mp4/.mov/.avi/.mkv | `craft`（跳过下载，从 extract+transcribe 开始） | — |
 | 文章/脚本 | .md/.txt，无视频特征 | `craft` | `--skip-ingest --skip-transcribe` |
@@ -68,7 +69,7 @@ CLI 独立运行：`python -m tools.ingest "<video-url>" -o workspace/<id>`
 按 `references/INDEX.md` 的 Progressive Loading 规则：
 
 1. 全局加载：`transcription/REFERENCE.md` + `content-distillation/REFERENCE.md`（如存在）
-2. 命令对应领域参考（如 `storyboard/REFERENCE.md`、`voice/REFERENCE.md`）
+2. 命令对应领域参考（如 `storyboard/REFERENCE.md`、`voice/REFERENCE.md`）；`/recastory research` 加载 `research/REFERENCE.md`
 3. 视角 Expression DNA（如指定 `--perspective`）：
    - 检查 `skills/perspectives/<name>/SKILL.md` 是否存在
    - 如存在 → 直接使用
@@ -117,11 +118,13 @@ CLI 独立运行：`python -m tools.ingest "<video-url>" -o workspace/<id>`
   "references_loaded": ["transcription/REFERENCE.md", "content-distillation/REFERENCE.md"],
   "anti_patterns_enabled": ["CD-001", "CD-003", "SL-001", "SL-002", "SL-003", "SL-004", "SL-005", "SL-006"],
   "skills": [
-    { "name": "distill", "depends_on": [] },
+    { "name": "research", "depends_on": [] },
+    { "name": "distill", "depends_on": ["research"] },
     { "name": "storyboard", "depends_on": ["distill"] },
     { "name": "voice", "depends_on": ["distill"] }
   ],
   "parallel_groups": [
+    { "skills": ["research"], "after": null },
     { "skills": ["storyboard", "voice"], "after": "distill" }
   ]
 }
