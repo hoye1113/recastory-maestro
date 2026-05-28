@@ -192,12 +192,28 @@ python -m tools.ingest "<video-url>" -o workspace/<id>
 每个 Skill 完成后，**先运行 CLI 审计**，再进入 Review：
 
 ```bash
-npx recastory-audit --rule <enabled-rules> workspace/<pipeline-id>/<skill>/
+# 全量扫描
+python -m tools.audit workspace/<pipeline-id>/
+
+# 指定规则
+python -m tools.audit --rule TR-001,TR-002 workspace/<pipeline-id>/<skill>/
+
+# JSON 输出（供 CI 使用）
+python -m tools.audit --json workspace/<pipeline-id>/
 ```
 
-- **Pass** → 进入 Phase 5
+- **Pass**（exit 0）→ 进入 Phase 5
 - **Warning** → 记录问题，继续执行
-- **Critical** → 阻断流程，等待修复
+- **Critical**（exit 1）→ 阻断流程，等待修复
+
+### 规则覆盖
+
+| 规则组 | 规则 ID | 检测文件 |
+|---------|---------|---------|
+| 转写 | TR-001~005 | `*.md`, `*.srt` |
+| 内容提炼 | CD-001~003, CD-005~006 | `*.md` |
+| 配音 | VO-001~004 | `audio-segments.json` |
+| AI Slop | SL-001~006 | `*.md` |
 
 ---
 
