@@ -63,7 +63,8 @@
   },
   "defaults": {
     "speed": 1.0,
-    "language": "zh"
+    "language": "zh",
+    "voice": "默认"
   },
   "fallback_order": ["minimax", "qwen3-tts", "edge-tts", "piper-tts"]
 }
