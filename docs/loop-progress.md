@@ -15,7 +15,7 @@
 | 2 | 2026-05-29 | B | B-001~007 + runtime neutrality | 0/7/6 | 0 | — | doc alignment + version fix + tts_install_help. Commit: 3ffa596 |
 | 3 | 2026-05-29 | C+D | C-001, C-002, C-003, D-001 | 0/4/5 | 0 | — | ID conflict resolution + polling. Commit: 46a1b0f |
 | 4 | 2026-05-29 | E | E-001 (broken refs × 3) | 0/4/3 | 0 | — | Remove broken file references in docs. Commit: 54bdce7 |
-| 5 | 2026-05-29 | A+C+E | C-004, A-004, E-002 | 0/0/3 | 0 | — | anti-patterns.ts phantom refs + shell injection + broken links. Commit: (pending) |
+| 5 | 2026-05-29 | A+C+E | C-004, A-004, E-002 | 0/0/3 | 0 | — | anti-patterns.ts phantom refs + shell injection + broken links. Commit: f72943f |
 
 ## Darwin-Skill Score Trend
 

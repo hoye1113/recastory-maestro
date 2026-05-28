@@ -129,13 +129,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 <table>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/midnight-press.png"><img src="../../dist/imgs/web-video/midnight-press.png" alt="midnight-press preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>midnight-press</code></strong>
 <br /><sub>Cinematic editorial dark · warm espresso + hot orange</sub>
 <br /><sub><b>Best for</b> · developer tutorials · AI &amp; tool reviews · technical deep dives</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/dark-botanical.png"><img src="../../dist/imgs/web-video/dark-botanical.png" alt="dark-botanical preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>dark-botanical</code></strong>
 <br /><sub>Premium editorial dark · terracotta / blush / gold glow</sub>
 <br /><sub><b>Best for</b> · brand films · fashion &amp; beauty · premium product launches</sub>
@@ -143,13 +143,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/chalk-garden.png"><img src="../../dist/imgs/web-video/chalk-garden.png" alt="chalk-garden preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>chalk-garden</code></strong>
 <br /><sub>Slate chalkboard · handwritten Patrick Hand + chalk-yellow</sub>
 <br /><sub><b>Best for</b> · explainers · classroom teaching · beginner-friendly walk-throughs</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/blueprint.png"><img src="../../dist/imgs/web-video/blueprint.png" alt="blueprint preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>blueprint</code></strong>
 <br /><sub>Drafting board · deep navy + cyan + 60 px grid</sub>
 <br /><sub><b>Best for</b> · tech architecture · system breakdowns · API / SDK intros</sub>
@@ -157,13 +157,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/terminal-green.png"><img src="../../dist/imgs/web-video/terminal-green.png" alt="terminal-green preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>terminal-green</code></strong>
 <br /><sub>80s phosphor CRT · mono-only + scanlines</sub>
 <br /><sub><b>Best for</b> · CLI tutorials · hacker / security topics · retro-tech homages</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/neon-cyber.png"><img src="../../dist/imgs/web-video/neon-cyber.png" alt="neon-cyber preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>neon-cyber</code></strong>
 <br /><sub>Cyberpunk future · cyan + magenta double-neon</sub>
 <br /><sub><b>Best for</b> · AI / LLM reviews · web3 &amp; security · futuristic / cyberpunk topics</sub>
@@ -171,13 +171,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/bold-signal.png"><img src="../../dist/imgs/web-video/bold-signal.png" alt="bold-signal preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>bold-signal</code></strong>
 <br /><sub>Hero pitch deck · dark gradient + orange focal card</sub>
 <br /><sub><b>Best for</b> · pitch decks · product launches · brand keynote opens</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/creative-voltage.png"><img src="../../dist/imgs/web-video/creative-voltage.png" alt="creative-voltage preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>creative-voltage</code></strong>
 <br /><sub>Saturated electric blue + neon yellow halftone</sub>
 <br /><sub><b>Best for</b> · design week · studio showcases · type / visual-culture talks</sub>
@@ -192,13 +192,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 <table>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/paper-press.png"><img src="../../dist/imgs/web-video/paper-press.png" alt="paper-press preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>paper-press</code></strong>
 <br /><sub>Editorial paper · warm cream + hot orange</sub>
 <br /><sub><b>Best for</b> · magazine pieces · lifestyle · everyday tool reviews</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/newsroom.png"><img src="../../dist/imgs/web-video/newsroom.png" alt="newsroom preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>newsroom</code></strong>
 <br /><sub>NYT broadsheet · newsprint cream + banner red</sub>
 <br /><sub><b>Best for</b> · documentary reporting · deep reviews · current-affairs commentary</sub>
@@ -206,13 +206,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/monochrome-print.png"><img src="../../dist/imgs/web-video/monochrome-print.png" alt="monochrome-print preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>monochrome-print</code></strong>
 <br /><sub>Refined Monocle / Wallpaper print restraint</sub>
 <br /><sub><b>Best for</b> · long-read adaptations · academic / opinion · arts criticism</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/vintage-editorial.png"><img src="../../dist/imgs/web-video/vintage-editorial.png" alt="vintage-editorial preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>vintage-editorial</code></strong>
 <br /><sub>Witty Fraunces + geometric overlay (circle / line / dot)</sub>
 <br /><sub><b>Best for</b> · personal essays · culture columns · type / design talks</sub>
@@ -220,13 +220,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/sunset-zine.png"><img src="../../dist/imgs/web-video/sunset-zine.png" alt="sunset-zine preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>sunset-zine</code></strong>
 <br /><sub>Risograph zine · peach + magenta + dashed cut lines</sub>
 <br /><sub><b>Best for</b> · lifestyle vlogs · creative shares · short-video / zine-style</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/pastel-dream.png"><img src="../../dist/imgs/web-video/pastel-dream.png" alt="pastel-dream preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>pastel-dream</code></strong>
 <br /><sub>Soft pastel + sage + right-edge pill ribbon</sub>
 <br /><sub><b>Best for</b> · product onboarding · friendly tutorials · wellness &amp; parenting</sub>
@@ -234,13 +234,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/warm-keynote.png"><img src="../../dist/imgs/web-video/warm-keynote.png" alt="warm-keynote preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>warm-keynote</code></strong>
 <br /><sub>Modern SaaS keynote · glass slab + teal + warm grid</sub>
 <br /><sub><b>Best for</b> · SaaS keynotes · B2B launches · team-facing roll-ups</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/electric-studio.png"><img src="../../dist/imgs/web-video/electric-studio.png" alt="electric-studio preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>electric-studio</code></strong>
 <br /><sub>Corporate clarity · crisp white + electric-blue base bar</sub>
 <br /><sub><b>Best for</b> · B2B product talks · investor decks · quarterly updates</sub>
@@ -248,13 +248,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/bauhaus-bold.png"><img src="../../dist/imgs/web-video/bauhaus-bold.png" alt="bauhaus-bold preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>bauhaus-bold</code></strong>
 <br /><sub>Manifesto modernist · 0 radius + 4 px thick frame</sub>
 <br /><sub><b>Best for</b> · product launches · manifestos · brand statements</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/swiss-ikb.png"><img src="../../dist/imgs/web-video/swiss-ikb.png" alt="swiss-ikb preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>swiss-ikb</code></strong>
 <br /><sub>Extra-light 200 Helvetica + IKB + 1 px hairline grid</sub>
 <br /><sub><b>Best for</b> · AI / tech launches · year-in-review data · info-graphics</sub>
@@ -262,13 +262,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/dune.png"><img src="../../dist/imgs/web-video/dune.png" alt="dune preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>dune</code></strong>
 <br /><sub>Charcoal + sand · near-zero accent (architecture brochure)</sub>
 <br /><sub><b>Best for</b> · architecture &amp; interior · art exhibitions · premium brand books</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/indigo-porcelain.png"><img src="../../dist/imgs/web-video/indigo-porcelain.png" alt="indigo-porcelain preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>indigo-porcelain</code></strong>
 <br /><sub>Indigo <em>is</em> the ink (not an accent) + porcelain white</sub>
 <br /><sub><b>Best for</b> · academic research · AI / data deep dives · serious tech briefings</sub>
@@ -276,13 +276,13 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/forest-ink.png"><img src="../../dist/imgs/web-video/forest-ink.png" alt="forest-ink preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>forest-ink</code></strong>
 <br /><sub>Forest green <em>is</em> the ink + ivory (vintage National Geographic)</sub>
 <br /><sub><b>Best for</b> · nature &amp; sustainability · documentary non-fiction · slow living</sub>
 </td>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/kraft-paper.png"><img src="../../dist/imgs/web-video/kraft-paper.png" alt="kraft-paper preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>kraft-paper</code></strong>
 <br /><sub>Deep brown <em>is</em> the ink + kraft beige + copper accent</sub>
 <br /><sub><b>Best for</b> · book reviews · history &amp; nostalgia · craft &amp; food storytelling</sub>
@@ -290,7 +290,7 @@ The skill ships **23 themes**, each with its own design DNA — not a simple col
 </tr>
 <tr>
 <td align="center" width="50%">
-<a href="../../dist/imgs/web-video/split-canvas.png"><img src="../../dist/imgs/web-video/split-canvas.png" alt="split-canvas preview" /></a>
+<div style="background:#1a1a2e;color:#eee;padding:2em;text-align:center;border-radius:8px">Theme Preview</div>
 <br /><strong><code>split-canvas</code></strong>
 <br /><sub>Dual-tone · peach left + lavender right</sub>
 <br /><sub><b>Best for</b> · A/B comparisons · dialogue stories · concept-contrast explainers</sub>
