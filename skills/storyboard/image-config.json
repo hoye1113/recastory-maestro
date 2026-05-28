@@ -1,0 +1,27 @@
+{
+  "provider": "minimax",
+  "cli": "mmx",
+  "auth_check": "mmx auth status",
+  "generate_template": {
+    "command": "mmx image generate",
+    "params": {
+      "prompt": "{{prompt}}",
+      "aspect-ratio": "16:9",
+      "prompt-optimizer": true,
+      "out": "{{output_path}}",
+      "quiet": true
+    }
+  },
+  "defaults": {
+    "model": "image-01",
+    "aspect_ratio": "16:9",
+    "width": 1920,
+    "height": 1080
+  },
+  "prompt_prefix": {
+    "default": "Cinematic, high quality, 16:9 aspect ratio, ",
+    "hero": "Cinematic, high quality, 16:9 aspect ratio, ",
+    "icon": "Clean icon design, minimalist, ",
+    "diagram": "Clean infographic style, data visualization, "
+  }
+}

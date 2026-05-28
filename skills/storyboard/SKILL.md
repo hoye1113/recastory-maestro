@@ -99,6 +99,29 @@ bash skills/storyboard/scaffold.sh <workspace-dir> [theme-id]
 
 输出：`workspace/<id>/storyboard/` — 完整 Vite+React+TS 项目
 
+### 4.5 生成图片资产（可选）
+
+如 outline.md 中包含图片描述标记（`<!-- img: 描述 -->`），自动生成图片：
+
+```bash
+bash tools/generate-images.sh <workspace-dir>
+```
+
+脚本自动完成：
+
+1. 扫描 `distill/outline.md` 中的 `<!-- img: 描述 -->` 标记
+2. 输出图片清单到 stdout，等待确认
+3. 调用 `mmx image generate` 生成每张图片
+4. 输出到 `storyboard/public/img/<chapter>/<step>.jpg`
+
+**降级处理**：
+
+- mmx-cli 不可用 → 跳过图片生成，使用纯文本/卡片布局
+- 单张图片失败 → 记录警告，继续生成其他图片
+- 全部失败 → 警告用户，继续使用占位卡片
+
+**[可选预览]** — 图片生成后，可展示首张图片预览供用户确认质量。非硬性门禁。
+
 ### 5. Chapter 1 主线程锚点
 
 **Chapter 1 必须在主线程完成，不可派发给 subagent。**
@@ -170,7 +193,10 @@ export function Chapter01({ step }: ChapterProps) {
 - 无页眉/页脚，舒适的颜色/字体/节奏，需要视觉冲击力
 
 **原则 2：必须有视觉演示元素**
-- 每章必须有 1-2 个动画/演示元素
+
+- 每章必须有 1-2 个视觉演示元素
+- 优先级：生成图片 > CSS/SVG 动画 > 占位卡片
+- 如有生成的图片（`public/img/`），优先使用 `<img>` 而非纯 CSS 占位
 - 纯文字章节 = 不合格
 
 **原则 3：渐进揭示，永不一次展示**

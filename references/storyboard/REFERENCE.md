@@ -137,3 +137,100 @@
 | CH-004 | 假数据 / 假 logo / 假"X 万用户" |
 | CH-005 | 全章同一种入场动画（全场 fade / 全场 blur） |
 | CH-006 | 每步都挂 ken burns / 光晕呼吸 / 持续闪烁 |
+
+---
+
+## 图片生成指南
+
+### mmx image generate 集成
+
+storyboard 支持使用 mmx-cli 生成 AI 图片，替换占位卡片。
+
+#### 命令模板
+
+```bash
+mmx image generate \
+  --prompt "图片描述" \
+  --aspect-ratio 16:9 \
+  --prompt-optimizer \
+  --out workspace/<id>/storyboard/public/img/<chapter>/<step>.jpg \
+  --quiet
+```
+
+#### 图片标记规范
+
+在 `distill/outline.md` 的步骤描述后添加 HTML 注释：
+
+```markdown
+### 步骤 1
+屏幕：冷萃咖啡特写
+<!-- img: 一杯冷萃咖啡的特写，水珠凝结在玻璃杯壁，自然光，摄影风格 -->
+```
+
+**标记规则：**
+- 格式：`<!-- img: 描述文本 -->`
+- 位置：在步骤的"屏幕"描述之后
+- 描述语言：中文或英文均可
+- 每步最多 1 张图片
+
+#### Prompt 编写规范
+
+| 图片类型 | Prompt 前缀 | 示例 |
+|---------|------------|------|
+| 章节 Hero 图 | `Cinematic, high quality, ` | `Cinematic, high quality, 一杯冷萃咖啡特写` |
+| 数据图表 | `Clean infographic, data visualization, ` | `Clean infographic, 温度对比图表` |
+| 场景插图 | `Photorealistic, ` | `Photorealistic, 咖啡豆研磨过程` |
+| 概念图 | `Minimalist illustration, ` | `Minimalist illustration, 分子结构` |
+
+#### Prompt 优化技巧
+
+1. **具体 > 抽象**：`"一杯冷萃咖啡，玻璃杯，水珠凝结"` > `"冷萃咖啡"`
+2. **风格描述**：`"摄影风格"` / `"信息图风格"` / `"插画风格"`
+3. **光线描述**：`"自然光"` / `"工作室灯光"` / `"侧光"`
+4. **构图描述**：`"特写"` / `"俯视"` / `"45度角"`
+
+#### 图片尺寸
+
+| 用途 | 尺寸 | 说明 |
+|------|------|------|
+| 全屏背景 | 1920×1080 | `--width 1920 --height 1080` |
+| 半屏插图 | 960×540 | `--width 960 --height 540` |
+| 图标/小图 | 512×512 | `--width 512 --height 512` |
+
+#### 人物一致性
+
+如需保持角色外观一致，使用 `--subject-ref`：
+
+```bash
+mmx image generate \
+  --prompt "一个男人在咖啡店" \
+  --subject-ref "type=character,image=workspace/id/storyboard/public/img/character-ref.jpg" \
+  --out workspace/id/storyboard/public/img/01-what/02.jpg
+```
+
+#### Chapter.tsx 中使用图片
+
+```tsx
+// 有生成图片时
+if (step === 0) return (
+  <div className="cd-stage">
+    <img src="/img/01-what/01.jpg" alt="冷萃咖啡特写" className="cd-hero-img" />
+  </div>
+);
+
+// 无图片时保持 CSS/emoji 占位
+if (step === 1) return (
+  <div className="cd-stage">
+    <div className="cd-placeholder">☕</div>
+  </div>
+);
+```
+
+#### 降级策略
+
+| 场景 | 处理 |
+|------|------|
+| mmx-cli 未安装 | 跳过图片生成，使用纯文本布局 |
+| mmx auth 失败 | 跳过图片生成，警告用户 |
+| 单张图片失败 | 记录警告，继续生成其他图片 |
+| 全部失败 | 使用占位卡片，警告用户 |
