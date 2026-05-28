@@ -78,10 +78,10 @@ presentation/public/audio/<chapter-id>/<step>.mp3  # web-video-presentation
 ## 反模式速查
 | ID | 名称 | 检测 | 严重度 |
 |---|---|---|---|
-| RD-001 | 编号错位 | MP3 文件名与 outline 步骤不匹配 | critical |
-| RD-002 | 句子过长 | 单句 >50 字 | warning |
-| RD-003 | 语速异常 | <120 或 >180 字/分 | warning |
-| RD-004 | 缺少章节 SRT | 章节目录下无合并 SRT | warning |
+| RR-001 | 编号错位 | MP3 文件名与 outline 步骤不匹配 | critical |
+| RR-002 | 句子过长 | 单句 >50 字 | warning |
+| RR-003 | 语速异常 | <120 或 >180 字/分 | warning |
+| RR-004 | 缺少章节 SRT | 章节目录下无合并 SRT | warning |
 
 ---
 

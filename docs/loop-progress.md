@@ -12,6 +12,7 @@
 | Iter | Date | Track | Issues Fixed | Remaining (C/W/I) | Regression | E2E | Notes |
 |------|------|-------|-------------|-------------------|------------|-----|-------|
 | 1 | 2026-05-29 | A | A-001, A-002, A-003 | 0/14/6 | 0 | — | shell injection + error handling + puppeteer check. Commit: 9ffdfbb |
+| 2 | 2026-05-29 | B | B-001~007 + runtime neutrality | 0/7/6 | 0 | — | doc alignment + version fix + tts_install_help. Commit: 3ffa596 |
 
 ## Darwin-Skill Score Trend
 
