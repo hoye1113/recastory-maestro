@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "prompt": "对「冷萃咖啡」进行主题调研，输出研究笔记",
+    "expected": "workspace/<id>/research/research-notes.md 存在，包含核心发现、关键数据、相关案例、未核实信息四个章节"
+  },
+  {
+    "id": 2,
+    "prompt": "用 research-search.sh 搜索「咖啡市场数据」并限制 5 条结果",
+    "expected": "JSON 输出 total=5，每条包含 title/link/snippet/date 字段"
+  },
+  {
+    "id": 3,
+    "prompt": "对关键发现进行二次搜索并交叉验证",
+    "expected": "至少 2 次搜索调用，研究笔记中标注信息来源 URL，未核实信息有勾选框"
+  },
+  {
+    "id": 4,
+    "prompt": "mmx-cli 不可用时执行研究",
+    "expected": "报告 mmx 未安装或 auth 失败，停止执行，不输出空研究笔记"
+  },
+  {
+    "id": 5,
+    "prompt": "plan.json 缺失时执行 /recastory research",
+    "expected": "IRON LAW 违规，停止执行并报告原因"
+  }
+]
