@@ -9,6 +9,9 @@ log_info()  { echo -e "${GREEN}[INFO]${NC} $1" >&2; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 log_warn()  { echo -e "${YELLOW}[WARN]${NC} $1" >&2; }
 
+# mmx exit codes: 0=success, 1=general, 2=usage, 3=auth, 4=quota, 5=timeout
+MMX_EXIT_CODE=0
+
 usage() {
     echo "Usage: bash research-search.sh <query> [--max <n>] [--out <path>] [--related]"
     echo ""
@@ -21,6 +24,13 @@ usage() {
     echo "  bash research-search.sh \"AI news\""
     echo "  bash research-search.sh \"气候数据\" --max 5 --related"
     echo "  bash research-search.sh \"案例分析\" --out results.json"
+    echo ""
+    echo "Exit codes:"
+    echo "  0  Success"
+    echo "  1  General error"
+    echo "  3  Authentication error"
+    echo "  4  Quota exceeded"
+    echo "  5  Timeout (after retry)"
     exit 1
 }
 
@@ -111,8 +121,23 @@ do_search() {
     log_info "Searching: $query"
     local raw_json
     raw_json=$(mmx search query --q "$query" --output json --quiet 2>/dev/null) || {
-        log_error "mmx search query failed"
-        exit 1
+        MMX_EXIT_CODE=$?
+        if [ "$MMX_EXIT_CODE" -eq 4 ]; then
+            log_error "mmx search quota exceeded. Try again later or reduce search frequency."
+            exit 4
+        elif [ "$MMX_EXIT_CODE" -eq 3 ]; then
+            log_error "mmx authentication failed. Run 'mmx auth login' first."
+            exit 3
+        elif [ "$MMX_EXIT_CODE" -eq 5 ]; then
+            log_warn "mmx search timed out. Retrying once..."
+            raw_json=$(mmx search query --q "$query" --output json --quiet 2>/dev/null) || {
+                log_error "mmx search timed out after retry."
+                exit 5
+            }
+        else
+            log_error "mmx search query failed (exit code: $MMX_EXIT_CODE)"
+            exit 1
+        fi
     }
 
     # Validate JSON response
@@ -176,9 +201,28 @@ do_search() {
     echo "$result"
 }
 
+# ── Quota pre-check ─────────────────────────────────────────────────────────
+check_search_quota() {
+    local quota_json
+    quota_json=$(mmx quota show --output json 2>/dev/null) || return 0  # can't check, proceed
+    local remaining
+    remaining=$(echo "$quota_json" | node -e "
+        const d=JSON.parse(require('fs').readFileSync(0,'utf8'));
+        const search=(d.model_remains||[]).find(m=>m.model_name==='coding-plan-search');
+        console.log(search ? search.current_interval_total_count - search.current_interval_usage_count : -1);
+    " 2>/dev/null) || remaining="-1"
+    if [ "$remaining" = "0" ]; then
+        log_error "mmx search quota exhausted for this interval. Try again later."
+        exit 4
+    elif [ "$remaining" -gt 0 ] 2>/dev/null && [ "$remaining" -lt 5 ]; then
+        log_warn "mmx search quota low: $remaining remaining this interval."
+    fi
+}
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 main() {
     parse_args "$@"
+    check_search_quota
     validate_deps
 
     local result
