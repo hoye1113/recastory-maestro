@@ -17,6 +17,8 @@ class PipelineConfig:
     whisper_model: str = "base"
     language: Optional[str] = None
     device: str = "auto"
+    cookies_file: Optional[str] = None
+    cookies_from_browser: Optional[str] = None
 
 
 @dataclass
@@ -62,7 +64,12 @@ def run_pipeline(
     # Step 1: Download
     notify("download", 0.0)
     video_dir = os.path.join(workspace, "video")
-    dl_result = download_video(url, video_dir, max_height=config.max_height)
+    dl_result = download_video(
+        url, video_dir,
+        max_height=config.max_height,
+        cookies_file=config.cookies_file,
+        cookies_from_browser=config.cookies_from_browser,
+    )
     if not dl_result.success:
         return PipelineResult(success=False, error=f"Download failed: {dl_result.error}")
     notify("download", 1.0)

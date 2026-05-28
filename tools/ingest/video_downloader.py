@@ -26,6 +26,8 @@ def download_video(
     output_dir: str,
     max_height: int = 720,
     progress_callback: Optional[Callable[[float], None]] = None,
+    cookies_file: Optional[str] = None,
+    cookies_from_browser: Optional[str] = None,
 ) -> DownloadResult:
     """Download video using yt-dlp."""
     if not validate_url(url):
@@ -49,6 +51,11 @@ def download_video(
         'retries': 3,
         'socket_timeout': 30,
     }
+
+    if cookies_file and os.path.exists(cookies_file):
+        ydl_opts['cookiefile'] = cookies_file
+    elif cookies_from_browser:
+        ydl_opts['cookiesfrombrowser'] = (cookies_from_browser,)
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:

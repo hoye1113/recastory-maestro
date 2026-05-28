@@ -44,6 +44,17 @@ def main():
         choices=["auto", "cpu", "cuda"],
         help="Compute device (default: auto)",
     )
+    parser.add_argument(
+        "--cookies",
+        default=None,
+        help="Path to cookies.txt file (for sites requiring authentication)",
+    )
+    parser.add_argument(
+        "--cookies-from-browser",
+        default=None,
+        choices=["chrome", "firefox", "edge", "opera", "vivaldi", "brave"],
+        help="Extract cookies from browser (requires browser to be closed)",
+    )
 
     args = parser.parse_args()
 
@@ -59,6 +70,8 @@ def main():
         whisper_model=args.model,
         language=args.language,
         device=args.device,
+        cookies_file=args.cookies,
+        cookies_from_browser=args.cookies_from_browser,
     )
 
     def progress(step: str, pct: float):
