@@ -89,3 +89,48 @@ presentation/public/audio/<chapter-id>/<step>.mp3  # web-video-presentation
 | RD-002 | 句子过长 | 单句 >50 字 | warning |
 | RD-003 | 语速异常 | <120 或 >180 字/分 | warning |
 | RD-004 | 缺少章节 SRT | 章节目录下无合并 SRT | warning |
+
+---
+
+## BGM 混音指南
+
+### mmx music generate 集成
+
+render 流水线支持使用 mmx-cli 生成背景音乐并混入最终视频。
+
+#### 使用方式
+
+```bash
+# 方式 1：环境变量控制
+ENABLE_BGM=true BGM_PROMPT="Cinematic orchestral" bash tools/render-video.sh workspace/<id>
+
+# 方式 2：独立调用
+bash tools/mix-bgm.sh workspace/<id> --prompt "Warm acoustic, gentle piano" --volume 0.2
+```
+
+#### BGM 风格预设
+
+| 内容类型 | 预设描述 |
+|---------|---------|
+| 知识科普 | Cinematic orchestral, building tension, intellectual |
+| 产品介绍 | Upbeat electronic, modern, clean, positive energy |
+| 科技评测 | Tech ambient, futuristic, minimal beats |
+| 人文故事 | Warm acoustic, gentle piano, emotional |
+| 商业分析 | Corporate ambient, confident, steady rhythm |
+
+#### FFmpeg 混音参数
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| volume | 0.2 | BGM 音量（0-1），口播存在时建议 0.15-0.25 |
+| fade_in | 3s | 开头淡入时长 |
+| fade_out | 3s | 结尾淡出时长 |
+
+#### 降级策略
+
+| 场景 | 处理 |
+|------|------|
+| mmx-cli 未安装 | 跳过 BGM，警告用户 |
+| mmx auth 失败 | 跳过 BGM，警告用户 |
+| BGM 生成失败 | 跳过 BGM，警告用户 |
+| final.mp4 不存在 | 阻断，要求先运行 render-video.sh |
