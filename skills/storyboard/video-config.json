@@ -1,0 +1,23 @@
+{
+  "provider": "minimax",
+  "cli": "mmx",
+  "auth_check": "mmx auth status",
+  "generate_template": {
+    "command": "mmx video generate",
+    "params": {
+      "prompt": "{{prompt}}",
+      "async": true,
+      "quiet": true
+    }
+  },
+  "defaults": {
+    "model": "MiniMax-Hailuo-2.3",
+    "poll_interval": 10,
+    "max_wait_seconds": 300
+  },
+  "prompt_prefix": {
+    "transition": "Smooth cinematic transition, ",
+    "scene": "Cinematic, high quality, ",
+    "motion": "Slow motion, dramatic, "
+  }
+}
