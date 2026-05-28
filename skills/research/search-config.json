@@ -1,0 +1,23 @@
+{
+  "provider": "minimax",
+  "cli": "mmx",
+  "auth_check": "mmx auth status",
+  "search_template": {
+    "command": "mmx search query",
+    "params": {
+      "q": "{{query}}",
+      "output": "json",
+      "quiet": true
+    }
+  },
+  "defaults": {
+    "max_results": 10,
+    "language": "zh"
+  },
+  "query_prefix": {
+    "fact_check": "核实：",
+    "data_search": "数据统计：",
+    "case_study": "案例：",
+    "background": ""
+  }
+}
