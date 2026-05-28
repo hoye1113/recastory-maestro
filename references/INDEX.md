@@ -15,12 +15,12 @@
 
 | 命令 | 触发加载 | 可选加载 |
 |------|---------|---------|
-| `/recastory craft` | `storyboard/REFERENCE.md`, `voice/REFERENCE.md`, `render/REFERENCE.md` | `storyboard/themes/`, `skills/web-video-presentation/SKILL.md`, `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`（视角解析时） |
-| `/recastory storyboard` | `storyboard/REFERENCE.md` | `storyboard/themes/`, `skills/web-video-presentation/SKILL.md`, `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`（视角解析时） |
+| `/recastory craft` | `storyboard/REFERENCE.md`, `voice/REFERENCE.md`, `render/REFERENCE.md` | `storyboard/themes/`, `skills/web-video-presentation/SKILL.md`, `skills/perspectives/<name>/SKILL.md`（视角解析时，不存在时回退 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`） |
+| `/recastory storyboard` | `storyboard/REFERENCE.md` | `storyboard/themes/`, `skills/web-video-presentation/SKILL.md`, `skills/perspectives/<name>/SKILL.md`（视角解析时，不存在时回退 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`） |
 | `/recastory voice` | `voice/REFERENCE.md` | — |
 | `/recastory render` | `render/REFERENCE.md` | — |
 | `/recastory transcribe` | —（全局已覆盖）| — |
-| `/recastory distill` | —（全局已覆盖）| `skills/humanizer-zh/SKILL.md`（深度去 AI 味）, `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`（视角解析时） |
+| `/recastory distill` | —（全局已覆盖）| `skills/humanizer-zh/SKILL.md`（深度去 AI 味）, `skills/perspectives/<name>/SKILL.md`（视角解析时，不存在时回退 `skills/nuwa-skill/examples/<name>-perspective/SKILL.md`） |
 | `/recastory research` | `research/REFERENCE.md` | — |
 | `/recastory audit` | —（使用 anti-patterns.ts）| — |
 | `/recastory critique` | —（LLM 审查，无需参考文件）| — |

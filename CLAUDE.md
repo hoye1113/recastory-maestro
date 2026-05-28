@@ -25,6 +25,7 @@
 | voice | `skills/voice/SKILL.md` | 被 using-recastory 调度 |
 | storyboard | `skills/storyboard/SKILL.md` | 被 using-recastory 调度 |
 | perspectives/feynman | `skills/perspectives/feynman/SKILL.md` | 被 distill/storyboard 按需调用 |
+| perspectives/mrbeast | `skills/perspectives/mrbeast/SKILL.md` | 被 distill/storyboard 按需调用 |
 
 ## 核心原则
 

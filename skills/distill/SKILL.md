@@ -182,6 +182,10 @@ outline.md 是跨步骤记忆载体，必须同时参考 script.md 和 article.m
 | CD-005 | 缺乏 Hook | 前 10 秒无吸引力 | warning |
 | CD-006 | 视角未注入 | 指定了 perspective 但 script 风格中性 | critical |
 
+### 确定性检测
+
+反模式 CD/SL 规则可通过 `python -m tools.audit <workspace-dir>` 运行确定性检测。Agent 自检后，建议用户运行审计工具做二次验证。
+
 ## Failure Modes
 
 | 场景 | 回退 |

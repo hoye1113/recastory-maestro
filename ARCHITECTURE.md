@@ -324,9 +324,9 @@ references/
 ### CLI 检测方式
 
 ```bash
-npx recastory-audit workspace/<pipeline-id>/  # 全量扫描
-npx recastory-audit --rule TR-001,TR-002 workspace/<pipeline-id>/transcribe/  # 指定规则
-npx recastory-audit --json workspace/<pipeline-id>/  # JSON 输出，供 CI 使用
+python -m tools.audit workspace/<pipeline-id>/  # 全量扫描
+python -m tools.audit --rule TR-001,TR-002 workspace/<pipeline-id>/transcribe/  # 指定规则
+python -m tools.audit --json workspace/<pipeline-id>/  # JSON 输出，供 CI 使用
 ```
 
 ### AI Slop Test（AI 味检测）
@@ -529,7 +529,7 @@ Maestro 必须在启动时判断输入类型，选择对应的 Pipeline（Route 
 每个 Skill 完成后，**先运行 CLI 审计**，再进入 Review：
 
 ```bash
-npx recastory-audit --rule <enabled-rules> workspace/<pipeline-id>/<skill>/
+python -m tools.audit --rule <enabled-rules> workspace/<pipeline-id>/<skill>/
 ```
 
 - **Pass**：进入 Phase 5

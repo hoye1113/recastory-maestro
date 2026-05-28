@@ -296,6 +296,10 @@ export const chapters = [
 | SB-004 | 舞台错误 | 非 1920×1080 | critical |
 | SB-005 | 无 step 驱动 | 使用 setTimeout/setInterval | critical |
 
+### 确定性检测
+
+反模式 SB/SL 规则可通过 `python -m tools.audit <workspace-dir>` 运行确定性检测。Agent 自检后，建议用户运行审计工具做二次验证。
+
 ## Failure Modes
 
 | 场景 | 回退 |
