@@ -15,8 +15,9 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
 
 @dataclass
@@ -28,10 +29,13 @@ class VisionResult:
     file: Optional[str] = None
 
 
-def _call_vision(image_path: str, prompt: str) -> Optional[str]:
+def _call_vision(image_path: str, prompt: str) -> Union[str, dict, None]:
     """Call mmx vision describe and return the description text.
 
-    Returns None if mmx is unavailable or the call fails.
+    Returns:
+        str: the description text on success
+        dict: error info dict with 'error' and 'message' keys for known failures
+        None: if mmx is unavailable or the call fails generically
     """
     try:
         result = subprocess.run(
@@ -39,7 +43,12 @@ def _call_vision(image_path: str, prompt: str) -> Optional[str]:
             capture_output=True, text=True, timeout=30
         )
         if result.returncode != 0:
-            return None
+            if result.returncode == 4:
+                return {"error": "quota_exhausted", "message": "mmx vision quota exhausted. Retry later."}
+            elif result.returncode == 3:
+                return {"error": "auth_failed", "message": "mmx authentication failed. Run 'mmx auth login'."}
+            else:
+                return None  # generic failure, treat as unavailable
         data = json.loads(result.stdout)
         return data.get("description") or data.get("content") or ""
     except (subprocess.TimeoutExpired, json.JSONDecodeError, FileNotFoundError):
@@ -72,6 +81,10 @@ def detect_vv001_ai_fingerprint(image_path: str) -> VisionResult:
     desc = _call_vision(image_path, prompt)
     if desc is None:
         return VisionResult("VV-001", "skip", "mmx vision unavailable", image_path)
+    if isinstance(desc, dict) and "error" in desc:
+        if desc["error"] == "quota_exhausted":
+            return VisionResult("VV-001", "skip", "mmx vision quota exhausted. Retry later.", image_path)
+        return VisionResult("VV-001", "skip", desc["message"], image_path)
     status = "fail" if "FAIL" in desc.upper() else "pass"
     return VisionResult("VV-001", status, desc[:200], image_path)
 
@@ -88,6 +101,10 @@ def detect_vv002_info_density(image_path: str) -> VisionResult:
     desc = _call_vision(image_path, prompt)
     if desc is None:
         return VisionResult("VV-002", "skip", "mmx vision unavailable", image_path)
+    if isinstance(desc, dict) and "error" in desc:
+        if desc["error"] == "quota_exhausted":
+            return VisionResult("VV-002", "skip", "mmx vision quota exhausted. Retry later.", image_path)
+        return VisionResult("VV-002", "skip", desc["message"], image_path)
     try:
         count = int(''.join(c for c in desc if c.isdigit()))
         if count > 10:
@@ -111,6 +128,10 @@ def detect_vv003_placeholder(image_path: str) -> VisionResult:
     desc = _call_vision(image_path, prompt)
     if desc is None:
         return VisionResult("VV-003", "skip", "mmx vision unavailable", image_path)
+    if isinstance(desc, dict) and "error" in desc:
+        if desc["error"] == "quota_exhausted":
+            return VisionResult("VV-003", "skip", "mmx vision quota exhausted. Retry later.", image_path)
+        return VisionResult("VV-003", "skip", desc["message"], image_path)
     status = "fail" if "FAIL" in desc.upper() else "pass"
     return VisionResult("VV-003", status, desc[:200], image_path)
 
@@ -129,6 +150,10 @@ def detect_vv004_ending_screen(image_path: str) -> VisionResult:
     desc = _call_vision(image_path, prompt)
     if desc is None:
         return VisionResult("VV-004", "skip", "mmx vision unavailable", image_path)
+    if isinstance(desc, dict) and "error" in desc:
+        if desc["error"] == "quota_exhausted":
+            return VisionResult("VV-004", "skip", "mmx vision quota exhausted. Retry later.", image_path)
+        return VisionResult("VV-004", "skip", desc["message"], image_path)
     status = "fail" if "FAIL" in desc.upper() else "pass"
     return VisionResult("VV-004", status, desc[:200], image_path)
 
@@ -146,6 +171,10 @@ def detect_vv005_text_density(image_path: str) -> VisionResult:
     desc = _call_vision(image_path, prompt)
     if desc is None:
         return VisionResult("VV-005", "skip", "mmx vision unavailable", image_path)
+    if isinstance(desc, dict) and "error" in desc:
+        if desc["error"] == "quota_exhausted":
+            return VisionResult("VV-005", "skip", "mmx vision quota exhausted. Retry later.", image_path)
+        return VisionResult("VV-005", "skip", desc["message"], image_path)
     try:
         count = int(''.join(c for c in desc if c.isdigit()))
         if count > 80:
@@ -189,10 +218,17 @@ def run_vv_rules(screenshot_dir: str) -> list[VisionResult]:
         results.append(VisionResult("VV", "skip", "No screenshots found"))
         return results
 
+    any_quota = False
     for filename in screenshots:
         filepath = os.path.join(screenshot_dir, filename)
         for rule_fn in VV_RULES:
             result = rule_fn(filepath)
+            if result.status == "skip" and "quota" in result.message.lower():
+                any_quota = True
             results.append(result)
+
+    all_skipped = all(r.status == "skip" for r in results)
+    if all_skipped and any_quota:
+        print("WARNING: mmx vision quota exhausted. VV rules skipped. Retry tomorrow.", file=sys.stderr)
 
     return results
