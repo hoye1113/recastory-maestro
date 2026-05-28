@@ -92,6 +92,13 @@ Agent 在开发 Chapter 时检查 `public/img/` 是否有可用图片：
 - `--force` flag：重新生成所有图片（用户对第一版不满意时使用）
 - `--only <chapter-step>` flag：精确指定重生成哪张（可选，Task 2 实现）
 
+### 5. 目录与版本控制
+
+- `public/img/` 目录由 `generate-images.sh` 的 `mkdir -p` 自动创建，不需要修改 scaffold.sh 或 skeleton
+- 生成的图片位于 `workspace/<id>/storyboard/public/img/`，被根 `.gitignore` 的 `workspace/` 规则忽略
+- 图片是临时产物（ephemeral），可从 outline.md + mmx 重新生成，不需要版本控制
+- Vite 自动服务 `public/` 目录下的静态文件，无需额外配置
+
 ---
 
 ## 文件清单

@@ -38,6 +38,7 @@ Recastory/
 | plan.json | JSON | 运行时执行计划，由 using-recastory 生成 |
 | REFERENCE.md | Markdown | 领域参考文件，≤3000 tokens，按 INDEX.md 注册 |
 | mmx-config.json | JSON | 工具配置模板（voice Skill 专用） |
+| image-config.json | JSON | 工具配置模板（storyboard 图片生成专用） |
 
 ---
 
