@@ -1,4 +1,4 @@
-# ARCHITECTURE.md — Recastory Maestro v2.0
+# ARCHITECTURE.md — Recastory Maestro v2.2.0
 
 > **本文件是架构蓝图，供深入理解设计决策时参考。** Agent 每次会话应读取 [AGENT.md](AGENT.md)（主入口）。
 >
@@ -35,7 +35,7 @@ Maestro **不直接处理内容**，只负责：
 
 ### 设计原则
 
-Agent（Claude Code）负责**判断和创作**，工具负责**执行和转换**。
+Agent 负责**判断和创作**，工具负责**执行和转换**。
 
 核心动机：
 1. **可靠性** — 工具做确定性操作，结果可预测
@@ -221,24 +221,18 @@ perspective/
 ```
 references/
 ├── transcription/          # 转写领域
-│   ├── REFERENCE.md        # 标点规范、说话人标注、时间戳格式
-│   └── anti-patterns.md    # 转写反模式
+│   └── REFERENCE.md        # 标点规范、说话人标注、时间戳格式
 ├── content-distillation/   # 内容提炼领域
-│   ├── REFERENCE.md        # 大纲结构、信息密度、叙事弧线
-│   └── anti-patterns.md
+│   └── REFERENCE.md        # 大纲结构、信息密度、叙事弧线
 ├── storyboard/             # 分镜领域
 │   ├── REFERENCE.md        # 主题规范、配色、字体、布局网格
-│   ├── themes/             # 每套主题的 theme.json + preview.png
-│   └── anti-patterns.md
+│   └── themes/             # 每套主题的 theme.json + preview.png
 ├── voice/                  # 配音领域
-│   ├── REFERENCE.md        # 语速、停顿、情感标记、多音字处理
-│   └── anti-patterns.md
+│   └── REFERENCE.md        # 语速、停顿、情感标记、多音字处理
 ├── render/                 # 渲染领域
-│   ├── REFERENCE.md        # 分辨率、码率、编码参数、字幕样式
-│   └── anti-patterns.md
-├── research/               # 研究领域（新增）
-│   ├── REFERENCE.md        # 横纵分析法、信息源验证、报告结构
-│   └── anti-patterns.md
+│   └── REFERENCE.md        # 分辨率、码率、编码参数、字幕样式
+├── research/               # 研究领域
+│   └── REFERENCE.md        # 横纵分析法、信息源验证、报告结构
 └── brand/                  # 品牌注册表（用户配置）
     └── REGISTER.md         # 用户品牌色、字体偏好、口播风格
 ```
@@ -618,52 +612,36 @@ Audit 通过后，运行 LLM 深度审查：
 ```
 skills/
 ├── ingest/
-│   ├── SKILL.md
-│   ├── schema.ts         # Zod Schema
-│   ├── anti-patterns.ts  # 该 Skill 的确定性规则
-│   ├── index.ts
-│   └── test/
+│   └── SKILL.md
 ├── transcribe/
-│   ├── SKILL.md
-│   ├── schema.ts
-│   ├── anti-patterns.ts
-│   ├── index.ts
-│   └── test/
+│   └── SKILL.md
 ├── distill/
 │   ├── SKILL.md
-│   ├── schema.ts
-│   ├── anti-patterns.ts
-│   ├── index.ts
-│   └── test/
+│   └── test-prompts.json
 ├── storyboard/
 │   ├── SKILL.md
-│   ├── schema.ts
-│   ├── anti-patterns.ts
-│   ├── index.ts
-│   └── test/
+│   └── test-prompts.json
 ├── voice/
 │   ├── SKILL.md
-│   ├── schema.ts
-│   ├── anti-patterns.ts
-│   ├── index.ts
-│   └── test/
+│   └── test-prompts.json
 ├── render/
-│   ├── SKILL.md
-│   ├── schema.ts
-│   ├── anti-patterns.ts
-│   ├── index.ts
-│   └── test/
-├── review/
-│   ├── SKILL.md
-│   ├── schema.ts
-│   ├── index.ts
-│   └── test/
+│   └── SKILL.md
 ├── research/
 │   ├── SKILL.md
-│   ├── schema.ts
-│   ├── anti-patterns.ts
-│   ├── index.ts
-│   └── test/
+│   └── test-prompts.json
+├── audit/
+│   └── SKILL.md
+├── critique/
+│   └── SKILL.md
+├── using-recastory/
+│   ├── SKILL.md
+│   └── test-prompts.json
+├── humanizer-zh/
+│   └── SKILL.md
+├── nuwa-skill/
+│   └── SKILL.md
+├── web-video-presentation/
+│   └── SKILL.md
 └── perspectives/          # 视角库
     ├── feynman/
     │   ├── SKILL.md
@@ -871,13 +849,7 @@ npx recastory-score --skill distill --input test/fixtures/distill/input.json --o
 
 ## 九、多 Harness 安装
 
-| 工具 | 安装路径 |
-|------|---------|
-| **Claude Code** | `.claude/skills/recastory-maestro/` |
-| **OpenCode** | `.opencode/skills/recastory-maestro/` |
-| **Codex CLI** | `.agents/skills/recastory-maestro/` |
-| **Cursor** | `.cursor/skills/recastory-maestro/` |
-| **GitHub Copilot** | `.github/skills/recastory-maestro/` |
+Skills 可安装到任意 AI Agent 的 skills 目录。具体路径参考各 Agent 的文档。
 
 安装后，在对应工具中运行：
 ```
@@ -976,4 +948,4 @@ npx recastory-score --skill distill --input test/fixtures/distill/input.json --o
 
 - AGENT.md Version: 3.0.0（本文件为 v2.2.0 架构蓝图，已降级为参考文档）
 - Inspired by: superpowers, impeccable, nuwa-skill, SlideNarrator, ClipScribe, darwin-skill, hv-analysis, 可乐米花园视频生成教程
-- Compatible with: Claude Code, Codex CLI, OpenCode, Cursor, GitHub Copilot
+- Compatible with: Any AI Agent harness supporting SKILL.md protocol

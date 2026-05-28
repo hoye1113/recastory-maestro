@@ -21,7 +21,8 @@
         "max_retries": 1,
         "retry_on": ["timeout", "network_error"],
         "do_not_retry_on": ["quota_exhausted", "auth_error"]
-      }
+      },
+      "tts_install_help": "npm install -g mmx-cli && mmx auth login --api-key <your-api-key>"
     },
     "qwen3-tts": {
       "priority": 2,
@@ -33,7 +34,8 @@
         "活力女声": "female-bright",
         "专业播音": "female-calm",
         "默认": "female-calm"
-      }
+      },
+      "tts_install_help": "pip install -U qwen-tts  # 需要 GPU 4-8GB"
     },
     "edge-tts": {
       "priority": 3,
@@ -45,7 +47,8 @@
         "活力女声": "zh-CN-XiaoxiaoNeural",
         "专业播音": "zh-CN-YunjianNeural",
         "默认": "zh-CN-XiaoxiaoNeural"
-      }
+      },
+      "tts_install_help": "pip install edge-tts  # 或 uvx edge-tts"
     },
     "piper-tts": {
       "priority": 4,
@@ -54,7 +57,8 @@
       "synthesize_template": "piper --model zh_CN-huayan-medium --text \"{{text}}\" --output_file {{output_path}}",
       "voice_map": {
         "默认": "zh_CN-huayan-medium"
-      }
+      },
+      "tts_install_help": "pip install piper-tts  # 或下载 piper 二进制"
     }
   },
   "defaults": {

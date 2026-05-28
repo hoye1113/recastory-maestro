@@ -265,6 +265,11 @@ Audit 通过后，运行 LLM 深度审查（6 个维度）：
 - 烧入章节级 SRT 字幕
 - 合并为最终 MP4 + 生成 manifest.json
 
+可选步骤：
+
+3. BGM 混音：`bash tools/mix-bgm.sh <workspace-dir> --prompt "Cinematic orchestral"`
+4. 平台输出优化：按目标平台生成优化版本（见 `references/render/REFERENCE.md` 平台输出优化规格）
+
 ---
 
 ## Concrete Example：从视频到成品

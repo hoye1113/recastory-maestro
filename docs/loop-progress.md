@@ -11,7 +11,7 @@
 
 | Iter | Date | Track | Issues Fixed | Remaining (C/W/I) | Regression | E2E | Notes |
 |------|------|-------|-------------|-------------------|------------|-----|-------|
-| 1 | 2026-05-29 | A | A-001, A-002, A-003 | 0/14/6 (pending) | — | — | shell injection + error handling + puppeteer check |
+| 1 | 2026-05-29 | A | A-001, A-002, A-003 | 0/14/6 | 0 | — | shell injection + error handling + puppeteer check. Commit: 9ffdfbb |
 
 ## Darwin-Skill Score Trend
 
