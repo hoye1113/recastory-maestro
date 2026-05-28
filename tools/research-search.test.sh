@@ -400,6 +400,50 @@ STUB
     rm -rf "$tmpdir"
 }
 
+# ── Test 17: mmx quota exhausted (exit 4) ────────────────────────────────────
+test_quota_exhausted() {
+    echo -e "\n${YELLOW}Test 17: mmx quota exhausted (exit 4)${NC}"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+    cat > "$tmpdir/mmx" << 'STUB'
+#!/bin/bash
+if [ "${1:-}" = "auth" ] && [ "${2:-}" = "status" ]; then exit 0; fi
+if [ "${1:-}" = "search" ] && [ "${2:-}" = "query" ]; then exit 4; fi
+exit 1
+STUB
+    chmod +x "$tmpdir/mmx"
+    local output exit_code=0
+    output=$(PATH="$tmpdir:$PATH" bash "$SEARCH_SCRIPT" "test" 2>&1) || exit_code=$?
+    if [ $exit_code -eq 4 ] && echo "$output" | grep -qi "quota"; then
+        pass "Quota exhausted exits with code 4 and mentions quota"
+    else
+        fail "Expected exit 4 with quota message, got exit $exit_code: $output"
+    fi
+    rm -rf "$tmpdir"
+}
+
+# ── Test 18: mmx auth failure (exit 3) ───────────────────────────────────────
+test_auth_failure() {
+    echo -e "\n${YELLOW}Test 18: mmx auth failure (exit 3)${NC}"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+    cat > "$tmpdir/mmx" << 'STUB'
+#!/bin/bash
+if [ "${1:-}" = "auth" ] && [ "${2:-}" = "status" ]; then exit 0; fi
+if [ "${1:-}" = "search" ] && [ "${2:-}" = "query" ]; then exit 3; fi
+exit 1
+STUB
+    chmod +x "$tmpdir/mmx"
+    local output exit_code=0
+    output=$(PATH="$tmpdir:$PATH" bash "$SEARCH_SCRIPT" "test" 2>&1) || exit_code=$?
+    if [ $exit_code -eq 3 ] && echo "$output" | grep -qi "auth"; then
+        pass "Auth failure exits with code 3 and mentions auth"
+    else
+        fail "Expected exit 3 with auth message, got exit $exit_code: $output"
+    fi
+    rm -rf "$tmpdir"
+}
+
 # ── Main test runner ─────────────────────────────────────────────────────────
 main() {
     echo -e "${YELLOW}=== research-search.sh tests ===${NC}"
@@ -420,6 +464,8 @@ main() {
     test_related_flag
     test_out_to_file
     test_no_related_by_default
+    test_quota_exhausted
+    test_auth_failure
 
     echo ""
     echo -e "${YELLOW}=== Test Summary ===${NC}"
