@@ -31,12 +31,15 @@ usage() {
 load_config() {
     local config="$PROJECT_ROOT/skills/storyboard/video-config.json"
     if [ -f "$config" ]; then
+        # Convert to Windows path for Node.js compatibility (MSYS2/Git Bash)
+        local config_win
+        config_win=$(cygpath -w "$config" 2>/dev/null || echo "$config")
         local interval
-        interval=$(node -e "const c=JSON.parse(require('fs').readFileSync('$config','utf8')); process.stdout.write(String(c.defaults?.poll_interval||10))" 2>/dev/null || echo "10")
+        interval=$(node -e "const c=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')); process.stdout.write(String(c.defaults?.poll_interval||10))" "$config_win" 2>/dev/null || echo "10")
         local max_wait
-        max_wait=$(node -e "const c=JSON.parse(require('fs').readFileSync('$config','utf8')); process.stdout.write(String(c.defaults?.max_wait_seconds||300))" 2>/dev/null || echo "300")
+        max_wait=$(node -e "const c=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')); process.stdout.write(String(c.defaults?.max_wait_seconds||300))" "$config_win" 2>/dev/null || echo "300")
         local prefix
-        prefix=$(node -e "const c=JSON.parse(require('fs').readFileSync('$config','utf8')); const p=c.prompt_prefix||{}; process.stdout.write(p.scene||p.transition||p.motion||'')" 2>/dev/null || echo "")
+        prefix=$(node -e "const c=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')); const p=c.prompt_prefix||{}; process.stdout.write(p.scene||p.transition||p.motion||'')" "$config_win" 2>/dev/null || echo "")
         POLL_INTERVAL="$interval"
         MAX_WAIT_SECONDS="$max_wait"
         VIDEO_PROMPT_PREFIX="$prefix"

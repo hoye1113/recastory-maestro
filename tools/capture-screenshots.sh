@@ -29,7 +29,7 @@ fi
 # Start Vite dev server
 log_info "Starting Vite dev server..."
 cd "$STORYBOARD_DIR"
-npx vite --port 5174 --host 127.0.0.1 &
+npx vite --port 5174 --host 127.0.0.1 --strictPort &
 VITE_PID=$!
 trap 'kill $VITE_PID 2>/dev/null || true' EXIT
 sleep 3
