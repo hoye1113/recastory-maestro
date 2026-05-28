@@ -166,6 +166,17 @@ main() {
 }
 EOF
 
+    # Optional BGM mixing (controlled by ENABLE_BGM env var)
+    if [ "${ENABLE_BGM:-false}" = "true" ]; then
+        local bgm_prompt="${BGM_PROMPT:-}"
+        local bgm_volume="${BGM_VOLUME:-0.2}"
+        if [ -n "$bgm_prompt" ]; then
+            bash "$SCRIPT_DIR/mix-bgm.sh" "$workspace" --prompt "$bgm_prompt" --volume "$bgm_volume" || log_warn "BGM mixing failed, continuing without BGM"
+        else
+            bash "$SCRIPT_DIR/mix-bgm.sh" "$workspace" --volume "$bgm_volume" || log_warn "BGM mixing failed, continuing without BGM"
+        fi
+    fi
+
     log_info "Render complete!"
 }
 
