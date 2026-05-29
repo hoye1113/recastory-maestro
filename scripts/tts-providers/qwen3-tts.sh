@@ -23,12 +23,15 @@ find_python() {
 tts_check() {
   local py
   py=$(find_python) || return 1
-  "$py" -c "from qwen_tts import Qwen3TTSModel" 2>/dev/null
+  "$py" -c "from qwen_tts import Qwen3TTSModel" 2>/dev/null || return 1
+  # qwen-tts requires SoX for audio processing
+  command -v sox >/dev/null 2>&1 || command -v soxi >/dev/null 2>&1 || return 1
 }
 
 tts_install_help() {
   echo "pip install -U qwen-tts  # 需要 GPU 4-8GB (0.6B模型) 或 6-8GB (1.7B模型)"
   echo "模型会自动从 HuggingFace 下载，首次加载较慢"
+  echo "还需要安装 SoX: choco install sox (Windows) / apt install sox (Linux) / brew install sox (macOS)"
 }
 
 tts_synthesize() {

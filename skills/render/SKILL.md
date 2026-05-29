@@ -139,6 +139,28 @@ ffmpeg -i render/final.mp4 -c:v libx264 -crf 20 -preset medium \
 | macOS | h264_videotoolbox | `-c:v h264_videotoolbox -b:v 8M` |
 | Intel QSV | h264_qsv | `-c:v h264_qsv -preset medium` |
 
+### Windows 平台注意事项
+
+录屏在 Windows 上有两个已知陷阱，render-video.sh 和 puppeteer-launch.js 已内置修复：
+
+#### 1. 浏览器必须置于前台
+
+Puppeteer 打开浏览器并全屏后，如果不主动调用 Win32 `SetForegroundWindow`，FFmpeg gdigrab 会录制到 IDE 或其他窗口。脚本通过 PowerShell 调用 `user32.dll` 的 `SetForegroundWindow` + `ShowWindow(SW_RESTORE)` 将浏览器窗口拉到最前面。
+
+#### 2. 屏幕分辨率必须动态检测
+
+硬编码 `1920x1080` 在非 1080p 显示器上会导致只录制左上角部分区域。脚本使用 `[System.Windows.Forms.Screen]::PrimaryScreen.Bounds` 获取实际分辨率，传给 FFmpeg `-video_size` 参数。
+
+**重要**：H.264 编码要求宽高都是偶数。检测到的分辨率必须向下取整到最近的偶数（如 1707x1067 → 1706x1066），否则 FFmpeg 会报 "Generic error in an external library" 错误。
+
+#### 3. Puppeteer 启动顺序
+
+浏览器必须先于 FFmpeg 录屏启动。当前流程：Puppeteer 启动（后台） → 等待 5 秒 → FFmpeg 开始录屏。这确保浏览器已全屏并处于前台。
+
+#### 4. FFmpeg 字幕路径
+
+FFmpeg `subtitles` filter 在 Windows 上将冒号解析为参数分隔符，导致绝对路径 `C:\path\file.srt` 失败。解决方案：将 SRT 复制到 render 目录，使用相对路径 `../render/_sub.srt`（从 storyboard CWD）。
+
 ### 3. 可选 BGM 混音
 
 如 `ENABLE_BGM=true`，工具自动调用 `mix-bgm.sh`：
@@ -234,5 +256,7 @@ BGM 混音失败时不阻断流水线，降级使用无 BGM 版本。
 | Vite 启动超时 | 30 秒内未响应 `http://127.0.0.1:<port>` | 阻断，检查 storyboard 项目是否完整，运行 `npm install` |
 | Puppeteer 失败 | Chromium 启动报错 | 阻断，检查 node 版本（>=18）和 Puppeteer 安装 |
 | 录屏失败（单章） | FFmpeg 退出码非 0 | 跳过该章，继续其他章节，最后在报告中标注 |
+| 录屏内容错误（Windows） | gdigrab 录到 IDE 而非浏览器 | 确保 puppeteer-launch.js 调用 `SetForegroundWindow`，且 Puppeteer 先于 FFmpeg 启动 |
+| 录屏只录到部分区域 | `-video_size` 与实际分辨率不匹配 | 动态检测屏幕分辨率，不要硬编码 |
 | BGM 生成失败 | mmx music 返回错误 | 降级到无 BGM 版本，不阻断 |
 | 音画同步偏差 > 0.5s | manifest.json 中 duration 偏差 | 阻断（IRON LAW），检查录屏和音频对齐 |

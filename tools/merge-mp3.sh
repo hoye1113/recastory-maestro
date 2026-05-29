@@ -127,7 +127,7 @@ main() {
 
         while IFS= read -r step; do
             if [ -n "$step" ]; then
-                local step_file="$chapter_dir/$(printf "%02d" $((step + 1))).mp3"
+                local step_file="$chapter_dir/$(printf "%02d" $step).mp3"
                 if [ -f "$step_file" ]; then
                     local abs_path
                     abs_path=$(ffmpeg_path "$step_file")

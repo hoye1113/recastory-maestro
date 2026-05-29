@@ -160,6 +160,8 @@ bash scripts/tts-providers/<name>.sh tts_check
 
 > **dry_run 模式**：如 plan.json 中 `dry_run: true`，跳过实际合成，仅生成 audio-segments.json 并输出将要执行的命令列表（每段一行），用于验证流程正确性。
 
+**VO-002 预检查**：在合成前，检查每步文本长度。如单句 >50 字，必须在合成前拆分为短句（以逗号、句号、分号为断点），然后分段合成后拼接为单个 MP3。这确保字幕不会过长，避免观众阅读困难。
+
 **dry_run 输出示例**（2 章 5 步，假设选定 minimax）：
 
 ```text

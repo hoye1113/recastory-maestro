@@ -94,6 +94,8 @@ process_srt_file() {
     local current_text=""
 
     while IFS= read -r line || [ -n "$line" ]; do
+        # Strip carriage return (Windows line endings)
+        line="${line%$'\r'}"
         # Empty lines mark end of block
         if [ -z "$line" ]; then
             if [ $in_block -eq 1 ] && [ -n "$current_timestamp" ]; then
@@ -184,6 +186,7 @@ get_last_end_timestamp_ms() {
     local in_timestamp=0
 
     while IFS= read -r line || [ -n "$line" ]; do
+        line="${line%$'\r'}"
         # Check if this is a timestamp line
         if [[ "$line" =~ ^([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})\ --\>\ ([0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3})$ ]]; then
             last_timestamp="${BASH_REMATCH[2]}"
@@ -284,7 +287,7 @@ main() {
         local steps
         # Extract stepIndex values for this chapter from JSON
         # Each segment is on one line, so we can grep for lines containing both chapter and stepIndex
-        steps=$(grep "\"chapter\"[[:space:]]*:[[:space:]]*\"$chapter\"" "$segments_file" | \
+        steps=$(grep -A5 "\"chapter\"[[:space:]]*:[[:space:]]*\"$chapter\"" "$segments_file" | \
                 grep -o '"stepIndex"[[:space:]]*:[[:space:]]*[0-9]*' | \
                 sed 's/.*"stepIndex"[[:space:]]*:[[:space:]]*\([0-9]*\).*/\1/' | \
                 sort -n)
