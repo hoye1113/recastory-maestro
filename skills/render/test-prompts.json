@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "prompt": "渲染 workspace/test-bilibili-01 的最终视频",
+    "expected": "生成 render/final.mp4，包含所有章节拼接、字幕烧录，时长 >0，分辨率 1920x1080"
+  },
+  {
+    "id": 2,
+    "prompt": "只渲染前 2 章（MAX_CHAPTERS=2）",
+    "expected": "只生成 2 个章节视频并拼接，final.mp4 时长明显短于全量版本"
+  },
+  {
+    "id": 3,
+    "prompt": "渲染并添加 BGM（ENABLE_BGM=true）",
+    "expected": "生成 final-with-bgm.mp4，BGM 音量低于口播（默认 0.2）"
+  },
+  {
+    "id": 4,
+    "prompt": "验证渲染产物：字幕位置、帧率、音频同步",
+    "expected": "字幕在底部（非居中），帧率 ≥24fps，音频与画面同步"
+  }
+]

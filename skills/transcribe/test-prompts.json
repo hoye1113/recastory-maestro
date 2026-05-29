@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "转写这个 MP3 文件（examples/hello-world/audio.mp3）",
+    "expected": "生成 article.md，包含完整转写文字，标点规范，无 ASR 噪声"
+  },
+  {
+    "id": 2,
+    "prompt": "转写英文音频文件",
+    "expected": "自动检测语言为英文，转写结果为英文，时间戳格式正确"
+  },
+  {
+    "id": 3,
+    "prompt": "转写一个不存在的文件",
+    "expected": "报错提示文件不存在，不生成空 article.md"
+  }
+]

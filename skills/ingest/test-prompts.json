@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "下载这个 B 站视频并生成 article.md（https://www.bilibili.com/video/BV1xx411c7mD）",
+    "expected": "下载视频、提取音频、转写，生成 article.md 包含完整文字内容"
+  },
+  {
+    "id": 2,
+    "prompt": "下载 YouTube 短视频（≤2min）并转写",
+    "expected": "生成 article.md，包含标题、正文、时间戳标记"
+  },
+  {
+    "id": 3,
+    "prompt": "用已有的本地 MP4 文件生成 article.md",
+    "expected": "提示用户使用 transcribe 命令而非 ingest（本地文件不走 ingest）"
+  }
+]

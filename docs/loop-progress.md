@@ -3,6 +3,7 @@
 | Iteration | Date | Track | Issues Fixed | Issues Remaining | Regression | Notes |
 |-----------|------|-------|-------------|-----------------|------------|-------|
 | 1 | 2026-05-30 | B,C,D,E | B-005, C-001, D-002, D-003, E-002, E-003 | 13 (warning) + 3 (info) | 0 | version fix, RV prefix rename, port align, OBSOLETE markers, test script |
+| 2 | 2026-05-30 | F | F-001 (partial) | 5 (warning) + 3 (info) | 0 | test-prompts.json for render/ingest/transcribe/audit |
 
 ## Iteration 1 Summary
 
