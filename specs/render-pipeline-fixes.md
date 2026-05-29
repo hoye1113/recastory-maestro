@@ -1,5 +1,7 @@
 # Render Pipeline Fixes - Specs Document
 
+> **OBSOLETE**: 本文档 §1-8 记录的 FFmpeg gdigrab 方案已被 CDP screencast 替代。§9-10 为当前方案。
+
 > 记录渲染流水线的所有修复和经验教训
 
 ---
@@ -279,15 +281,133 @@ actual_resolution=$(ffprobe -v quiet -show_entries stream=width,height -of csv=p
 
 ---
 
-## 8. 文件清单
+## 8. 浏览器消失问题（FFmpeg/Puppeteer 时序）
+
+### 8.1 浏览器在录屏中消失
+
+**问题**：FFmpeg 录屏过程中浏览器窗口消失，录到 VS Code 桌面
+
+**根因**：`render-video.sh` 中 FFmpeg 和 Puppeteer 的等待顺序错误：
+1. FFmpeg 先录完
+2. 脚本等待 Puppeteer
+3. 但 Puppeteer 的 `finally` 块已调用 `browser.close()` 关闭浏览器
+4. FFmpeg 录到了空桌面
+
+**帧分析证据**（mmx 图片理解服务验证）：
+- 5s/30s: 浏览器可见
+- 60s: VS Code 在前台（浏览器被遮挡）
+- 120s/180s: 浏览器恢复
+- 230s: VS Code 在前台（浏览器已关闭）
+
+**修复**：哨兵文件机制
+```javascript
+// puppeteer-launch.js - auto-play 完成后
+const sentinelFile = path.join(process.cwd(), '.puppeteer-alive')
+fs.writeFileSync(sentinelFile, String(process.pid))
+// 等待 bash 删除哨兵文件后才关闭浏览器
+await new Promise((resolve) => {
+  const checkInterval = setInterval(() => {
+    if (!fs.existsSync(sentinelFile)) { clearInterval(checkInterval); resolve() }
+  }, 500)
+  setTimeout(() => { clearInterval(checkInterval); resolve() }, MAX_WAIT_MS)
+})
+```
+
+```bash
+# render-video.sh - FFmpeg 录完后发信号
+rm -f "$storyboard_dir/.puppeteer-alive"
+wait $puppeteer_pid  # 此时才等待 puppeteer 关闭浏览器
+```
+
+### 8.2 CDP Browser.setWindowBounds 参数冲突
+
+**问题**：`Browser.setWindowBounds` 同时设置 `windowState: 'maximized'` 和 `width/height` 报错
+
+**错误**：`The 'minimized', 'maximized' and 'fullscreen' states cannot be combined with 'left', 'top', 'width' or 'height'`
+
+**修复**：只用 `windowState`，不设 `width/height`
+```javascript
+await session.send('Browser.setWindowBounds', {
+  windowId,
+  bounds: { windowState: 'maximized' }  // 不能同时设 width/height
+})
+```
+
+### 8.3 浏览器稳定性 Chromium flags
+
+**问题**：浏览器在渲染过程中可能崩溃（GPU 相关）
+
+**修复**：添加稳定性 flags
+```javascript
+args: [
+  '--disable-gpu',                    // 防止 GPU 相关崩溃
+  '--disable-software-rasterizer',    // 低资源环境稳定性
+  '--disable-dev-shm-usage',          // 避免 /dev/shm 问题
+  '--no-zygote',                      // 单进程更稳定
+]
+```
+
+### 8.4 哨兵文件清理
+
+**注意**：`cleanup()` 函数中需清理哨兵文件，防止残留
+```bash
+cleanup() {
+    rm -f "${storyboard_dir:-/dev/null}/.puppeteer-alive" 2>/dev/null
+}
+```
+
+---
+
+## 9. CDP Screencast 录制方案（替代 FFmpeg gdigrab）
+
+### 9.1 背景
+
+FFmpeg gdigrab 桌面录屏存在多个 Windows 平台问题：
+- 浏览器焦点丢失（录到 IDE）
+- DPI 缩放导致录制区域偏移
+- 浏览器在录屏中消失（Puppeteer/FFmpeg 时序竞争）
+- 需要 Win32 API 哨兵文件机制
+
+**解决方案**：使用 CDP `Page.startScreencast` 浏览器内录，消除所有系统级录屏问题。
+
+### 9.2 实现
+
+新增 `tools/capture-chrome.js`，使用 Puppeteer + CDP screencast：
+- 浏览器内录，不依赖桌面焦点
+- `ffprobe` 预读 MP3 时长，`setTimeout` + `dispatchEvent` 驱动翻页
+- 不在浏览器内播放 MP3（规避 Chrome autoplay policy）
+- 事后 FFmpeg 混流：无声视频 + 原始 MP3 → 最终 MP4
+
+### 9.3 关键发现
+
+| 发现 | 说明 |
+|------|------|
+| CDP 帧率 | 事件驱动，实际 30-100fps（非固定 15fps） |
+| 动态 fps | 必须从 `frames.length / elapsed` 计算实际 fps，否则视频时长错位 |
+| 键盘事件 | `page.keyboard.press` 在 screencast 期间不可靠，需用 `page.evaluate(() => window.dispatchEvent(...))` |
+| 内存 | 4000+ JPEG 帧 ≈ 200MB 内存，可接受 |
+
+### 9.4 旧方案（已废弃）
+
+以下章节记录的 FFmpeg gdigrab + puppeteer-launch.js 方案已被 CDP screencast 替代：
+- §2 浏览器焦点问题（不再需要）
+- §3.1 分辨率检测（CDP 固定 1920x1080）
+- §3.4 浏览器视窗 vs 屏幕分辨率（不再适用）
+- §7 Puppeteer 启动顺序（不再需要 FFmpeg 启动顺序）
+- §8 浏览器消失问题（不再存在）
+
+---
+
+## 10. 文件清单
 
 | 文件 | 修改内容 |
 | --- | --- |
-| `tools/render-video.sh` | 字幕字体、分辨率检测、Vite 清理、启动顺序、自动缩放到 1080p |
-| `tools/puppeteer-launch.js` | AttachThreadInput 前台激活、周期性 interval、分辨率检测 |
-| `tools/verify-render.sh` | 新增：渲染验证截图提取脚本 |
-| `skills/render/SKILL.md` | Windows 平台注意事项 |
-| `references/render/REFERENCE.md` | Windows 平台已知陷阱、验证流程、DPI 缩放、环境检测 |
+| `tools/capture-chrome.js` | **新增**：CDP screencast 录制脚本 |
+| `tools/render-video.sh` | 改用 capture-chrome.js 替代 FFmpeg gdigrab + puppeteer-launch.js |
+| `tools/puppeteer-launch.js` | 保留，用于非录制场景（截图、验证） |
+| `tools/verify-render.sh` | 渲染验证截图提取脚本 |
+| `skills/render/SKILL.md` | 更新录制模式说明 |
+| `references/render/REFERENCE.md` | 更新录制模式、移除 Windows 焦点/DPI 描述 |
 | `specs/render-pipeline-fixes.md` | 本文档 |
 
 ---

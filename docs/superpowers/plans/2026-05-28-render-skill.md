@@ -1,5 +1,7 @@
 # Render Skill Implementation Plan
 
+> **OBSOLETE**: 本计划基于 FFmpeg gdigrab 方案，已被 CDP screencast 替代。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 ## 质量门禁（每 Task 强制执行）

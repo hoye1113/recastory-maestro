@@ -261,7 +261,7 @@ Audit 通过后，运行 LLM 深度审查（6 个维度）：
 - 启动 Vite dev server
 - 合并步骤级 MP3 → 章节级 MP3
 - Puppeteer 打开浏览器 + 按 SPACE 启动自动播放
-- FFmpeg 录屏
+- CDP Screencast 录屏
 - 烧入章节级 SRT 字幕
 - 合并为最终 MP4 + 生成 manifest.json
 
@@ -307,7 +307,7 @@ Phase 3: Dispatch
 ├─ 第 1 章 storyboard + voice（主线程）
 │   └─ [Checkpoint STORYBOARD_PREVIEW] → 用户验收
 ├─ 第 2~N 章（按 Mode A 逐章确认）
-└─ render: Puppeteer 录屏 + FFmpeg 编码
+└─ render: CDP Screencast 录屏 + FFmpeg 编码
 
 Phase 4: Audit → 每个 Skill 后运行确定性规则
 Phase 5: Review → LLM 审查 6 维度

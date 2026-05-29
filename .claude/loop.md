@@ -117,7 +117,7 @@
 |----|-------|------|--------|
 | A-001 | qwen3-tts.sh shell injection vulnerability | scripts/tts-providers/qwen3-tts.sh | critical |
 | A-002 | TTS provider scripts 缺少 set -e / error handling | scripts/tts-providers/*.sh (4 files) | critical |
-| A-003 | render-video.sh 未校验 puppeteer-launch.js 存在 | tools/render-video.sh | warning |
+| A-003 | ~~render-video.sh 未校验 puppeteer-launch.js 存在~~ | ~~tools/render-video.sh~~ | ~~warning~~ (resolved: CDP screencast migration) |
 
 **完成标准**: 所有 shell 脚本通过 `bash -n` 语法检查，无直接变量插值到 Python/Node 代码中。
 

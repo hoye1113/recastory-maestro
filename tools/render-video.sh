@@ -8,9 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "$SCRIPT_DIR/lib/env-common.sh"
 
 DEV_SERVER_PID=""
-FFMPEG_PID=""
 cleanup() {
-    [ -n "$FFMPEG_PID" ] && kill -0 "$FFMPEG_PID" 2>/dev/null && kill "$FFMPEG_PID" 2>/dev/null
     [ -n "$DEV_SERVER_PID" ] && kill -0 "$DEV_SERVER_PID" 2>/dev/null && kill "$DEV_SERVER_PID" 2>/dev/null
 }
 trap cleanup EXIT
@@ -35,8 +33,8 @@ main() {
     [ -f "$segments_file" ] || { log_error "audio-segments.json not found: $segments_file"; exit 1; }
     command -v ffmpeg >/dev/null 2>&1 || { log_error "FFmpeg not installed"; exit 1; }
     command -v ffprobe >/dev/null 2>&1 || { log_error "FFprobe not installed"; exit 1; }
-    if [ ! -f "$SCRIPT_DIR/puppeteer-launch.js" ]; then
-        log_error "puppeteer-launch.js not found in $SCRIPT_DIR"
+    if [ ! -f "$SCRIPT_DIR/capture-chrome.js" ]; then
+        log_error "capture-chrome.js not found in $SCRIPT_DIR"
         exit 1
     fi
 
@@ -53,15 +51,6 @@ main() {
     if [ "${SKIP_PREFLIGHT:-false}" != "true" ]; then
         env_preflight_check || { log_error "Pre-flight check failed"; exit 1; }
     fi
-
-    # Detect environment once (resolution, DPI, platform)
-    local env_raw env_capture_res
-    env_raw=$(env_detect_resolution)
-    env_parse_resolution "$env_raw"
-    env_capture_res=$(env_pick_capture_resolution "capture")
-    local platform
-    platform=$(env_platform)
-    log_info "Screen capture: $env_capture_res (logical: $ENV_LOGICAL_RES, physical: $ENV_PHYSICAL_RES, DPI: ${ENV_DPI_SCALE}x)"
 
     log_info "Starting render pipeline"
     mkdir -p "$output_dir"
@@ -128,7 +117,6 @@ main() {
 
         local chapter_mp3="$audio_dir/${chapter}.mp3"
         local chapter_srt="$audio_dir/${chapter}.srt"
-        local chapter_raw="$output_dir/${chapter}-raw.mp4"
         local chapter_video="$output_dir/${chapter}.mp4"
 
         if [ ! -f "$chapter_mp3" ]; then
@@ -136,65 +124,34 @@ main() {
             continue
         fi
 
-        # Get audio duration
-        local audio_dur capture_dur
-        audio_dur=$(ffprobe -v quiet -show_entries format=duration -of csv=p=0 "$chapter_mp3")
-        capture_dur=$(awk "BEGIN{printf \"%.0f\", $audio_dur + 3}")
-
-        # Platform-specific screen capture (resolution detected once before the loop)
-        local screen_input
-        local screen_res="$env_capture_res"
-        case "$platform" in
-            windows) screen_input=(-f gdigrab -framerate 30 -video_size "$screen_res" -i desktop) ;;
-            darwin)  screen_input=(-f avfoundation -framerate 30 -i 1:0) ;;
-            linux)   screen_input=(-f x11grab -framerate 30 -video_size "$screen_res" -i :0.0) ;;
-        esac
-
-        # Puppeteer opens browser + presses SPACE (must happen BEFORE FFmpeg captures)
-        log_info "Launching browser for auto-play..."
-        local viewport_file="$storyboard_dir/.viewport-dimensions.txt"
-        rm -f "$viewport_file"
-        node "$SCRIPT_DIR/puppeteer-launch.js" "http://127.0.0.1:${vite_port}/?auto=1&chapter=${chapter}" --headed &
-        local puppeteer_pid=$!
-        sleep 8  # Let browser open, go fullscreen, and come to foreground
-
-        # Read actual browser viewport dimensions (written by puppeteer-launch.js)
-        if [ -f "$viewport_file" ]; then
-            local viewport_res
-            viewport_res=$(cat "$viewport_file" | tr -d '[:space:]')
-            if [[ "$viewport_res" =~ ^[0-9]+x[0-9]+$ ]]; then
-                screen_res="$viewport_res"
-                log_info "Using browser viewport dimensions: $screen_res"
-            fi
-            rm -f "$viewport_file"
+        # CDP screencast recording via capture-chrome.js
+        # Handles: browser launch, CDP screencast, ffprobe timing, frame encoding, audio muxing
+        log_info "Recording chapter via CDP screencast..."
+        if ! node "$SCRIPT_DIR/capture-chrome.js" "$workspace" \
+            --chapter "$chapter" \
+            --port "$vite_port" \
+            --output "$chapter_video"; then
+            log_error "capture-chrome.js failed for $chapter, skipping"
+            continue
         fi
 
-        # Start FFmpeg recording (background) — browser should be in foreground now
-        log_info "Starting screen capture (${capture_dur}s, ${screen_res})..."
-        ffmpeg -y "${screen_input[@]}" -t "$capture_dur" -c:v libx264 -preset medium -crf 18 -pix_fmt yuv420p "$chapter_raw" &
-        FFMPEG_PID=$!
-
-        # Wait for FFmpeg to finish (capture duration elapsed)
-        wait $FFMPEG_PID 2>/dev/null || { log_error "FFmpeg capture failed for $chapter"; FFMPEG_PID=""; continue; }
-        FFMPEG_PID=""
-
-        # Wait for puppeteer to finish (auto-play complete)
-        wait $puppeteer_pid 2>/dev/null || log_warn "Puppeteer exited with error for $chapter"
-        [ -f "$chapter_raw" ] || { log_error "Raw capture missing: $chapter_raw"; continue; }
+        [ -f "$chapter_video" ] || { log_error "Chapter video missing: $chapter_video"; continue; }
 
         # Burn subtitles
         if [ -f "$chapter_srt" ]; then
             log_info "Burning subtitles..."
-            # FFmpeg subtitles filter breaks on Windows absolute paths (colon in drive letter).
-            # Workaround: copy SRT to render dir, use relative path from CWD (storyboard dir).
             local srt_copy="../render/_sub.srt"
             cp "$chapter_srt" "$output_dir/_sub.srt"
-            ffmpeg -y -i "$chapter_raw" \
+            if ffmpeg -y -i "$chapter_video" \
                 -filter_complex "subtitles=filename=${srt_copy}:force_style='FontSize=18,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,MarginV=30'" \
-                -c:v libx264 -preset medium -crf 18 -c:a copy "$chapter_video" 2>/dev/null
-            rm -f "$chapter_raw" "$output_dir/_sub.srt"
-        else
-            mv "$chapter_raw" "$chapter_video"
+                -c:v libx264 -preset medium -crf 18 -c:a copy "${chapter_video}.sub.mp4" 2>/dev/null; then
+                mv "${chapter_video}.sub.mp4" "$chapter_video"
+                rm -f "$output_dir/_sub.srt"
+                log_info "Subtitles burned successfully"
+            else
+                log_warn "Subtitle burning failed, keeping video without subtitles"
+                rm -f "${chapter_video}.sub.mp4" "$output_dir/_sub.srt"
+            fi
         fi
 
         log_info "Chapter video: $chapter_video"

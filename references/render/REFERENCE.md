@@ -7,32 +7,29 @@
 ## 输出规格
 | 参数 | 值 |
 |---|---|
-| 分辨率 | 动态检测（`tools/lib/env-common.sh`），逻辑分辨率录屏，物理分辨率报告，最终缩放到 1920x1080 |
-| 帧率 | 30fps（FFmpeg 录屏） |
+| 分辨率 | 1920x1080（CDP screencast 固定） |
+| 帧率 | 动态（CDP 推帧率，通常 30-100fps） |
 | 编码 | H.264, CRF 18 |
 | 最终格式 | MP4 |
 
-### Windows 平台已知陷阱
+### 录制模式：CDP Screencast
+
+使用 `tools/capture-chrome.js`，基于 Puppeteer + CDP `Page.startScreencast` 浏览器内录：
+
+- 不依赖桌面焦点，无 DPI/缩放问题
+- `ffprobe` 预读 MP3 时长，`setTimeout` + `dispatchEvent` 驱动翻页
+- 不在浏览器内播放 MP3（规避 Chrome autoplay policy）
+- 事后 FFmpeg 混流：无声视频 + 原始 MP3 → 最终 MP4
+
+### 已知问题
 
 | 问题 | 根因 | 修复 |
-|---|---|---|
-| 录屏内容是 IDE | 浏览器未置于前台 | `AttachThreadInput` + `SetForegroundWindow` |
-| 页面切换后录到 IDE | 自动播放过程中焦点丢失 | `setInterval` 每 2 秒周期性调用 `bringToForeground()` |
-| 焦点激活无效 | Windows 限制后台进程调用 `SetForegroundWindow` | 使用 `AttachThreadInput` 附加到前台线程 |
-| 只录到左上角 | `-video_size` 硬编码 1920x1080 | 动态检测实际分辨率，向下取整到偶数 |
-| 录屏尺寸不匹配 | 屏幕分辨率 ≠ 浏览器视窗大小 | 使用 Puppeteer `window.innerWidth/innerHeight` 获取实际视窗 |
-| 最终视频非 1080p | 用户屏幕不是 1920x1080 | 拼接后自动 `scale=1920:1080:flags=lanczos` |
+| --- | --- | --- |
 | 字幕烧录失败 | FFmpeg 将 `C:` 冒号解析为 filter 分隔符 | 使用相对路径 `../render/_sub.srt` |
 | Vite 端口冲突 | 旧进程占用 5173 | 启动前 `pkill -f "vite"` 清理旧进程，再从日志检测实际端口 |
-
-### DPI 缩放处理
-
-Windows DPI 缩放会导致逻辑分辨率与物理分辨率不一致：
-- 2560x1600 屏幕 + 150% DPI → 逻辑分辨率 1707x1067
-- FFmpeg gdigrab 使用逻辑分辨率（工作在屏幕坐标空间）
-- 最终视频自动缩放到 1920x1080
-
-检测方式：`tools/lib/env-common.sh` 的 `env_detect_resolution` 函数，同时报告逻辑分辨率、物理分辨率和 DPI 缩放比例。
+| 浏览器崩溃（GPU 相关） | Chromium GPU 加速在某些环境不稳定 | 添加 `--disable-gpu --disable-software-rasterizer --no-zygote` 稳定性 flags |
+| ArrowRight 不触发 | `page.keyboard.press` 在 screencast 期间不可靠 | 改用 `page.evaluate(() => window.dispatchEvent(new KeyboardEvent(...)))` |
+| 视频时长错位 | CDP 推帧率非固定，不能硬编码 fps | 从 `frames.length / elapsed` 计算实际 fps |
 
 ### 环境检测流水线
 
@@ -76,10 +73,10 @@ SKIP_PREFLIGHT=true bash tools/render-video.sh workspace/<id>
 | `?audio=1` 或 `M` | Audio | 自动播音频，手动推进 |
 | `?auto=1` / 再按 `M` | Auto | 自动播 + 自动推进（录制用） |
 Auto 首次按 `Space` 启动。录屏：全屏 → 录制 → Space → 一镜到底 → 裁头尾。
-| 平台 | 工具 | 设置 |
-|---|---|---|
-| macOS | Cmd+Shift+5 / QuickTime | 浏览器窗口，1920x1080 |
-| 跨平台 | OBS Studio | 窗口捕获，1920x1080，60fps |
+
+### CDP Screencast 录制（推荐）
+
+使用 `tools/capture-chrome.js`，基于 Puppeteer + CDP `Page.startScreencast` 浏览器内录。不依赖桌面焦点，无 DPI/缩放问题，跨平台一致。
 ---
 ## TTS Provider 契约
 
