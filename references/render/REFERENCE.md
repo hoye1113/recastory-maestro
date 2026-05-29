@@ -7,10 +7,58 @@
 ## 输出规格
 | 参数 | 值 |
 |---|---|
-| 分辨率 | 1920x1080（浏览器全屏） |
-| 帧率 | 60fps（OBS 设置） |
-| 编码 | H.264, CRF 18–23 |
+| 分辨率 | 动态检测（`tools/lib/env-common.sh`），逻辑分辨率录屏，物理分辨率报告，最终缩放到 1920x1080 |
+| 帧率 | 30fps（FFmpeg 录屏） |
+| 编码 | H.264, CRF 18 |
 | 最终格式 | MP4 |
+
+### Windows 平台已知陷阱
+
+| 问题 | 根因 | 修复 |
+|---|---|---|
+| 录屏内容是 IDE | 浏览器未置于前台 | `AttachThreadInput` + `SetForegroundWindow` |
+| 页面切换后录到 IDE | 自动播放过程中焦点丢失 | `setInterval` 每 2 秒周期性调用 `bringToForeground()` |
+| 焦点激活无效 | Windows 限制后台进程调用 `SetForegroundWindow` | 使用 `AttachThreadInput` 附加到前台线程 |
+| 只录到左上角 | `-video_size` 硬编码 1920x1080 | 动态检测实际分辨率，向下取整到偶数 |
+| 录屏尺寸不匹配 | 屏幕分辨率 ≠ 浏览器视窗大小 | 使用 Puppeteer `window.innerWidth/innerHeight` 获取实际视窗 |
+| 最终视频非 1080p | 用户屏幕不是 1920x1080 | 拼接后自动 `scale=1920:1080:flags=lanczos` |
+| 字幕烧录失败 | FFmpeg 将 `C:` 冒号解析为 filter 分隔符 | 使用相对路径 `../render/_sub.srt` |
+| Vite 端口冲突 | 旧进程占用 5173 | 启动前 `pkill -f "vite"` 清理旧进程，再从日志检测实际端口 |
+
+### DPI 缩放处理
+
+Windows DPI 缩放会导致逻辑分辨率与物理分辨率不一致：
+- 2560x1600 屏幕 + 150% DPI → 逻辑分辨率 1707x1067
+- FFmpeg gdigrab 使用逻辑分辨率（工作在屏幕坐标空间）
+- 最终视频自动缩放到 1920x1080
+
+检测方式：`tools/lib/env-common.sh` 的 `env_detect_resolution` 函数，同时报告逻辑分辨率、物理分辨率和 DPI 缩放比例。
+
+### 环境检测流水线
+
+`tools/env-check.sh` 生成 `env-report.json`，包含：
+
+| 字段 | 说明 |
+| --- | --- |
+| `platform` | windows/linux/darwin |
+| `resolution.logical` | 逻辑分辨率（录屏用） |
+| `resolution.physical` | 物理分辨率（报告用） |
+| `resolution.dpi_scale` | DPI 缩放比例 |
+| `resolution.capture_recommended` | 推荐录屏分辨率 |
+| `browser.path` | 检测到的浏览器路径 |
+| `dependencies` | 所有依赖的检测结果 |
+| `preflight.passed` | 预检是否通过 |
+
+使用方式：
+
+```bash
+# 运行环境检查
+bash tools/env-check.sh --output env-report.json
+
+# 跳过预检直接渲染
+SKIP_PREFLIGHT=true bash tools/render-video.sh workspace/<id>
+```
+
 ---
 ## 字幕同步 + 音画对齐
 | 要求 | 值 |
@@ -162,3 +210,35 @@ ffmpeg -i render/final.mp4 -vf "scale=1080:1920:force_original_aspect_ratio=decr
 | NVIDIA GPU | h264_nvenc | `-c:v h264_nvenc -preset p5` |
 | macOS | h264_videotoolbox | `-c:v h264_videotoolbox -b:v 8M` |
 | Intel QSV | h264_qsv | `-c:v h264_qsv -preset medium` |
+
+---
+
+## 渲染验证流程
+
+渲染完成后，使用 `verify-render.sh` 提取截图并验证内容正确性。
+
+### 验证命令
+
+```bash
+# 提取 5 张均匀分布的截图
+bash tools/verify-render.sh workspace/<id> 5
+
+# 使用 mmx MCP 读取截图验证内容
+mcp__MiniMax__understand_image --image workspace/<id>/render/verify/screenshot-00-5s.jpg
+```
+
+### 测试模式（限制章节数）
+
+```bash
+# 只渲染 3 个章节用于快速验证
+MAX_CHAPTERS=3 bash tools/render-video.sh workspace/<id>
+```
+
+### 验证检查项
+
+| 检查项 | 说明 |
+| --- | --- |
+| 画面内容 | 是否显示浏览器页面（非 IDE） |
+| 字幕可见 | 字幕是否清晰可读 |
+| 分辨率 | 最终视频是否为 1920x1080 |
+| 无黑屏 | 无异常黑屏或花屏 |
