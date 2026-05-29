@@ -57,14 +57,18 @@ SKIP_PREFLIGHT=true bash tools/render-video.sh workspace/<id>
 ```
 
 ---
-## 字幕同步 + 音画对齐
+
+## 音画同步 + TTS 约束
+
 | 要求 | 值 |
 |---|---|
 | Auto 推进 | 音频播完 + 200ms 缓冲 → next() |
 | 无音频退化 | `max(1500ms, 字数 x 250ms)` |
-| 字幕偏差 | ≤0.5s |
+| 音画偏差 | ≤0.5s |
 | 语速范围 | 120–180 字/分 |
 | 单句上限 | ≤50 字 |
+
+> 所有文字均为 HTML 元素，由 CDP screencast 自然捕获，无需 SRT 字幕烧录。
 ---
 ## 三种录制模式
 | URL / 快捷键 | 模式 | 行为 |

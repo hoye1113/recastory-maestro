@@ -1,6 +1,6 @@
 #!/bin/bash
 # tools/render-video.sh
-# Main render pipeline: merge audio, record screen via FFmpeg, burn subtitles, concatenate
+# Main render pipeline: merge audio, record via CDP screencast, concatenate
 # Usage: bash render-video.sh <workspace-dir>
 set -euo pipefail
 
@@ -116,7 +116,6 @@ main() {
         log_info "Rendering chapter: $chapter"
 
         local chapter_mp3="$audio_dir/${chapter}.mp3"
-        local chapter_srt="$audio_dir/${chapter}.srt"
         local chapter_video="$output_dir/${chapter}.mp4"
 
         if [ ! -f "$chapter_mp3" ]; then
@@ -136,23 +135,6 @@ main() {
         fi
 
         [ -f "$chapter_video" ] || { log_error "Chapter video missing: $chapter_video"; continue; }
-
-        # Burn subtitles
-        if [ -f "$chapter_srt" ]; then
-            log_info "Burning subtitles..."
-            local srt_copy="../render/_sub.srt"
-            cp "$chapter_srt" "$output_dir/_sub.srt"
-            if ffmpeg -y -i "$chapter_video" \
-                -filter_complex "subtitles=filename=${srt_copy}:force_style='FontSize=18,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,MarginV=30'" \
-                -c:v libx264 -preset medium -crf 18 -c:a copy "${chapter_video}.sub.mp4" 2>/dev/null; then
-                mv "${chapter_video}.sub.mp4" "$chapter_video"
-                rm -f "$output_dir/_sub.srt"
-                log_info "Subtitles burned successfully"
-            else
-                log_warn "Subtitle burning failed, keeping video without subtitles"
-                rm -f "${chapter_video}.sub.mp4" "$output_dir/_sub.srt"
-            fi
-        fi
 
         log_info "Chapter video: $chapter_video"
         chapter_videos+=("$chapter_video")
