@@ -140,18 +140,19 @@ main() {
         # Burn voiceover subtitles (SRT) onto video bottom
         if [ -f "$chapter_srt" ]; then
             log_info "Burning voiceover subtitles..."
-            local srt_copy="../render/_sub.srt"
-            cp "$chapter_srt" "$output_dir/_sub.srt"
+            local srt_split="$output_dir/_sub_split.srt"
+            py "$SCRIPT_DIR/split-srt.py" "$chapter_srt" "$srt_split" --max-len 20 2>/dev/null || cp "$chapter_srt" "$srt_split"
+            local srt_copy="../render/_sub_split.srt"
             if ffmpeg -y -i "$chapter_video" \
-                -vf "subtitles=filename=${srt_copy}:force_style='FontSize=18,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,MarginV=30'" \
+                -vf "subtitles=filename=${srt_copy}:force_style='FontSize=12,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,MarginV=140'" \
                 -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p -r 30 \
                 -c:a copy "${chapter_video}.sub.mp4" 2>/dev/null; then
                 mv "${chapter_video}.sub.mp4" "$chapter_video"
-                rm -f "$output_dir/_sub.srt"
+                rm -f "$srt_split"
                 log_info "Voiceover subtitles burned"
             else
                 log_warn "Subtitle burning failed, keeping video without subtitles"
-                rm -f "${chapter_video}.sub.mp4" "$output_dir/_sub.srt"
+                rm -f "${chapter_video}.sub.mp4" "$srt_split"
             fi
         fi
 
