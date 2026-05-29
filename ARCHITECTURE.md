@@ -346,10 +346,10 @@ references/
 
 | 规则 ID | 检测内容 | 修复动作 |
 |---------|---------|---------|
-| `RD-001` | 视频时长与音频时长偏差 >1 秒 | 阻断，检查同步 |
-| `RD-002` | 分辨率 ≠ 1920×1080 | 强制重渲染 |
-| `RD-003` | 字幕与音频不同步（>0.5 秒） | 标记为需校对 |
-| `RD-004` | 输出文件大小 >500MB（短视频） | 建议压缩或分段 |
+| `RV-001` | 视频时长与音频时长偏差 >1 秒 | 阻断，检查同步 |
+| `RV-002` | 分辨率 ≠ 1920×1080 | 强制重渲染 |
+| `RV-003` | 字幕与音频不同步（>0.5 秒） | 标记为需校对 |
+| `RV-004` | 输出文件大小 >500MB（短视频） | 建议压缩或分段 |
 
 ### 视觉审查反模式（VV 规则，通过 mmx vision）
 
@@ -956,6 +956,6 @@ Skills 可安装到任意 AI Agent 的 skills 目录。具体路径参考各 Age
 
 ## 版本
 
-- AGENT.md Version: 3.0.0（本文件为 v2.2.0 架构蓝图，已降级为参考文档）
+- AGENT.md Version: 3.0.0（本文件为 v3.0.0 架构蓝图，已降级为参考文档）
 - Inspired by: superpowers, impeccable, nuwa-skill, SlideNarrator, ClipScribe, darwin-skill, hv-analysis, 可乐米花园视频生成教程
 - Compatible with: Any AI Agent harness supporting SKILL.md protocol

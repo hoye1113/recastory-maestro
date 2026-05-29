@@ -245,4 +245,13 @@ BGM 混音失败时不阻断流水线，降级使用无 BGM 版本。
 | 录屏失败（单章） | capture-chrome.js 退出码非 0 | 跳过该章，继续其他章节，最后在报告中标注 |
 | 浏览器崩溃 | GPU 加速不稳定 | 添加 `--disable-gpu --no-zygote` 等稳定性 flags |
 | BGM 生成失败 | mmx music 返回错误 | 降级到无 BGM 版本，不阻断 |
+
+## 踩坑参考
+
+渲染相关的历史踩坑记录见 [docs/pitfalls.md](../../docs/pitfalls.md)，关键条目：
+
+- **ffmpeg force_style 多参数失效** — Windows 上逗号被解析为 filter separator，用 ASS override tags 替代
+- **ASS 对齐编号** — `\an2`=底部，`\an8`=顶部（键盘布局，非直觉）
+- **字幕烧录是破坏性操作** — 录制后先备份到 `render/clean/` 再烧录
+- **静态页帧率低** — CSS 动画驱动合成器推帧
 | 音画同步偏差 > 0.5s | manifest.json 中 duration 偏差 | 阻断（IRON LAW），检查录屏和音频对齐 |

@@ -142,9 +142,11 @@ main() {
             log_info "Burning voiceover subtitles..."
             local srt_split="$output_dir/_sub_split.srt"
             py "$SCRIPT_DIR/split-srt.py" "$chapter_srt" "$srt_split" --max-len 20 2>/dev/null || cp "$chapter_srt" "$srt_split"
-            local srt_copy="../render/_sub_split.srt"
+            # Use forward slashes for ffmpeg subtitle path (Windows compat)
+            local srt_ffmpeg
+            srt_ffmpeg=$(echo "$srt_split" | sed 's|\\|/|g')
             if ffmpeg -y -i "$chapter_video" \
-                -vf "subtitles=filename=${srt_copy}:force_style='FontSize=12,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2,MarginV=140'" \
+                -vf "subtitles=filename=${srt_ffmpeg}:force_style='FontSize=12'" \
                 -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p -r 30 \
                 -c:a copy "${chapter_video}.sub.mp4" 2>/dev/null; then
                 mv "${chapter_video}.sub.mp4" "$chapter_video"

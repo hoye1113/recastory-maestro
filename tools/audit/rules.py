@@ -11,7 +11,7 @@ Defined in docs but not yet implemented:
 - DS-001~006: Distill-Style oral rules (content-distillation/REFERENCE.md)
 - CH-001~006: Visual chapter rules (storyboard/REFERENCE.md)
 - SB-001~005: Storyboard design rules (ARCHITECTURE.md)
-- RD-001~004: Render rules (ARCHITECTURE.md)
+- RV-001~004: Render validation rules (ARCHITECTURE.md)
 """
 from __future__ import annotations
 

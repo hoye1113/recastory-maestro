@@ -1,5 +1,7 @@
 # mmx-cli Web Search Integration Plan
 
+> **OBSOLETE**: 本计划中的 `mmx-config.json` 引用已失效。保留作为历史参考。
+>
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 ## 质量门禁（每 Task 强制执行）

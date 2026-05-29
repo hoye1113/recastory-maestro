@@ -29,11 +29,11 @@ fi
 # Start Vite dev server
 log_info "Starting Vite dev server..."
 cd "$STORYBOARD_DIR"
-npx vite --port 5174 --host 127.0.0.1 --strictPort &
+npx vite --port 5173 --host 127.0.0.1 --strictPort &
 VITE_PID=$!
 trap 'kill $VITE_PID 2>/dev/null || true' EXIT
-for i in $(seq 1 30); do curl -s "http://127.0.0.1:5174" >/dev/null 2>&1 && break; sleep 1; done
-if ! curl -s "http://127.0.0.1:5174" >/dev/null 2>&1; then
+for i in $(seq 1 30); do curl -s "http://127.0.0.1:5173" >/dev/null 2>&1 && break; sleep 1; done
+if ! curl -s "http://127.0.0.1:5173" >/dev/null 2>&1; then
     log_error "Dev server failed to start within 30s"
     kill $VITE_PID 2>/dev/null || true
     exit 1
@@ -42,7 +42,7 @@ fi
 # Capture screenshots
 log_info "Capturing screenshots..."
 node "$SCRIPT_DIR/puppeteer-launch.js" \
-    "http://127.0.0.1:5174/?auto=1" \
+    "http://127.0.0.1:5173/?auto=1" \
     --screenshot-steps \
     --screenshot-dir "$SCREENSHOT_DIR" \
     || log_error "Screenshot capture failed"

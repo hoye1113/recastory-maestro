@@ -146,7 +146,8 @@ def process_srt(input_path, output_path, max_len=20):
         chunks, times = merge_short_chunks(chunks, times)
 
         for chunk, (s, e) in zip(chunks, times):
-            out_blocks.append(f"{idx}\n{ms_to_srt(s)} --> {ms_to_srt(e)}\n{chunk}")
+            # Inject ASS override for bottom-center alignment (\an2)
+            out_blocks.append(f"{idx}\n{ms_to_srt(s)} --> {ms_to_srt(e)}\n" + "{\\an2}" + chunk)
             idx += 1
 
     with open(output_path, 'w', encoding='utf-8') as f:
