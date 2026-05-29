@@ -13,5 +13,10 @@
     "id": 3,
     "prompt": "将多步 SRT 合并为章节级 SRT（cumulative_offset 链式偏移）",
     "expected": "时间戳连续无重叠，条目从 1 重新编号，块间空行分隔"
+  },
+  {
+    "id": 4,
+    "prompt": "TTS 合成时主 provider 不可用，触发降级链",
+    "expected": "自动降级到下一个 provider（minimax → edge-tts），不中断流水线"
   }
 ]

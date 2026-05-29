@@ -18,5 +18,15 @@
     "id": 4,
     "prompt": "验证渲染产物：字幕位置、帧率、音频同步",
     "expected": "字幕在底部（非居中），帧率 ≥24fps，音频与画面同步"
+  },
+  {
+    "id": 5,
+    "prompt": "渲染一个缺少 audio-segments.json 的 workspace",
+    "expected": "报错提示 audio-segments.json 缺失，不生成空视频"
+  },
+  {
+    "id": 6,
+    "prompt": "渲染时 Vite 启动失败",
+    "expected": "报错提示 dev server 启动超时，清理进程后退出"
   }
 ]
