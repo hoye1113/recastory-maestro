@@ -76,11 +76,13 @@ Released 2026-05-30.
 
 **结果**: 平均 85.9 分。最低分: ingest/transcribe (82)。优化优先级: ingest → transcribe → render。
 
-#### Phase 3: 定向优化（v3.1.0 Iteration 1）
+#### Phase 3: 定向优化（✅ 已完成 2026-05-30）
 
-- [ ] 对 render / ingest / voice 跑 darwin-skill 优化循环（每 skill 最多 3 轮）
-- [ ] 棘轮机制：只保留可测量改进，自动回滚退步
-- [ ] 人类检查点：每 skill 优化后暂停确认
+- [x] 对 ingest / transcribe / render 跑 darwin-skill 优化循环（每 skill 3 轮）
+- [x] 棘轮机制：只保留可测量改进，自动回滚退步
+- [x] 人类检查点：每 skill 优化后暂停确认
+
+**结果**: ingest 82→91.3, transcribe 82→91.3, render 85→88.8。全部 keep。
 
 #### Phase 4: 成果可视化（v3.1.0 Iteration 2）
 
