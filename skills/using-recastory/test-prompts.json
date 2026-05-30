@@ -13,5 +13,15 @@
     "id": 3,
     "prompt": "/recastory craft examples/hello-world/article.md --skip-ingest --skip-transcribe",
     "expected": "plan.json 的 skills 数组不含 ingest/transcribe，直接从 distill 开始"
+  },
+  {
+    "id": 4,
+    "prompt": "/recastory craft article.md --format keynote --style casual",
+    "expected": "检测参数冲突，展示说明请用户选择优先参数"
+  },
+  {
+    "id": 5,
+    "prompt": "/recastory craft article.md --perspective nonexistent",
+    "expected": "视角不存在时降级到中性风格，plan.json 标记 perspective.missing"
   }
 ]

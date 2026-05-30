@@ -13,5 +13,15 @@
     "id": 3,
     "prompt": "审计一个空目录",
     "expected": "提示缺少产出文件，不报错退出"
+  },
+  {
+    "id": 4,
+    "prompt": "审计时 rules.py 导入失败",
+    "expected": "阻断，提示 pip install -e . 或检查 Python 环境"
+  },
+  {
+    "id": 5,
+    "prompt": "审计时 mmx vision 不可用，跳过视觉规则",
+    "expected": "跳过 VV-001~005，记录 warning，继续其余 20 条规则"
   }
 ]

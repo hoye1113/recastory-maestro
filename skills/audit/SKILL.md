@@ -51,6 +51,19 @@ python -m tools.audit workspace/<pipeline_id>/ --json
 - `0` = Pass（无 Critical）
 - `1` = 至少一个 Critical
 
+> **dry_run 模式**：如 plan.json 中 `dry_run: true`，跳过实际审计执行，仅输出将要检查的文件列表和规则集。用于验证 workspace 结构和规则覆盖。
+>
+> dry_run 输出示例：
+>
+> ```text
+> [dry_run] 将执行审计：
+>   目录: workspace/rm-test-001/
+>   规则集: TR-001~005, CD-001/002/003/005/006, VO-001~004, SL-001~006, VV-001~005
+>   扫描文件: article.md, script.md, outline.md, audio-segments.json
+> [dry_run] 预估耗时: ~5 秒
+> [dry_run] 完成。实际审计请移除 dry_run 标志。
+> ```
+
 ### 2. 解读审计结果
 
 按严重度分类：
@@ -142,6 +155,13 @@ python -m tools.audit workspace/<pipeline_id>/
 - 审计报告（终端输出或 JSON）
 - 修复后的产出文件
 - 汇总报告（Pass/Warning/Critical 数量）
+
+## Resources
+
+| 资源 | 路径 | 用途 |
+| ---- | ---- | ---- |
+| 审计工具 | `tools/audit/` | 确定性规则引擎（25 条规则） |
+| 测试用例 | `skills/audit/test-prompts.json` | 典型 prompt 和期望输出 |
 
 ## Anti-Patterns
 
