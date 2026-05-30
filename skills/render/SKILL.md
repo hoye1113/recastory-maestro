@@ -4,6 +4,8 @@ version: 1.0.0
 description: 将 storyboard 幻灯片和 voice 音频合成为最终 MP4 视频，含录屏、字幕烧录、章节拼接、可选 BGM。用于流水线最后一步渲染。触发词：/recastory render、"合成视频"、"渲染最终视频"。
 ---
 
+> Darwin Skill: 88.8/100 (baseline 85 → optimized 2026-05-30)
+
 # Skill: render
 
 ## IRON LAW

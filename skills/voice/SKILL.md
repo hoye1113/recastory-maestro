@@ -4,6 +4,8 @@ version: 1.1.0
 description: 将口播稿 script.md 的每个步骤合成为独立 TTS 音频（MP3）和字幕（SRT），支持多 Provider 降级链、多章节批量合成、语速/音色配置、SRT 合并。触发条件：/recastory voice 或被 using-recastory 调度。
 ---
 
+> Darwin Skill: 90.3/100 (baseline 88 → optimized 2026-05-30)
+
 # Skill: voice
 
 ## IRON LAW

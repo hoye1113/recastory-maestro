@@ -4,6 +4,8 @@ version: 1.1.0
 description: 从 outline.md 生成 Vite+React+TS 幻灯片项目，含 narrations.ts 单一信源、23 主题、逐章开发。触发条件：/recastory storyboard 或被 using-recastory 调度。
 ---
 
+> Darwin Skill: 92.3/100 (baseline 90 → optimized 2026-05-30)
+
 # Skill: storyboard
 
 ## IRON LAW

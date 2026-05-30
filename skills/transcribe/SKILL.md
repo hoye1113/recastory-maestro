@@ -4,6 +4,8 @@ version: 1.0.0
 description: 将本地音频或视频文件转写为 article.md，支持多语言和多模型。用于已有本地文件的场景。在线视频请用 ingest。触发词：/recastory transcribe、"转写这个"、"识别语音"。
 ---
 
+> Darwin Skill: 91.3/100 (baseline 82 → optimized 2026-05-30)
+
 # Skill: transcribe
 
 ## IRON LAW

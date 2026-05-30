@@ -260,7 +260,7 @@ Audit 通过后，运行 LLM 深度审查（6 个维度）：
 
 - 启动 Vite dev server
 - 合并步骤级 MP3 → 章节级 MP3
-- Puppeteer 打开浏览器 + 按 SPACE 启动自动播放
+- CDP Screencast 浏览器内录，自动播放驱动帧推送
 - CDP Screencast 录屏
 - 烧入章节级 SRT 字幕
 - 合并为最终 MP4 + 生成 manifest.json

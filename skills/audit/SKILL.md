@@ -4,6 +4,8 @@ version: 1.0.0
 description: 运行确定性反模式规则检查（37 条规则），解读结果并指导修复。用于产出文件的质量门控，在 critique（LLM 深度审查）之前运行。触发词：/recastory audit、"检查质量"、"跑审计"。
 ---
 
+> Darwin Skill: 90.3/100 (baseline 84 → optimized 2026-05-30)
+
 # Skill: audit
 
 ## IRON LAW

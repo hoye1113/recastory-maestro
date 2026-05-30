@@ -4,6 +4,8 @@ version: 1.0.0
 description: 从视频 URL 一键完成下载、音频提取、转写，生成 article.md。用于在线视频导入场景（YouTube/Bilibili/Vimeo/Dailymotion）。本地文件请用 transcribe。触发词：/recastory ingest、视频 URL、"下载这个视频"。
 ---
 
+> Darwin Skill: 91.3/100 (baseline 82 → optimized 2026-05-30)
+
 # Skill: ingest
 
 ## IRON LAW

@@ -4,6 +4,8 @@ version: 1.1.0
 description: 将文章或转写文本提炼为口播稿（script.md）和开发大纲（outline.md），注入视角风格。触发条件：/recastory distill、被 using-recastory 调度、或用户要求"提炼文章""生成口播稿""转写成脚本"时触发。
 ---
 
+> Darwin Skill: 91.3/100 (baseline 86 → optimized 2026-05-30)
+
 # Skill: distill
 
 ## IRON LAW

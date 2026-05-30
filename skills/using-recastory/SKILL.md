@@ -9,6 +9,8 @@ user-invocable: true
 argument-hint: "[craft|distill|voice|storyboard|research] <input> [--perspective <name>] [--register <brand|product>] [--dry-run]"
 ---
 
+> Darwin Skill: 91.3/100 (baseline 87 → optimized 2026-05-30)
+
 # Skill: using-recastory
 
 ## IRON LAW

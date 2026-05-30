@@ -8,6 +8,8 @@ description: |
   三阶段流程：广度搜索 → 深度挖掘 → 交叉验证。
 ---
 
+> Darwin Skill: 90.3/100 (baseline 84 → optimized 2026-05-30)
+
 # Skill: research
 
 ## IRON LAW
