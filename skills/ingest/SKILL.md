@@ -66,6 +66,19 @@ python -m tools.ingest "<url>" -o workspace/<pipeline_id> \
 | `--language` | auto | 强制语言（如 `zh`、`en`），默认自动检测 |
 | `--device` | auto | 计算设备：auto / cpu / cuda |
 
+> **dry_run 模式**：如 plan.json 中 `dry_run: true`，跳过实际下载和转写，仅输出将要执行的命令和预期产物路径。用于验证 URL 有效性和参数合理性。
+>
+> dry_run 输出示例：
+>
+> ```text
+> [dry_run] 将执行以下步骤：
+>   1. yt-dlp download "https://..." → video/<title>.mp4
+>   2. ffmpeg extract audio → audio/<title>.wav
+>   3. faster-whisper transcribe → article.md
+> [dry_run] 预估耗时: ~60 秒（取决于视频时长和网络速度）
+> [dry_run] 完成。实际导入请移除 dry_run 标志。
+> ```
+
 工具自动完成 4 个步骤：
 1. yt-dlp 下载视频 → `workspace/<id>/video/<title>.mp4`
 2. FFmpeg 提取音频（16kHz mono WAV） → `workspace/<id>/audio/<title>.wav`
@@ -151,6 +164,14 @@ python -m tools.ingest "<url>" -o workspace/<pipeline_id> \
 - `workspace/<id>/video/<title>.mp4` — 原始视频
 - `workspace/<id>/audio/<title>.wav` — 提取的音频（16kHz mono）
 - `workspace/<id>/article.md` — 转写文本（按停顿分段的 markdown）
+
+## Resources
+
+| 资源 | 路径 | 用途 |
+| ---- | ---- | ---- |
+| 转写参考 | `references/transcription/REFERENCE.md` | Whisper 参数调优 |
+| 测试用例 | `skills/ingest/test-prompts.json` | 典型 prompt 和期望输出 |
+| 摄取工具 | `tools/ingest/` | Python 模块（yt-dlp + FFmpeg + Whisper） |
 
 ## Anti-Patterns
 

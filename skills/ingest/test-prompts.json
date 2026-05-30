@@ -13,5 +13,15 @@
     "id": 3,
     "prompt": "用已有的本地 MP4 文件生成 article.md",
     "expected": "提示用户使用 transcribe 命令而非 ingest（本地文件不走 ingest）"
+  },
+  {
+    "id": 4,
+    "prompt": "用一个无效的 URL 进行 ingest",
+    "expected": "阻断，报告 URL 不匹配支持平台"
+  },
+  {
+    "id": 5,
+    "prompt": "yt-dlp 下载失败时的处理",
+    "expected": "保留中间文件，报告错误原因，不跳过失败步骤"
   }
 ]
