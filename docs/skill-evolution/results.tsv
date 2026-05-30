@@ -1,0 +1,10 @@
+timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
+2026-05-30T15:00	baseline	render	-	85	baseline	-	完整流水线文档+踩坑参考+CDP录制模式	dry_run
+2026-05-30T15:00	baseline	ingest	-	82	baseline	-	简洁聚焦但缺dry_run模式	dry_run
+2026-05-30T15:00	baseline	voice	-	88	baseline	-	Provider降级链+典型执行流程+dry_run	dry_run
+2026-05-30T15:00	baseline	storyboard	-	90	baseline	-	23主题+10原则+14项自检+CSS token	dry_run
+2026-05-30T15:00	baseline	distill	-	86	baseline	-	三阶段流程+Comprehension Gate+五维评分	dry_run
+2026-05-30T15:00	baseline	transcribe	-	82	baseline	-	聚焦本地转写但缺dry_run模式	dry_run
+2026-05-30T15:00	baseline	audit	-	84	baseline	-	25条规则+修复指导+重跑验证	dry_run
+2026-05-30T15:00	baseline	using-recastory	-	87	baseline	-	主入口+4检查点+plan.json调度	dry_run
+2026-05-30T15:00	baseline	research	-	84	baseline	-	三阶段搜索+交叉验证+质量检查点	dry_run
