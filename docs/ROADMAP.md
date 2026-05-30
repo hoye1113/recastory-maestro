@@ -108,7 +108,6 @@ Released 2026-05-30.
 
 **目标**: 消除手动维护规则 ID 列表的风险。
 
-- [x] `@rule` 装饰器自动注册规则到 `_RULE_REGISTRY`
+- [x] `@rule` 装饰器自动注册规则到 `_RULE_REGISTRY`，替代手动 VV_RULE_IDS 列表
 - [x] `VV_RULE_IDS` / `ALL_RULE_IDS` 从 registry 自动导出
-- [x] `list_all_rules()` 函数输出所有注册规则（function + decorator）
-- 替代 VV_RULE_IDS 手动列表
+- [x] `get_all_rules()` 函数输出所有注册规则（function + decorator）

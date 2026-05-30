@@ -62,6 +62,7 @@ def scan_workspace(
 
     rules = get_rules_by_ids(rule_ids) if rule_ids else ALL_RULES
     report = AuditReport(workspace_dir=str(workspace), total_files_scanned=0)
+    scanned_files: set[str] = set()  # deduplicate file counting
 
     # Map file patterns to applicable rule categories
     # VO rules only apply to audio-segments.json, not all JSON files
@@ -70,7 +71,10 @@ def scan_workspace(
     vo_rules = [r for r in rules if r.id.startswith('VO-')]
 
     def _apply_rules(file_path: Path, content: str, applicable_rules: list[Rule]) -> None:
-        report.total_files_scanned += 1
+        fkey = str(file_path)
+        if fkey not in scanned_files:
+            scanned_files.add(fkey)
+            report.total_files_scanned += 1
         for rule in applicable_rules:
             violations = rule.detect(content, str(file_path))
             report.results.extend(violations)
@@ -149,11 +153,20 @@ def _run_vv_rules(workspace: Path, report: AuditReport) -> None:
     vv_results = run_vv_rules(screenshot_dir)
 
     for vr in vv_results:
-        # Convert VisionResult to RuleResult for unified reporting
+        if vr.status == 'skip':
+            # Report skip for transparency (mmx unavailable) but don't count
+            report.results.append(RuleResult(
+                rule_id=vr.rule_id,
+                name='VV visual check',
+                severity='warning',
+                file_path=vr.file or screenshot_dir,
+                message=vr.message,
+            ))
+            continue
         severity = 'critical' if vr.status == 'fail' else 'warning'
         report.results.append(RuleResult(
             rule_id=vr.rule_id,
-            name=f'VV visual check',
+            name='VV visual check',
             severity=severity,
             file_path=vr.file or screenshot_dir,
             message=vr.message,

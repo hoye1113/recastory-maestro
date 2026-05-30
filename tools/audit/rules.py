@@ -143,10 +143,6 @@ def detect_tr002(content: str, file_path: str) -> list[RuleResult]:
                 message='说话人标签应使用 [说话人] 格式，当前行使用了非标准格式',
                 line_number=i,
             ))
-    if has_bracket and has_non_standard:
-        pass
-    elif has_non_standard and not has_bracket:
-        pass
     return results
 
 
@@ -195,6 +191,8 @@ def detect_tr004(content: str, file_path: str) -> list[RuleResult]:
     total = len(chinese_chars)
     if total == 0:
         return results
+    # Note: substring matching may count "那个" in "那个人口" (demonstrative) as filler.
+    # Acceptable tradeoff — Chinese word segmentation would be overkill for this heuristic.
     filler_count = sum(content.count(f) for f in fillers)
     density = filler_count / total
     if density > 0.05:
@@ -398,11 +396,14 @@ def detect_vo002(content: str, file_path: str) -> list[RuleResult]:
         clean = sent.strip()
         char_count = len(re.findall(r'[一-鿿\w]', clean))
         if char_count > 50:
+            # Find line number by matching the start of the sentence
             line_no = None
-            for ln, line in enumerate(content.splitlines(), 1):
-                if clean[:20] in line:
-                    line_no = ln
-                    break
+            needle = clean[:min(20, len(clean))]
+            if needle:
+                for ln, line in enumerate(content.splitlines(), 1):
+                    if needle in line:
+                        line_no = ln
+                        break
             results.append(RuleResult(
                 rule_id='VO-002', name='单句长度过长', severity='warning',
                 file_path=file_path,
@@ -687,7 +688,7 @@ class DS002LongSentence:
             content = script_path.read_text(encoding='utf-8', errors='replace')
             sentences = re.split(r'[。！？.!?]', content)
             for sent in sentences:
-                chars = re.findall(r'[一-鿿]', sent)
+                chars = re.findall(r'[一-鿿\w]', sent)
                 if len(chars) > 20:
                     line_no = None
                     for ln, line in enumerate(content.splitlines(), 1):
@@ -1083,7 +1084,7 @@ class SB004TooManyAnimations:
         return results
 
 
-@rule("SB-005", severity="critical", file_types=["tsx", "ts"])
+@rule("SB-005", severity="critical", file_types=["tsx", "ts", "json"])
 class SB005PlaceholderImage:
     """SB-005: Placeholder text/images in storyboard files."""
 
@@ -1122,8 +1123,15 @@ class SB005PlaceholderImage:
 # VV rules live in vision_rules.py with a different calling convention,
 # but we register their IDs here so get_rules_by_prefix("VV-") works.
 
-for _vv_id in ['VV-001', 'VV-002', 'VV-003', 'VV-004', 'VV-005']:
-    _RULE_REGISTRY[_vv_id] = {"class": None, "severity": "warning", "file_types": []}
+_vv_severity = {
+    'VV-001': 'critical',  # AI fingerprint
+    'VV-002': 'warning',   # info density
+    'VV-003': 'critical',  # placeholder
+    'VV-004': 'critical',  # ending screen
+    'VV-005': 'warning',   # text density
+}
+for _vv_id, _vv_sev in _vv_severity.items():
+    _RULE_REGISTRY[_vv_id] = {"class": None, "severity": _vv_sev, "file_types": []}
 
 
 # ---------------------------------------------------------------------------
