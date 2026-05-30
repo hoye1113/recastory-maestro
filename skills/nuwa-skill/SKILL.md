@@ -7,6 +7,7 @@ description: |
   触发词：「造skill」「蒸馏XX」「女娲」「造人」「XX的思维方式」「做个XX视角」「更新XX的skill」「我想提升决策质量」「有没有一种思维方式能帮我...」「我需要一个思维顾问」。
   适用场景：创建人物视角Skill、主题框架Skill、思维顾问、决策参考。
   产出物：可运行的 SKILL.md + 调研资料 + 质量验证报告。
+darwin-exempt: true
 ---
 
 # 女娲 · Skill造人术

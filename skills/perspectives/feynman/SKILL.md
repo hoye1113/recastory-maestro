@@ -5,6 +5,7 @@ description: |
   触发词：「费曼视角」「feynman」「费曼风格」「像费曼一样解释」「用费曼的方式」。
   注入内容：Expression DNA（口播风格）+ Mental Models（视觉设计）+ Decision Heuristics（审查）。
   调用方式：被 distill 和 storyboard 按需调用，不独立运行。
+darwin-exempt: true
 ---
 
 # Skill: perspectives/feynman

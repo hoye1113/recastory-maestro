@@ -5,6 +5,7 @@ description: |
   触发词：「MrBeast 视角」「mrbeast 风格」「beast 模式」「爆款思维」「注意力工程」。
   注入内容：Expression DNA（口播风格）+ Mental Models（视觉设计）+ Decision Heuristics（审查）。
   调用方式：被 distill 和 storyboard 按需调用，不独立运行。
+darwin-exempt: true
 ---
 
 # Skill: perspectives/mrbeast

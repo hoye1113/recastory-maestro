@@ -8,6 +8,7 @@ description: |
   流程：文章→口播稿+outline→一次对齐5件事→网页开发→可选音频合成。
   outline只规划节奏与信息密度，不规划动画——动画由章节即时设计。
   本Skill沉淀设计方法论+协作流程，不绑定特定样式/字体/颜色，可复用到任意主题。
+darwin-exempt: true
 ---
 
 # Web Video Presentation

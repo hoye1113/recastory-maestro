@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "对 workspace/test-bilibili-01 的最终视频进行 8 维度深度审查",
+    "expected": "输出 8 维度评分（spec compliance, narrative quality, perspective consistency, visual consistency, audio-visual sync, AI slop, registry, dual-source），每维度附具体问题和修复建议"
+  },
+  {
+    "id": 2,
+    "prompt": "只检查叙事质量和 AI Slop 两个维度",
+    "expected": "只输出 2 个维度的审查结果，其余维度跳过"
+  },
+  {
+    "id": 3,
+    "prompt": "audit 未通过时执行 critique",
+    "expected": "阻断，提示必须先通过 audit 才能运行 critique"
+  }
+]
