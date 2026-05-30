@@ -95,7 +95,7 @@ Released 2026-05-30.
 
 - [x] 将 results.tsv 纳入 Recastory 质量报告（docs/skill-evolution/results.tsv）
 - [x] 生成 result-card.html 存入 `docs/skill-evolution/`（summary + ingest 两张卡片）
-- [ ] 更新 skills/*/SKILL.md 头部，标注 darwin-skill 评分与版本（待定）
+- [x] 更新 skills/*/SKILL.md 头部，标注 darwin-skill 评分与版本（2026-05-30）
 
 **产物**：
 
