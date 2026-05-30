@@ -96,3 +96,18 @@ cp render/0*.mp4 render/clean/
 | 位置 | ~95% 从顶部 | 由 `\an2` + 默认 MarginV 控制 |
 | 每行字数 | ≤20 | split-srt.py 拆分 |
 | 最小显示 | 1.5s | 避免切换太快 |
+
+## 8. audit 规则覆盖范围（v3.0.0）
+
+**v3.0.0 的 `audit` skill 不是全量覆盖。** 当前 rules.py 只实现了部分规则：
+
+| 规则集 | 状态 | 说明 |
+|--------|------|------|
+| RD (render) | ✅ 已实现 | 视频时长、分辨率、字幕同步、文件大小 |
+| DS (distill-style) | ❌ 未实现 | 口语化检查，依赖 LLM critique 兜底 |
+| CH (chapter visual) | ❌ 未实现 | 视觉反模式，依赖 LLM critique 兜底 |
+| SB (storyboard design) | ❌ 未实现 | 分镜设计规则，依赖 LLM critique 兜底 |
+
+**影响**: 运行 `audit` 时，design/storyboard 相关违规不会被确定性规则捕获，而是由 SKILL.md 中的 Agent 指令隐式检查。这意味着检查结果可能因 LLM 状态而异。
+
+**v3.1.0 计划**: 实现 DS/CH/SB 规则引擎，使 audit 成为全量确定性质量门控。
