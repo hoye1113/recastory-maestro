@@ -137,17 +137,6 @@ ffmpeg -i render/final.mp4 -c:v libx264 -crf 20 -preset medium \
 | macOS | h264_videotoolbox | `-c:v h264_videotoolbox -b:v 8M` |
 | Intel QSV | h264_qsv | `-c:v h264_qsv -preset medium` |
 
-### CDP Screencast 录制模式
-
-使用 `tools/capture-chrome.js`，基于 Puppeteer + CDP `Page.startScreencast` 浏览器内录：
-
-- 不依赖桌面焦点，无 DPI/缩放问题，无平台差异
-- `ffprobe` 预读 MP3 时长，`setTimeout` + `dispatchEvent` 驱动翻页
-- 不在浏览器内播放 MP3（规避 Chrome autoplay policy）
-- 事后 FFmpeg 混流：无声视频 + 原始 MP3 → 最终 MP4
-- 分辨率固定 1920x1080（CDP screencast 参数）
-- 帧率动态（CDP 推帧率，通常 30-100fps），脚本自动计算实际 fps
-
 ### 3. 可选 BGM 混音
 
 如 `ENABLE_BGM=true`，工具自动调用 `mix-bgm.sh`：
@@ -245,6 +234,7 @@ BGM 混音失败时不阻断流水线，降级使用无 BGM 版本。
 | 录屏失败（单章） | capture-chrome.js 退出码非 0 | 跳过该章，继续其他章节，最后在报告中标注 |
 | 浏览器崩溃 | GPU 加速不稳定 | 添加 `--disable-gpu --no-zygote` 等稳定性 flags |
 | BGM 生成失败 | mmx music 返回错误 | 降级到无 BGM 版本，不阻断 |
+| 音画同步偏差 > 0.5s | manifest.json 中 duration 偏差 | 阻断（IRON LAW），检查录屏和音频对齐 |
 
 ## 踩坑参考
 
@@ -254,4 +244,3 @@ BGM 混音失败时不阻断流水线，降级使用无 BGM 版本。
 - **ASS 对齐编号** — `\an2`=底部，`\an8`=顶部（键盘布局，非直觉）
 - **字幕烧录是破坏性操作** — 录制后先备份到 `render/clean/` 再烧录
 - **静态页帧率低** — CSS 动画驱动合成器推帧
-| 音画同步偏差 > 0.5s | manifest.json 中 duration 偏差 | 阻断（IRON LAW），检查录屏和音频对齐 |

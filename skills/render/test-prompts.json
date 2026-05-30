@@ -28,5 +28,10 @@
     "id": 6,
     "prompt": "渲染时 Vite 启动失败",
     "expected": "报错提示 dev server 启动超时，清理进程后退出"
+  },
+  {
+    "id": 7,
+    "prompt": "渲染时 FFmpeg 未安装",
+    "expected": "阻断，提示安装 FFmpeg"
   }
 ]
