@@ -89,11 +89,18 @@ Released 2026-05-30.
 
 **结果**: audit 84→90.3, research 84→90.3, distill 86→91.3, using-recastory 87→91.3, voice 88→90.3, storyboard 90→92.3。9 个确定性 skills 平均 85.9→90.8。
 
-#### Phase 4: 成果可视化（v3.1.0 Iteration 2）
+#### Phase 4: 成果可视化（✅ 已完成 2026-05-30）
 
-- [ ] 将 results.tsv 纳入 Recastory 质量报告
-- [ ] 生成 result-card.html 存入 `docs/skill-evolution/`
-- [ ] 更新 skills/*/SKILL.md 头部，标注 darwin-skill 评分与版本
+- [x] 将 results.tsv 纳入 Recastory 质量报告（docs/skill-evolution/results.tsv）
+- [x] 生成 result-card.html 存入 `docs/skill-evolution/`（summary + ingest 两张卡片）
+- [ ] 更新 skills/*/SKILL.md 头部，标注 darwin-skill 评分与版本（待定）
+
+**产物**：
+
+- `docs/skill-evolution/results.tsv` — 9 skills × 2 批次优化日志
+- `docs/skill-evolution/result-card-summary.html` — 9 skills 总览卡片（85.9→90.8）
+- `docs/skill-evolution/result-card-ingest.html` — ingest 深度卡片（82→91.3）
+- PNG 截图待 Chrome 环境就绪后生成
 
 ### VV_RULE_IDS 自动收集
 
