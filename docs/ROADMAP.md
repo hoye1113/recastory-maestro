@@ -12,6 +12,21 @@ Released 2026-05-30.
 
 ## v3.1.0 (planned)
 
+### qwen3-tts 修复
+
+**阻塞项**:
+- PyTorch CPU-only：需安装 CUDA 版本（download.pytorch.org 国内不可达）
+- SoX 缺失：Windows 上需手动安装
+- py launcher 未适配：脚本用 `py` 调用但 venv 内无 `py` 命令
+
+**当前降级方案**: minimax → edge-tts（优先级 1+3），qwen3-tts 作为 P3 provider。
+
+### BGM 混音
+
+**依赖**: mmx-cli music generate 可用 + 风格确定。
+
+**当前状态**: `mix-bgm.sh` 已实现（ENABLE_BGM=true 触发），但无 BGM 素材和风格模板。
+
 ### 规则引擎实现
 
 **目标**: audit skill 全量确定性质量门控。
