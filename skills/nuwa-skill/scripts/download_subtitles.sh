@@ -4,7 +4,7 @@
 # 优先下载人工字幕，无人工字幕则下载自动生成字幕
 # 语言优先级：中文 > 英文 > 其他
 
-set -e
+set -euo pipefail
 
 URL="$1"
 OUTPUT_DIR="${2:-.}"
@@ -16,6 +16,9 @@ fi
 
 mkdir -p "$OUTPUT_DIR"
 
+MARKER=$(mktemp)
+trap 'rm -f "$MARKER"' EXIT
+
 echo ">>> 检查可用字幕..."
 yt-dlp --list-subs --no-download "$URL" 2>/dev/null | tail -20
 
@@ -24,7 +27,7 @@ echo ">>> 尝试下载人工字幕（中文优先）..."
 
 # 尝试1: 人工中文字幕
 if yt-dlp --write-subs --sub-langs "zh-Hans,zh-Hant,zh,zh-CN,zh-TW" --sub-format srt --skip-download -o "$OUTPUT_DIR/%(title)s" "$URL" 2>/dev/null; then
-    FOUND=$(find "$OUTPUT_DIR" -name "*.srt" -newer /tmp/.ytdlp_marker 2>/dev/null | head -1)
+    FOUND=$(find "$OUTPUT_DIR" -name "*.srt" -newer "$MARKER" 2>/dev/null | head -1)
     if [ -n "$FOUND" ]; then
         echo "✅ 下载成功: $FOUND"
         exit 0

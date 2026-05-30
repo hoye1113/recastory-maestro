@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # ────────────────────────────────────────────────────────────────────
 # OpenAI TTS provider — uses the Audio Speech REST API via curl.
 #
@@ -11,6 +12,7 @@
 # Strengths: many agents already have OPENAI_API_KEY set; predictable
 # pricing; very fast.
 # ────────────────────────────────────────────────────────────────────
+set -euo pipefail
 
 tts_check() {
   if ! command -v curl >/dev/null; then

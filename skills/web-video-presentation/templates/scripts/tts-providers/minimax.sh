@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # ────────────────────────────────────────────────────────────────────
 # MiniMax provider — uses the official mmx-cli.
 #
@@ -7,6 +8,7 @@
 # Strengths: Chinese narration quality is consistently good; lots of
 # voice options; one-line CLI call.
 # ────────────────────────────────────────────────────────────────────
+set -euo pipefail
 
 tts_check() {
   if ! command -v mmx >/dev/null; then

@@ -5,6 +5,7 @@
 | 1 | 2026-05-30 | B,C,D,E | B-005, C-001, D-002, D-003, E-002, E-003 | 13 (warning) + 3 (info) | 0 | version fix, RV prefix rename, port align, OBSOLETE markers, test script |
 | 2 | 2026-05-30 | F | F-001 (partial) | 5 (warning) + 3 (info) | 0 | test-prompts.json for render/ingest/transcribe/audit |
 | 3 | 2026-05-30 | F | F-002 (partial) | 2 (warning) + 3 (info) | 0 | edge-case prompts for render/distill/voice |
+| 4 | 2026-05-30 | D | D-006, D-007, D-008 | 2 (warning) + 3 (info) | 0 | shell quality batch + C-002 rule engine spec |
 
 ## Iteration 1 Summary
 
