@@ -102,6 +102,19 @@ bash tools/research-search.sh "<主题> 数据 市场规模" --max 5 --out works
 
 记录每个搜索结果的标题、摘要、URL、日期。
 
+> **dry_run 模式**：如 plan.json 中 `dry_run: true`，跳过实际搜索，仅输出将要执行的搜索命令列表和预期产物路径。用于验证搜索策略和配额规划。
+>
+> dry_run 输出示例：
+>
+> ```text
+> [dry_run] 将执行以下搜索：
+>   1. bash tools/research-search.sh "锂电池回收 历史 发展" → search-bg.json
+>   2. bash tools/research-search.sh "锂电池回收 对比 区别" → search-compare.json
+>   3. bash tools/research-search.sh "锂电池回收 数据 市场规模" → search-data.json
+> [dry_run] 预估搜索次数: 3 次广度 + 2~3 次深度
+> [dry_run] 完成。实际调研请移除 dry_run 标志。
+> ```
+
 ### 3. 深度挖掘
 
 从广度搜索中识别关键发现，进行二次搜索：
@@ -228,6 +241,15 @@ bash tools/research-search.sh "核实：锂电池回收率真的超过95%吗" --
 
 - `workspace/<id>/research/research-notes.md` — 结构化研究笔记
 - `workspace/<id>/research/search-*.json` — 原始搜索结果（中间产物）
+
+## Resources
+
+| 资源 | 路径 | 用途 |
+| ---- | ---- | ---- |
+| 搜索策略参考 | `references/research/REFERENCE.md` | 横纵分析法、搜索策略、信息源质量评估 |
+| 搜索脚本 | `tools/research-search.sh` | 封装 mmx search 调用 |
+| 搜索配置 | `skills/research/search-config.json` | 搜索词前缀配置 |
+| 测试用例 | `skills/research/test-prompts.json` | 典型 prompt 和期望输出 |
 
 ## Anti-Patterns
 

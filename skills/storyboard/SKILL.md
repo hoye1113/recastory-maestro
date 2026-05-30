@@ -408,7 +408,7 @@ Agent 自检完成后，建议用户运行审计工具做二次验证。
 - `workspace/<id>/storyboard/src/theme.css` — 11 token 定义
 - `workspace/<id>/storyboard/src/chapters.ts` — 章节注册表
 
-## References
+## Resources
 
 | 文件 | 用途 |
 |------|------|

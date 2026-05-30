@@ -13,5 +13,15 @@
     "id": 3,
     "prompt": "用 midnight-press 主题为第一章生成分镜",
     "expected": "主题 token 正确应用，深色调、电影感、衬线斜体 hero"
+  },
+  {
+    "id": 4,
+    "prompt": "scaffold.sh 不存在时执行 storyboard",
+    "expected": "阻断，报告 scaffold.sh 缺失"
+  },
+  {
+    "id": 5,
+    "prompt": "npm install 失败时执行 storyboard",
+    "expected": "重试一次，仍失败则阻断报告用户"
   }
 ]

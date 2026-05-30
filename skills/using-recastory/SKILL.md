@@ -292,6 +292,16 @@ workspace/<pipeline_id>/
 - `workspace/<id>/plan.json` — 执行计划
 - 各子 Skill 的产出（见各 SKILL.md 定义）
 
+## Resources
+
+| 资源 | 路径 | 用途 |
+| ---- | ---- | ---- |
+| 入口协议 | `AGENT.md` | 完整入口协议 + Agent-Tool 边界 |
+| 工作流 | `WORKFLOW.md` | Phase 0-7 详细流程 |
+| 参考文件索引 | `references/INDEX.md` | Progressive Loading 规则 |
+| 品牌注册表 | `brand/REGISTER.md` | register 类型推断 |
+| 测试用例 | `skills/using-recastory/test-prompts.json` | 典型 prompt 和期望输出 |
+
 ## Anti-Patterns
 
 | ID | 名称 | 检测方式 | 严重度 |

@@ -313,6 +313,15 @@ python -m tools.audit <workspace>/distill/
 - `workspace/<id>/distill/outline.md` — 开发大纲
 - `raw/article.md` — 原文（保留不删）
 
+## Resources
+
+| 资源 | 路径 | 用途 |
+| ---- | ---- | ---- |
+| 内容提炼参考 | `references/content-distillation/REFERENCE.md` | 格式规则、生成约束、口语化标准 |
+| 口语化规则 | `skills/humanizer-zh/SKILL.md` | SL-001~006 修复指导 |
+| 视角 SKILL | `skills/perspectives/<name>/SKILL.md` | Expression DNA、Narrative Heuristics |
+| 测试用例 | `skills/distill/test-prompts.json` | 典型 prompt 和期望输出 |
+
 ## dry_run 流程
 
 当 `plan.json` 中 `dry_run: true` 时，执行精简验证流程：
