@@ -5,15 +5,16 @@ Rule groups:
 - CD-001~003, CD-005~006: Content distillation rules
 - VO-001~004: Voice rules
 - SL-001~006: AI Slop rules
-- VV-001~005: Visual Verification rules (via mmx vision, in vision_rules.py)
 - DS-001~006: Distill-Style oral rules
 - CH-001~006: Chapter Visual rules
 - SB-001~005: Storyboard Design rules
+- VV-001~005: Visual Verification rules (via mmx vision, in vision_rules.py)
 """
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable
 
 
@@ -24,22 +25,33 @@ from typing import Callable
 _RULE_REGISTRY: dict[str, dict] = {}
 
 
-def rule(rule_id: str, *, severity: str = "warning", file_types: list[str] | None = None):
-    """Decorator to auto-register a rule class.
-
-    Usage:
-        @rule("DS-001", severity="warning", file_types=["script.md", "article.md"])
-        class DS001Rule:
-            ...
-    """
-    def decorator(cls):
+def rule(rule_id: str, severity: str = "warning", file_types: list[str] | None = None):
+    """Decorator to auto-register rules. Replaces manual VV_RULE_IDS."""
+    def decorator(obj):
         _RULE_REGISTRY[rule_id] = {
-            "class": cls,
+            "class": obj,
             "severity": severity,
             "file_types": file_types or [],
         }
-        return cls
+        obj.rule_id = rule_id
+        obj.severity = severity
+        return obj
     return decorator
+
+
+def get_all_rules() -> dict[str, dict]:
+    """Return the full rule registry."""
+    return dict(_RULE_REGISTRY)
+
+
+def get_rules_by_prefix(prefix: str) -> dict[str, dict]:
+    """Return rules whose ID starts with the given prefix."""
+    return {k: v for k, v in _RULE_REGISTRY.items() if k.startswith(prefix)}
+
+
+# ---------------------------------------------------------------------------
+# Data classes
+# ---------------------------------------------------------------------------
 
 
 @dataclass
@@ -66,6 +78,7 @@ class Rule:
 # ---------------------------------------------------------------------------
 
 
+@rule("TR-001", severity="warning")
 def detect_tr001(content: str, file_path: str) -> list[RuleResult]:
     """TR-001: 3+ consecutive long sentences (>50 chars) without punctuation."""
     lines = [l.strip() for l in content.splitlines() if l.strip()]
@@ -108,6 +121,7 @@ def detect_tr001(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("TR-002", severity="warning")
 def detect_tr002(content: str, file_path: str) -> list[RuleResult]:
     """TR-002: Speaker label format inconsistency."""
     results: list[RuleResult] = []
@@ -136,6 +150,7 @@ def detect_tr002(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("TR-003", severity="critical")
 def detect_tr003(content: str, file_path: str) -> list[RuleResult]:
     """TR-003: SRT timestamp discontinuity or overlap."""
     results: list[RuleResult] = []
@@ -171,6 +186,7 @@ def detect_tr003(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("TR-004", severity="warning")
 def detect_tr004(content: str, file_path: str) -> list[RuleResult]:
     """TR-004: Filler word density > 5%."""
     results: list[RuleResult] = []
@@ -190,10 +206,11 @@ def detect_tr004(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("TR-005", severity="warning")
 def detect_tr005(content: str, file_path: str) -> list[RuleResult]:
     """TR-005: Mixed Chinese/English punctuation."""
     results: list[RuleResult] = []
-    cn_punct = set('，。！？；：（）【】《》、""''')
+    cn_punct = set('，。！？；：（）【】《》、""\'\'')
     en_punct = set(',.!?;:()[]<>"\'')
     has_cn = False
     has_en = False
@@ -220,6 +237,7 @@ def detect_tr005(content: str, file_path: str) -> list[RuleResult]:
 # ---------------------------------------------------------------------------
 
 
+@rule("CD-001", severity="warning")
 def detect_cd001(content: str, file_path: str) -> list[RuleResult]:
     """CD-001: Outline heading level deeper than 4 (####)."""
     results: list[RuleResult] = []
@@ -237,6 +255,7 @@ def detect_cd001(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("CD-002", severity="warning")
 def detect_cd002(content: str, file_path: str) -> list[RuleResult]:
     """CD-002: Single section > 500 chars (split by ## headings)."""
     results: list[RuleResult] = []
@@ -267,6 +286,7 @@ def detect_cd002(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("CD-003", severity="warning")
 def detect_cd003(content: str, file_path: str) -> list[RuleResult]:
     """CD-003: Script contains formal/written language patterns."""
     results: list[RuleResult] = []
@@ -290,6 +310,7 @@ def detect_cd003(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("CD-005", severity="warning")
 def detect_cd005(content: str, file_path: str) -> list[RuleResult]:
     """CD-005: Lack of Hook — first 50 chars have no engaging statement."""
     results: list[RuleResult] = []
@@ -314,6 +335,7 @@ def detect_cd005(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("CD-006", severity="warning")
 def detect_cd006(content: str, file_path: str) -> list[RuleResult]:
     """CD-006: Expression DNA not injected — no perspective markers."""
     results: list[RuleResult] = []
@@ -338,6 +360,7 @@ def detect_cd006(content: str, file_path: str) -> list[RuleResult]:
 # ---------------------------------------------------------------------------
 
 
+@rule("VO-001", severity="warning")
 def detect_vo001(content: str, file_path: str) -> list[RuleResult]:
     """VO-001: Speech rate abnormal — based on char count and estimated duration."""
     results: list[RuleResult] = []
@@ -366,6 +389,7 @@ def detect_vo001(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("VO-002", severity="warning")
 def detect_vo002(content: str, file_path: str) -> list[RuleResult]:
     """VO-002: Single sentence > 50 chars (TTS may break)."""
     results: list[RuleResult] = []
@@ -388,6 +412,7 @@ def detect_vo002(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("VO-003", severity="warning")
 def detect_vo003(content: str, file_path: str) -> list[RuleResult]:
     """VO-003: Polyphone without pinyin annotation."""
     results: list[RuleResult] = []
@@ -420,6 +445,7 @@ def detect_vo003(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("VO-004", severity="warning")
 def detect_vo004(content: str, file_path: str) -> list[RuleResult]:
     """VO-004: Lack of pause markers — 5+ consecutive sentences without comma/period."""
     results: list[RuleResult] = []
@@ -460,6 +486,7 @@ def detect_vo004(content: str, file_path: str) -> list[RuleResult]:
 # ---------------------------------------------------------------------------
 
 
+@rule("SL-001", severity="critical")
 def detect_sl001(content: str, file_path: str) -> list[RuleResult]:
     """SL-001: Fake empathy."""
     results: list[RuleResult] = []
@@ -477,6 +504,7 @@ def detect_sl001(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("SL-002", severity="critical")
 def detect_sl002(content: str, file_path: str) -> list[RuleResult]:
     """SL-002: Fake depth — "恰恰/反而/正是" wrapping."""
     results: list[RuleResult] = []
@@ -506,6 +534,7 @@ def detect_sl002(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("SL-003", severity="critical")
 def detect_sl003(content: str, file_path: str) -> list[RuleResult]:
     """SL-003: Self-promotion."""
     results: list[RuleResult] = []
@@ -523,6 +552,7 @@ def detect_sl003(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("SL-004", severity="critical")
 def detect_sl004(content: str, file_path: str) -> list[RuleResult]:
     """SL-004: Universal template."""
     results: list[RuleResult] = []
@@ -540,6 +570,7 @@ def detect_sl004(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("SL-005", severity="critical")
 def detect_sl005(content: str, file_path: str) -> list[RuleResult]:
     """SL-005: Parallel structure piling — 3+ consecutive sentences with same structure."""
     results: list[RuleResult] = []
@@ -585,6 +616,7 @@ def detect_sl005(content: str, file_path: str) -> list[RuleResult]:
     return results
 
 
+@rule("SL-006", severity="critical")
 def detect_sl006(content: str, file_path: str) -> list[RuleResult]:
     """SL-006: Template ending."""
     results: list[RuleResult] = []
@@ -603,409 +635,459 @@ def detect_sl006(content: str, file_path: str) -> list[RuleResult]:
 
 
 # ---------------------------------------------------------------------------
-# DS series — Distill-Style oral rules (auto-registered via @rule)
+# DS series — Distill-Style oral rules (check workspace_dir)
 # ---------------------------------------------------------------------------
 
 
-@rule("DS-001", severity="warning", file_types=["script.md", "article.md"])
-class DS001:
-    """信息保留度 <60%：script.md 字数 / article.md 字数。"""
+@rule("DS-001", severity="warning", file_types=["md"])
+class DS001InfoRetention:
+    """DS-001: script.md retains <60% of article.md content."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        script_chars = len(re.findall(r'[一-鿿\w]', content))
-        # 尝试在同一目录下找 article.md
-        import os
-        article_path = os.path.join(os.path.dirname(file_path), 'article.md')
-        if not os.path.exists(article_path):
+        script_files = list(Path(workspace_dir).rglob("script.md"))
+        article_files = list(Path(workspace_dir).rglob("article.md"))
+        if not script_files or not article_files:
             return results
-        with open(article_path, 'r', encoding='utf-8') as f:
-            article_chars = len(re.findall(r'[一-鿿\w]', f.read()))
+        script_path = script_files[0]
+        article_path = article_files[0]
+        if 'node_modules' in script_path.parts or '.git' in script_path.parts:
+            return results
+        if 'node_modules' in article_path.parts or '.git' in article_path.parts:
+            return results
+        script_chars = len(re.findall(
+            r'[一-鿿\w]',
+            script_path.read_text(encoding='utf-8', errors='replace'),
+        ))
+        article_chars = len(re.findall(
+            r'[一-鿿\w]',
+            article_path.read_text(encoding='utf-8', errors='replace'),
+        ))
         if article_chars == 0:
             return results
         ratio = script_chars / article_chars
         if ratio < 0.6:
             results.append(RuleResult(
-                rule_id='DS-001', name='信息保留度过低', severity='warning',
-                file_path=file_path,
-                message=f'信息保留度 {ratio:.0%}（<60%），script {script_chars} 字 vs article {article_chars} 字',
+                rule_id='DS-001', name='信息保留率过低', severity='warning',
+                file_path=str(script_path),
+                message=f'script.md 仅保留 article.md {ratio:.0%} 内容（<60%），可能丢失关键信息',
             ))
         return results
 
 
-@rule("DS-002", severity="warning", file_types=["script.md"])
-class DS002:
-    """单句 >20 字：按句号/问号/叹号分割，检查字数。"""
+@rule("DS-002", severity="warning", file_types=["md"])
+class DS002LongSentence:
+    """DS-002: Single sentence >20 chars in script.md (oral delivery should be short)."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        sentences = re.split(r'[。！？.!?]', content)
-        for sent in sentences:
-            chars = re.findall(r'[一-鿿]', sent)
-            if len(chars) > 20:
-                # Find line number
-                line_no = None
-                for ln, line in enumerate(content.splitlines(), 1):
-                    if sent.strip()[:15] and sent.strip()[:15] in line:
-                        line_no = ln
-                        break
-                results.append(RuleResult(
-                    rule_id='DS-002', name='单句过长', severity='warning',
-                    file_path=file_path,
-                    message=f'单句 {len(chars)} 字（>20），建议拆分: "{sent.strip()[:30]}..."',
-                    line_number=line_no,
-                ))
-        return results
-
-
-@rule("DS-003", severity="warning", file_types=["script.md"])
-class DS003:
-    """第三人称疏离：检测"用户""读者""大家"等第三人称表述。"""
-
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
-        results: list[RuleResult] = []
-        patterns = ['用户', '读者', '大家', '观众', '各位', '人们']
-        for i, line in enumerate(content.splitlines(), 1):
-            stripped = line.strip()
-            for pat in patterns:
-                if pat in stripped:
+        for script_path in Path(workspace_dir).rglob("script.md"):
+            if 'node_modules' in script_path.parts or '.git' in script_path.parts:
+                continue
+            content = script_path.read_text(encoding='utf-8', errors='replace')
+            sentences = re.split(r'[。！？.!?]', content)
+            for sent in sentences:
+                chars = re.findall(r'[一-鿿]', sent)
+                if len(chars) > 20:
+                    line_no = None
+                    for ln, line in enumerate(content.splitlines(), 1):
+                        if sent.strip()[:15] and sent.strip()[:15] in line:
+                            line_no = ln
+                            break
                     results.append(RuleResult(
-                        rule_id='DS-003', name='第三人称疏离', severity='warning',
-                        file_path=file_path,
-                        message=f'检测到第三人称 "{pat}"，建议改为第二人称"你"',
-                        line_number=i,
+                        rule_id='DS-002', name='口播句子过长', severity='warning',
+                        file_path=str(script_path),
+                        message=f'单句 {len(chars)} 字（>20），口播应更短: "{sent.strip()[:30]}..."',
+                        line_number=line_no,
                     ))
         return results
 
 
-@rule("DS-004", severity="warning", file_types=["script.md"])
-class DS004:
-    """无钩子开头：前 100 字是否含问号/反差词。"""
+@rule("DS-003", severity="warning", file_types=["md"])
+class DS003ThirdPerson:
+    """DS-003: Third person references (用户/读者/大家) in script.md."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        collected = ''
-        for line in content.splitlines():
-            stripped = line.strip()
-            if not stripped or stripped.startswith('#'):
+        for script_path in Path(workspace_dir).rglob("script.md"):
+            if 'node_modules' in script_path.parts or '.git' in script_path.parts:
                 continue
-            collected += stripped
-            if len(collected) >= 100:
-                break
-        if not collected:
-            return results
-        hook_patterns = [
-            r'[？?]', r'[！!]', r'你',
-            r'但是', r'然而', r'其实', r'竟然',
-        ]
-        has_hook = any(re.search(p, collected) for p in hook_patterns)
-        if not has_hook:
-            results.append(RuleResult(
-                rule_id='DS-004', name='无钩子开头', severity='warning',
-                file_path=file_path,
-                message='前 100 字无问号或反差词，建议添加开场钩子',
-            ))
-        return results
-
-
-@rule("DS-005", severity="warning", file_types=["script.md"])
-class DS005:
-    """结构词堆砌：检测"首先.*其次.*最后"模式。"""
-
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
-        results: list[RuleResult] = []
-        structure_words = ['首先', '其次', '最后', '第一', '第二', '第三']
-        found = []
-        for word in structure_words:
+            content = script_path.read_text(encoding='utf-8', errors='replace')
+            patterns = ['用户', '读者', '大家', '观众', '各位', '人们']
             for i, line in enumerate(content.splitlines(), 1):
-                if word in line:
-                    found.append((word, i))
-                    break
-        if len(found) >= 3:
-            results.append(RuleResult(
-                rule_id='DS-005', name='结构词堆砌', severity='warning',
-                file_path=file_path,
-                message=f'检测到 {len(found)} 个结构词（{"、".join(w for w, _ in found)}），建议自然过渡',
-            ))
-        return results
-
-
-@rule("DS-006", severity="warning", file_types=["script.md"])
-class DS006:
-    """数字未翻译：纯百分比/大数字无中文上下文。"""
-
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
-        results: list[RuleResult] = []
-        context_words = ['用户', '增长', '下降', '提升', '节省', '超过', '达到', '占比', '市场']
-        patterns = [
-            (r'\d+%', '百分比'),
-            (r'\d{4,}', '大数字'),
-            (r'[\$¥€£]\d+', '货币'),
-        ]
-        for i, line in enumerate(content.splitlines(), 1):
-            stripped = line.strip()
-            if not stripped or stripped.startswith('#'):
-                continue
-            for pat, name in patterns:
-                matches = re.findall(pat, stripped)
-                for m in matches:
-                    has_context = any(w in stripped for w in context_words)
-                    if not has_context:
+                stripped = line.strip()
+                if not stripped or stripped.startswith('#'):
+                    continue
+                for pat in patterns:
+                    if pat in stripped:
                         results.append(RuleResult(
-                            rule_id='DS-006', name='数字未翻译', severity='warning',
-                            file_path=file_path,
-                            message=f'数字 "{m}" 缺少中文上下文说明',
+                            rule_id='DS-003', name='第三人称视角', severity='warning',
+                            file_path=str(script_path),
+                            message=f'检测到第三人称 "{pat}"，口播应使用第二人称"你"',
                             line_number=i,
                         ))
         return results
 
 
-# ---------------------------------------------------------------------------
-# CH series — Chapter Visual rules (auto-registered via @rule)
-# ---------------------------------------------------------------------------
+@rule("DS-004", severity="warning", file_types=["md"])
+class DS004NoHook:
+    """DS-004: No hook in first 100 chars of script.md."""
 
-
-@rule("CH-001", severity="warning", file_types=["*.tsx", "*.jsx"])
-class CH001:
-    """纯文字无视觉：Chapter.tsx 无 img/SVG/animation。"""
-
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        visual_markers = ['<img', '<svg', '<SVG', 'animation', 'animate', 'motion.', 'kenBurns', 'ken-burns']
-        has_visual = any(m in content for m in visual_markers)
-        if not has_visual:
-            results.append(RuleResult(
-                rule_id='CH-001', name='纯文字无视觉', severity='warning',
-                file_path=file_path,
-                message='Chapter.tsx 无 img/SVG/animation 元素',
-            ))
-        return results
-
-
-@rule("CH-002", severity="warning", file_types=["*.tsx", "*.jsx"])
-class CH002:
-    """列表一次揭示：多项同 step。"""
-
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
-        results: list[RuleResult] = []
-        step_pattern = re.compile(r'step[=:]\s*(\d+)', re.IGNORECASE)
-        steps: dict[int, int] = {}
-        for m in step_pattern.finditer(content):
-            step_num = int(m.group(1))
-            steps[step_num] = steps.get(step_num, 0) + 1
-        for step_num, count in steps.items():
-            if count > 3:
+        for script_path in Path(workspace_dir).rglob("script.md"):
+            if 'node_modules' in script_path.parts or '.git' in script_path.parts:
+                continue
+            content = script_path.read_text(encoding='utf-8', errors='replace')
+            collected = ''
+            for line in content.splitlines():
+                stripped = line.strip()
+                if not stripped or stripped.startswith('#'):
+                    continue
+                collected += stripped
+                if len(collected) >= 100:
+                    break
+            if not collected:
+                continue
+            hook_patterns = [r'[？?]', r'[！!]', r'你', r'但是', r'然而', r'其实', r'竟然']
+            has_hook = any(re.search(p, collected) for p in hook_patterns)
+            if not has_hook:
                 results.append(RuleResult(
-                    rule_id='CH-002', name='列表一次揭示', severity='warning',
-                    file_path=file_path,
-                    message=f'step {step_num} 有 {count} 个元素同屏揭示，建议分步展示',
+                    rule_id='DS-004', name='缺少开场钩子', severity='warning',
+                    file_path=str(script_path),
+                    message='前 100 字无问号或反差词，建议添加开场钩子',
                 ))
         return results
 
 
-@rule("CH-003", severity="critical", file_types=["*.tsx", "*.jsx", "*.css"])
-class CH003:
-    """AI 视觉指纹：紫粉渐变/圆角彩色边框/emoji 图标。"""
+@rule("DS-005", severity="warning", file_types=["md"])
+class DS005StructureWords:
+    """DS-005: Mechanical structure words (首先/其次/最后) in script.md."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        ai_fingerprints = [
-            (r'linear-gradient.*purple.*pink|linear-gradient.*#.*[pP]urple.*#.*[pP]ink', '紫粉渐变'),
-            (r'border-left.*(?:#(?:6B5CE7|A855F7|EC4899|FF6B9D))', '彩色左边框'),
-            (r'border-radius.*(?:24px|16px).*border.*(?:#(?:6B5CE7|A855F7))', '圆角彩色卡片'),
-            (r'[\U0001F300-\U0001F9FF].*(?:icon|Icon)', 'emoji 作图标'),
-        ]
-        for pat, name in ai_fingerprints:
-            if re.search(pat, content, re.IGNORECASE):
-                results.append(RuleResult(
-                    rule_id='CH-003', name='AI 视觉指纹', severity='critical',
-                    file_path=file_path,
-                    message=f'检测到 AI 视觉指纹: {name}',
-                ))
-        return results
-
-
-@rule("CH-004", severity="critical", file_types=["*.tsx", "*.jsx", "*.ts"])
-class CH004:
-    """假数据：X0K users/假 logo/占位符。"""
-
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
-        results: list[RuleResult] = []
-        fake_patterns = [
-            (r'\d+K\s+users', '虚假用户数'),
-            (r'lorem\s+ipsum', '占位文本'),
-            (r'example\.com', '示例域名'),
-            (r'Acme\s+(?:Corp|Inc|Ltd)', '占位公司名'),
-            (r'placeholder', '占位符'),
-        ]
-        for pat, name in fake_patterns:
-            if re.search(pat, content, re.IGNORECASE):
-                line_no = None
-                for ln, line in enumerate(content.splitlines(), 1):
-                    if re.search(pat, line, re.IGNORECASE):
-                        line_no = ln
+        for script_path in Path(workspace_dir).rglob("script.md"):
+            if 'node_modules' in script_path.parts or '.git' in script_path.parts:
+                continue
+            content = script_path.read_text(encoding='utf-8', errors='replace')
+            structure_words = ['首先', '其次', '最后', '第一', '第二', '第三']
+            found = []
+            for word in structure_words:
+                for i, line in enumerate(content.splitlines(), 1):
+                    if word in line:
+                        found.append((word, i))
                         break
+            if len(found) >= 3:
                 results.append(RuleResult(
-                    rule_id='CH-004', name='假数据', severity='critical',
-                    file_path=file_path,
-                    message=f'检测到 {name}，建议替换为真实数据',
-                    line_number=line_no,
+                    rule_id='DS-005', name='结构词堆砌', severity='warning',
+                    file_path=str(script_path),
+                    message=f'检测到 {len(found)} 个结构词（{"、".join(w for w, _ in found)}），建议自然过渡',
                 ))
         return results
 
 
-@rule("CH-005", severity="warning", file_types=["*.tsx", "*.jsx", "*.css"])
-class CH005:
-    """全场同动画：单一 animation 名称重复。"""
+@rule("DS-006", severity="warning", file_types=["md"])
+class DS006UntranslatedNumbers:
+    """DS-006: Bare percentages/numbers without Chinese context in script.md."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        anim_pattern = re.compile(r'animation(?:-name)?:\s*(\w[\w-]*)', re.IGNORECASE)
-        animations = anim_pattern.findall(content)
-        if len(animations) >= 3:
-            unique = set(animations)
-            if len(unique) == 1:
-                results.append(RuleResult(
-                    rule_id='CH-005', name='全场同动画', severity='warning',
-                    file_path=file_path,
-                    message=f'所有元素使用同一动画 "{animations[0]}"，建议多样化',
-                ))
-        return results
-
-
-@rule("CH-006", severity="warning", file_types=["*.tsx", "*.jsx", "*.css"])
-class CH006:
-    """动画过多：每步都有 ken burns/光晕。"""
-
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
-        results: list[RuleResult] = []
-        heavy_anims = ['kenBurns', 'ken-burns', 'glow', 'pulse', 'shimmer']
-        count = sum(1 for a in heavy_anims if a.lower() in content.lower())
-        if count >= 3:
-            results.append(RuleResult(
-                rule_id='CH-006', name='动画过多', severity='warning',
-                file_path=file_path,
-                message=f'检测到 {count} 种重动画效果，建议精简',
-            ))
+        for script_path in Path(workspace_dir).rglob("script.md"):
+            if 'node_modules' in script_path.parts or '.git' in script_path.parts:
+                continue
+            content = script_path.read_text(encoding='utf-8', errors='replace')
+            context_words = ['用户', '增长', '下降', '提升', '节省', '超过', '达到', '占比', '市场']
+            patterns = [
+                (r'\d+%', '百分比'),
+                (r'\d{4,}', '大数字'),
+                (r'[\$¥€£]\d+', '货币'),
+            ]
+            for i, line in enumerate(content.splitlines(), 1):
+                stripped = line.strip()
+                if not stripped or stripped.startswith('#'):
+                    continue
+                for pat, name in patterns:
+                    matches = re.findall(pat, stripped)
+                    for m in matches:
+                        has_context = any(w in stripped for w in context_words)
+                        if not has_context:
+                            results.append(RuleResult(
+                                rule_id='DS-006', name='数字未翻译', severity='warning',
+                                file_path=str(script_path),
+                                message=f'数字 "{m}" 缺少中文上下文说明',
+                                line_number=i,
+                            ))
         return results
 
 
 # ---------------------------------------------------------------------------
-# SB series — Storyboard Design rules (auto-registered via @rule)
+# CH series — Chapter Visual rules (check workspace_dir)
 # ---------------------------------------------------------------------------
 
 
-@rule("SB-001", severity="warning", file_types=["narrations.ts", "narrations.json"])
-class SB001:
-    """单页 >80 字：检查 narrations.ts 每项字数。"""
+@rule("CH-001", severity="warning", file_types=["tsx"])
+class CH001NoVisual:
+    """CH-001: Chapter.tsx has no visual elements (img/SVG/animation)."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        # Match narration text in TS/JSON: "text": "..." or 'text': '...'
-        text_pattern = re.compile(r'["\']text["\']\s*:\s*["\'](.+?)["\']', re.DOTALL)
-        for i, m in enumerate(text_pattern.finditer(content), 1):
-            text = m.group(1)
-            chars = len(re.findall(r'[一-鿿\w]', text))
-            if chars > 80:
-                line_no = content[:m.start()].count('\n') + 1
+        for chapter_path in Path(workspace_dir).rglob("Chapter.tsx"):
+            if 'node_modules' in chapter_path.parts or '.git' in chapter_path.parts:
+                continue
+            content = chapter_path.read_text(encoding='utf-8', errors='replace')
+            visual_markers = ['<img', '<svg', '<SVG', 'animation', 'animate', 'motion.', 'kenBurns', 'ken-burns']
+            has_visual = any(m in content for m in visual_markers)
+            if not has_visual:
                 results.append(RuleResult(
-                    rule_id='SB-001', name='单页字数过多', severity='warning',
-                    file_path=file_path,
-                    message=f'第 {i} 页 narration {chars} 字（>80），建议精简',
-                    line_number=line_no,
+                    rule_id='CH-001', name='纯文字无视觉', severity='warning',
+                    file_path=str(chapter_path),
+                    message='Chapter.tsx 无 img/SVG/animation 元素',
                 ))
         return results
 
 
-@rule("SB-002", severity="warning", file_types=["theme.css", "*.css"])
-class SB002:
-    """默认主题：检查 theme.css 是否为默认样式。"""
+@rule("CH-002", severity="warning", file_types=["tsx"])
+class CH002ListReveal:
+    """CH-002: Multiple list items appear in same step (should be sequential reveal)."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        default_indicators = [
-            ':root {',
-            '--bg: #fff',
-            '--bg: #ffffff',
-            '--fg: #000',
-            '--fg: #000000',
-        ]
-        has_default = sum(1 for d in default_indicators if d in content)
-        if has_default >= 3:
-            results.append(RuleResult(
-                rule_id='SB-002', name='默认主题', severity='warning',
-                file_path=file_path,
-                message='theme.css 似乎是默认样式，建议自定义主题',
-            ))
-        return results
-
-
-@rule("SB-003", severity="warning", file_types=["theme.css", "*.css"])
-class SB003:
-    """对比度不足：检查 CSS 变量中的颜色对比度。"""
-
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
-        results: list[RuleResult] = []
-        hex_pattern = re.compile(r'--\w*(?:bg|background|fg|color|text)\w*:\s*(#[0-9a-fA-F]{3,8})', re.IGNORECASE)
-        colors = hex_pattern.findall(content)
-        # Check for very light colors on white bg (low contrast)
-        light_colors = [c for c in colors if len(c) in (4, 7)]
-        for c in light_colors:
-            # Simple check: hex color with all components > CC is very light
-            hex_val = c.lstrip('#')
-            if len(hex_val) == 3:
-                hex_val = ''.join(ch * 2 for ch in hex_val)
-            if len(hex_val) == 6:
-                r, g, b = int(hex_val[:2], 16), int(hex_val[2:4], 16), int(hex_val[4:6], 16)
-                # Very light text on white bg
-                if r > 200 and g > 200 and b > 200:
+        for chapter_path in Path(workspace_dir).rglob("Chapter.tsx"):
+            if 'node_modules' in chapter_path.parts or '.git' in chapter_path.parts:
+                continue
+            content = chapter_path.read_text(encoding='utf-8', errors='replace')
+            step_pattern = re.compile(r'step[=:]\s*(\d+)', re.IGNORECASE)
+            steps: dict[int, int] = {}
+            for m in step_pattern.finditer(content):
+                step_num = int(m.group(1))
+                steps[step_num] = steps.get(step_num, 0) + 1
+            for step_num, count in steps.items():
+                if count > 3:
                     results.append(RuleResult(
-                        rule_id='SB-003', name='对比度不足', severity='warning',
-                        file_path=file_path,
-                        message=f'颜色 {c} 过浅，可能在白色背景上对比度不足',
+                        rule_id='CH-002', name='列表一次揭示', severity='warning',
+                        file_path=str(chapter_path),
+                        message=f'step {step_num} 有 {count} 个元素同屏揭示，建议分步展示',
                     ))
         return results
 
 
-@rule("SB-004", severity="warning", file_types=["*.css"])
-class SB004:
-    """动画 >3 种：检查 CSS animation 属性数量。"""
+@rule("CH-003", severity="critical", file_types=["tsx"])
+class CH003AIFingerprint:
+    """CH-003: AI visual fingerprints in Chapter.tsx."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
-        anim_pattern = re.compile(r'@keyframes\s+([\w-]+)', re.IGNORECASE)
-        keyframes = anim_pattern.findall(content)
-        if len(keyframes) > 3:
-            results.append(RuleResult(
-                rule_id='SB-004', name='动画种类过多', severity='warning',
-                file_path=file_path,
-                message=f'定义了 {len(keyframes)} 种动画（>3），建议精简: {", ".join(keyframes[:5])}',
-            ))
+        for chapter_path in Path(workspace_dir).rglob("Chapter.tsx"):
+            if 'node_modules' in chapter_path.parts or '.git' in chapter_path.parts:
+                continue
+            content = chapter_path.read_text(encoding='utf-8', errors='replace')
+            ai_fingerprints = [
+                (r'linear-gradient.*purple.*pink|linear-gradient.*#.*[pP]urple.*#.*[pP]ink', '紫粉渐变'),
+                (r'border-left.*(?:#(?:6B5CE7|A855F7|EC4899|FF6B9D))', '彩色左边框'),
+                (r'border-radius.*(?:24px|16px).*border.*(?:#(?:6B5CE7|A855F7))', '圆角彩色卡片'),
+                (r'[\U0001F300-\U0001F9FF].*(?:icon|Icon)', 'emoji 作图标'),
+            ]
+            for pat, name in ai_fingerprints:
+                if re.search(pat, content, re.IGNORECASE):
+                    results.append(RuleResult(
+                        rule_id='CH-003', name='AI 视觉指纹', severity='critical',
+                        file_path=str(chapter_path),
+                        message=f'检测到 AI 视觉指纹: {name}',
+                    ))
         return results
 
 
-@rule("SB-005", severity="critical", file_types=["*.tsx", "*.jsx", "*.json"])
-class SB005:
-    """占位图：检测 placeholder 图片引用。"""
+@rule("CH-004", severity="critical", file_types=["tsx"])
+class CH004FakeData:
+    """CH-004: Fake data patterns (X0K users, lorem ipsum) in Chapter.tsx."""
 
-    @staticmethod
-    def detect(content: str, file_path: str) -> list[RuleResult]:
+    def check(self, workspace_dir: str) -> list[RuleResult]:
+        results: list[RuleResult] = []
+        for chapter_path in Path(workspace_dir).rglob("Chapter.tsx"):
+            if 'node_modules' in chapter_path.parts or '.git' in chapter_path.parts:
+                continue
+            content = chapter_path.read_text(encoding='utf-8', errors='replace')
+            fake_patterns = [
+                (r'\d+K\s+users', '虚假用户数'),
+                (r'lorem\s+ipsum', '占位文本'),
+                (r'example\.com', '示例域名'),
+                (r'Acme\s+(?:Corp|Inc|Ltd)', '占位公司名'),
+                (r'placeholder', '占位符'),
+            ]
+            for pat, name in fake_patterns:
+                if re.search(pat, content, re.IGNORECASE):
+                    line_no = None
+                    for ln, line in enumerate(content.splitlines(), 1):
+                        if re.search(pat, line, re.IGNORECASE):
+                            line_no = ln
+                            break
+                    results.append(RuleResult(
+                        rule_id='CH-004', name='假数据', severity='critical',
+                        file_path=str(chapter_path),
+                        message=f'检测到 {name}，建议替换为真实数据',
+                        line_number=line_no,
+                    ))
+        return results
+
+
+@rule("CH-005", severity="warning", file_types=["tsx"])
+class CH005SameAnimation:
+    """CH-005: Only one animation name used across all steps."""
+
+    def check(self, workspace_dir: str) -> list[RuleResult]:
+        results: list[RuleResult] = []
+        for chapter_path in Path(workspace_dir).rglob("Chapter.tsx"):
+            if 'node_modules' in chapter_path.parts or '.git' in chapter_path.parts:
+                continue
+            content = chapter_path.read_text(encoding='utf-8', errors='replace')
+            anim_pattern = re.compile(r'animation(?:-name)?:\s*(\w[\w-]*)', re.IGNORECASE)
+            animations = anim_pattern.findall(content)
+            if len(animations) >= 3:
+                unique = set(animations)
+                if len(unique) == 1:
+                    results.append(RuleResult(
+                        rule_id='CH-005', name='全场同动画', severity='warning',
+                        file_path=str(chapter_path),
+                        message=f'所有元素使用同一动画 "{animations[0]}"，建议多样化',
+                    ))
+        return results
+
+
+@rule("CH-006", severity="warning", file_types=["tsx"])
+class CH006TooManyAnimations:
+    """CH-006: Every step has heavy animation effects (ken burns/glow)."""
+
+    def check(self, workspace_dir: str) -> list[RuleResult]:
+        results: list[RuleResult] = []
+        for chapter_path in Path(workspace_dir).rglob("Chapter.tsx"):
+            if 'node_modules' in chapter_path.parts or '.git' in chapter_path.parts:
+                continue
+            content = chapter_path.read_text(encoding='utf-8', errors='replace')
+            heavy_anims = ['kenBurns', 'ken-burns', 'glow', 'pulse', 'shimmer']
+            count = sum(1 for a in heavy_anims if a.lower() in content.lower())
+            if count >= 3:
+                results.append(RuleResult(
+                    rule_id='CH-006', name='动画过多', severity='warning',
+                    file_path=str(chapter_path),
+                    message=f'检测到 {count} 种重动画效果，建议精简',
+                ))
+        return results
+
+
+# ---------------------------------------------------------------------------
+# SB series — Storyboard Design rules (check workspace_dir)
+# ---------------------------------------------------------------------------
+
+
+@rule("SB-001", severity="warning", file_types=["ts"])
+class SB001PageTooLong:
+    """SB-001: Narration entry >80 chars in narrations.ts."""
+
+    def check(self, workspace_dir: str) -> list[RuleResult]:
+        results: list[RuleResult] = []
+        for ts_path in Path(workspace_dir).rglob("narrations.ts"):
+            if 'node_modules' in ts_path.parts or '.git' in ts_path.parts:
+                continue
+            content = ts_path.read_text(encoding='utf-8', errors='replace')
+            text_pattern = re.compile(r'["\']text["\']\s*:\s*["\'](.+?)["\']', re.DOTALL)
+            for i, m in enumerate(text_pattern.finditer(content), 1):
+                text = m.group(1)
+                chars = len(re.findall(r'[一-鿿\w]', text))
+                if chars > 80:
+                    line_no = content[:m.start()].count('\n') + 1
+                    results.append(RuleResult(
+                        rule_id='SB-001', name='单页文字过多', severity='warning',
+                        file_path=str(ts_path),
+                        message=f'第 {i} 页 narration {chars} 字（>80），建议精简',
+                        line_number=line_no,
+                    ))
+        return results
+
+
+@rule("SB-002", severity="warning", file_types=["css"])
+class SB002DefaultTheme:
+    """SB-002: Theme.css matches default (no customization)."""
+
+    def check(self, workspace_dir: str) -> list[RuleResult]:
+        results: list[RuleResult] = []
+        for css_path in Path(workspace_dir).rglob("theme.css"):
+            if 'node_modules' in css_path.parts or '.git' in css_path.parts:
+                continue
+            content = css_path.read_text(encoding='utf-8', errors='replace')
+            default_indicators = [
+                ':root {',
+                '--bg: #fff',
+                '--bg: #ffffff',
+                '--fg: #000',
+                '--fg: #000000',
+            ]
+            has_default = sum(1 for d in default_indicators if d in content)
+            if has_default >= 3:
+                results.append(RuleResult(
+                    rule_id='SB-002', name='默认主题', severity='warning',
+                    file_path=str(css_path),
+                    message='theme.css 似乎是默认样式，建议自定义主题',
+                ))
+        return results
+
+
+@rule("SB-003", severity="warning", file_types=["css"])
+class SB003ContrastRatio:
+    """SB-003: Low contrast ratio between text and background colors."""
+
+    def check(self, workspace_dir: str) -> list[RuleResult]:
+        results: list[RuleResult] = []
+        for css_path in Path(workspace_dir).rglob("*.css"):
+            if 'node_modules' in css_path.parts or '.git' in css_path.parts:
+                continue
+            content = css_path.read_text(encoding='utf-8', errors='replace')
+            hex_pattern = re.compile(
+                r'--\w*(?:bg|background|fg|color|text)\w*:\s*(#[0-9a-fA-F]{3,8})',
+                re.IGNORECASE,
+            )
+            colors = hex_pattern.findall(content)
+            light_colors = [c for c in colors if len(c) in (4, 7)]
+            for c in light_colors:
+                hex_val = c.lstrip('#')
+                if len(hex_val) == 3:
+                    hex_val = ''.join(ch * 2 for ch in hex_val)
+                if len(hex_val) == 6:
+                    r, g, b = int(hex_val[:2], 16), int(hex_val[2:4], 16), int(hex_val[4:6], 16)
+                    if r > 200 and g > 200 and b > 200:
+                        results.append(RuleResult(
+                            rule_id='SB-003', name='对比度不足', severity='warning',
+                            file_path=str(css_path),
+                            message=f'颜色 {c} 过浅，可能在白色背景上对比度不足',
+                        ))
+        return results
+
+
+@rule("SB-004", severity="warning", file_types=["css"])
+class SB004TooManyAnimations:
+    """SB-004: >3 animation properties in CSS files."""
+
+    def check(self, workspace_dir: str) -> list[RuleResult]:
+        results: list[RuleResult] = []
+        for css_path in Path(workspace_dir).rglob("*.css"):
+            if 'node_modules' in css_path.parts or '.git' in css_path.parts:
+                continue
+            content = css_path.read_text(encoding='utf-8', errors='replace')
+            anim_pattern = re.compile(r'@keyframes\s+([\w-]+)', re.IGNORECASE)
+            keyframes = anim_pattern.findall(content)
+            if len(keyframes) > 3:
+                results.append(RuleResult(
+                    rule_id='SB-004', name='动画种类过多', severity='warning',
+                    file_path=str(css_path),
+                    message=f'定义了 {len(keyframes)} 种动画（>3），建议精简: {", ".join(keyframes[:5])}',
+                ))
+        return results
+
+
+@rule("SB-005", severity="critical", file_types=["tsx", "ts"])
+class SB005PlaceholderImage:
+    """SB-005: Placeholder text/images in storyboard files."""
+
+    def check(self, workspace_dir: str) -> list[RuleResult]:
         results: list[RuleResult] = []
         placeholders = [
             'image · 16:9',
@@ -1016,20 +1098,36 @@ class SB005:
             'via.placeholder.com',
             'dummyimage.com',
         ]
-        for i, line in enumerate(content.splitlines(), 1):
-            for pat in placeholders:
-                if pat.lower() in line.lower():
-                    results.append(RuleResult(
-                        rule_id='SB-005', name='占位图', severity='critical',
-                        file_path=file_path,
-                        message=f'检测到占位图引用 "{pat}"，建议替换为真实图片',
-                        line_number=i,
-                    ))
+        for ext in ['*.tsx', '*.ts', '*.json']:
+            for file_path in Path(workspace_dir).rglob(ext):
+                if 'node_modules' in file_path.parts or '.git' in file_path.parts:
+                    continue
+                content = file_path.read_text(encoding='utf-8', errors='replace')
+                for i, line in enumerate(content.splitlines(), 1):
+                    for pat in placeholders:
+                        if pat.lower() in line.lower():
+                            results.append(RuleResult(
+                                rule_id='SB-005', name='占位图', severity='critical',
+                                file_path=str(file_path),
+                                message=f'检测到占位图引用 "{pat}"，建议替换为真实图片',
+                                line_number=i,
+                            ))
+                            break  # one report per line
         return results
 
 
 # ---------------------------------------------------------------------------
-# Rule registry — function-based rules (legacy)
+# Register VV rule IDs for backward compatibility
+# ---------------------------------------------------------------------------
+# VV rules live in vision_rules.py with a different calling convention,
+# but we register their IDs here so get_rules_by_prefix("VV-") works.
+
+for _vv_id in ['VV-001', 'VV-002', 'VV-003', 'VV-004', 'VV-005']:
+    _RULE_REGISTRY[_vv_id] = {"class": None, "severity": "warning", "file_types": []}
+
+
+# ---------------------------------------------------------------------------
+# Legacy rule registry (function-based rules for backward compat)
 # ---------------------------------------------------------------------------
 
 ALL_RULES: list[Rule] = [
@@ -1079,43 +1177,21 @@ ALL_RULES: list[Rule] = [
          detect=detect_sl006, description='套话结尾模式'),
 ]
 
-# VV rule IDs are handled separately by vision_rules.py
-VV_RULE_IDS = {'VV-001', 'VV-002', 'VV-003', 'VV-004', 'VV-005'}
-
-# Auto-collected from @rule decorator
-DECORATOR_RULE_IDS = [k for k in _RULE_REGISTRY if k.startswith("VV-")]
-ALL_RULE_IDS = [r.id for r in ALL_RULES] + list(_RULE_REGISTRY.keys())
-VV_RULE_IDS = VV_RULE_IDS | {k for k in _RULE_REGISTRY if k.startswith("VV-")}
-
-
-def get_decorator_rules() -> dict[str, dict]:
-    """Return all rules registered via @rule decorator."""
-    return dict(_RULE_REGISTRY)
-
-
-def list_all_rules() -> list[dict]:
-    """Return a summary of all registered rules (function + decorator)."""
-    rules = []
-    for r in ALL_RULES:
-        rules.append({"id": r.id, "name": r.name, "severity": r.severity, "source": "function"})
-    for rule_id, info in _RULE_REGISTRY.items():
-        rules.append({
-            "id": rule_id,
-            "name": info["class"].__doc__.split("：")[0].strip() if info["class"].__doc__ else rule_id,
-            "severity": info["severity"],
-            "source": "decorator",
-        })
-    return rules
+# VV rule IDs — derived from registry for forward-compatibility
+VV_RULE_IDS = list(get_rules_by_prefix("VV-").keys())
 
 
 def get_rules_by_ids(rule_ids: list[str]) -> list[Rule]:
     """Get rules by their IDs. Raises ValueError for unknown IDs.
 
-    VV-xxx IDs are recognized but not returned (they're handled by vision_rules.py).
+    VV-xxx, DS-xxx, CH-xxx, SB-xxx IDs are recognized but not returned
+    from ALL_RULES (they have different calling conventions).
     """
     id_set = set(rule_ids)
     found = [r for r in ALL_RULES if r.id in id_set]
-    known = {r.id for r in found} | VV_RULE_IDS | set(_RULE_REGISTRY.keys())
+    # Collect all known IDs from registry (VV, DS, CH, SB)
+    known_registry_ids = set(_RULE_REGISTRY.keys())
+    known = {r.id for r in found} | known_registry_ids
     missing = id_set - known
     if missing:
         raise ValueError(f'Unknown rule IDs: {", ".join(sorted(missing))}')

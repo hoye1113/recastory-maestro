@@ -11,7 +11,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .rules import Rule, RuleResult, ALL_RULES, VV_RULE_IDS, get_rules_by_ids
+from .rules import Rule, RuleResult, ALL_RULES, VV_RULE_IDS, get_rules_by_ids, get_rules_by_prefix
 
 
 @dataclass
@@ -104,12 +104,38 @@ def scan_workspace(
             content = file_path.read_text(encoding='utf-8', errors='replace')
             _apply_rules(file_path, content, vo_rules)
 
+    # Run class-based rules (DS, CH, SB) that use check(workspace_dir)
+    _run_class_rules(workspace, report, rule_ids)
+
     # Run VV vision rules on screenshots (if any VV rule IDs requested)
     requested_vv = rule_ids is None or any(rid.startswith('VV-') for rid in rule_ids)
     if requested_vv:
         _run_vv_rules(workspace, report)
 
     return report
+
+
+def _run_class_rules(workspace: Path, report: AuditReport, rule_ids: list[str] | None) -> None:
+    """Run class-based rules (DS, CH, SB) that have a check(workspace_dir) method."""
+    requested_set = set(rule_ids) if rule_ids else None
+    for prefix in ('DS-', 'CH-', 'SB-'):
+        prefix_rules = get_rules_by_prefix(prefix)
+        for rid, info in prefix_rules.items():
+            if requested_set is not None and rid not in requested_set:
+                continue
+            rule_cls = info["class"]
+            if rule_cls is None:
+                continue
+            instance = rule_cls()
+            if not hasattr(instance, 'check'):
+                continue
+            violations = instance.check(str(workspace))
+            report.results.extend(violations)
+            for v in violations:
+                if v.severity == 'critical':
+                    report.critical_count += 1
+                else:
+                    report.warning_count += 1
 
 
 def _run_vv_rules(workspace: Path, report: AuditReport) -> None:
