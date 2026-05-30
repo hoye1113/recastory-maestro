@@ -10,3 +10,4 @@ timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
 2026-05-30T15:00	baseline	research	-	84	baseline	-	三阶段搜索+交叉验证+质量检查点	dry_run
 2026-05-30T16:00	4a44af1	ingest	82	91.3	keep	Instruction Specificity+Resource Integration	3轮优化：dry_run模式+Resources章节+error case	dry_run
 2026-05-30T16:30	05c5114	transcribe	82	91.3	keep	Instruction Specificity+Resource Integration	3轮优化：dry_run模式+Resources章节+error case	dry_run
+2026-05-30T17:00	a781ff4	render	85	88.8	keep	Architecture+Boundary Conditions	3轮优化：L257悬挂行修复+CDP节精简+FFmpeg error case	dry_run
