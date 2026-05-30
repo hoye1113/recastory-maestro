@@ -82,6 +82,19 @@ result = transcribe_audio(
 | medium | 慢 | 高 | 专业内容 |
 | large | 最慢 | 最高 | 最终交付 |
 
+> **dry_run 模式**：如 plan.json 中 `dry_run: true`，跳过实际转写，仅输出将要执行的命令和预期产物路径。用于验证输入文件和参数。
+>
+> dry_run 输出示例：
+>
+> ```text
+> [dry_run] 将执行转写：
+>   输入: workspace/rm-test-001/raw/video.mp4
+>   模型: base, 设备: auto, 语言: 自动检测
+>   输出: workspace/rm-test-001/article.md
+> [dry_run] 预估耗时: ~30 秒（base 模型，CPU）
+> [dry_run] 完成。实际转写请移除 dry_run 标志。
+> ```
+
 ### 4. 质量门控
 
 对转写结果运行 TR-001~005 规则检查：
@@ -186,6 +199,14 @@ article = segments_to_article(result.segments, title="转写文本")
 - `workspace/<id>/article.md` — 转写文本（按停顿分段）
 - `workspace/<id>/transcribe/audio.wav` — 提取的音频（如从视频提取）
 - `workspace/<id>/transcribe/transcript.json` — 原始转写 segments（可选）
+
+## Resources
+
+| 资源 | 路径 | 用途 |
+| ---- | ---- | ---- |
+| 转写参考 | `references/transcription/REFERENCE.md` | Whisper 参数调优、停顿分段策略 |
+| 转写工具 | `tools/ingest/transcriber.py` | Faster-Whisper 封装 |
+| 测试用例 | `skills/transcribe/test-prompts.json` | 典型 prompt 和期望输出 |
 
 ## Anti-Patterns
 
