@@ -84,6 +84,11 @@ Released 2026-05-30.
 
 **结果**: ingest 82→91.3, transcribe 82→91.3, render 85→88.8。全部 keep。
 
+- [x] 对 audit / research / distill / using-recastory / voice / storyboard 跑 darwin-skill 优化循环
+- [x] 棘轮机制：全部 keep，0 回滚
+
+**结果**: audit 84→90.3, research 84→90.3, distill 86→91.3, using-recastory 87→91.3, voice 88→90.3, storyboard 90→92.3。9 个确定性 skills 平均 85.9→90.8。
+
 #### Phase 4: 成果可视化（v3.1.0 Iteration 2）
 
 - [ ] 将 results.tsv 纳入 Recastory 质量报告
