@@ -25,3 +25,9 @@ env-report.json
 
 # Test artifacts
 .test-*/
+
+# Skills runtime
+.agents/
+.claude/skills/
+skills-lock.json
+.claude/loop.md
