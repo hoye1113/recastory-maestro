@@ -68,11 +68,13 @@ Released 2026-05-30.
 - [ ] 为 5 个豁免 skills 补 test-prompts.json（或标记 `darwin-exempt: true`）
 - [ ] 审计现有 9 个 skills 的 test-prompts.json 质量（happy path + edge case 覆盖）
 
-#### Phase 2: 基线评估（下周）
+#### Phase 2: 基线评估（✅ 已完成 2026-05-30）
 
-- [ ] 安装 darwin-skill: `npx skills add alchaincyf/darwin-skill`
-- [ ] 对 9 个确定性 skills 跑基线评估，生成 results.tsv
-- [ ] 识别最低分维度，制定优化优先级
+- [x] 安装 darwin-skill: `npx skills add alchaincyf/darwin-skill`
+- [x] 对 9 个确定性 skills 跑基线评估，生成 results.tsv
+- [x] 识别最低分维度，制定优化优先级
+
+**结果**: 平均 85.9 分。最低分: ingest/transcribe (82)。优化优先级: ingest → transcribe → render。
 
 #### Phase 3: 定向优化（v3.1.0 Iteration 1）
 
