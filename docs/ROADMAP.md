@@ -34,9 +34,9 @@ Released 2026-05-30.
 | 规则集 | 当前状态 | v3.1.0 目标 |
 |--------|---------|------------|
 | RD (render) | ✅ 已实现 | 保持 |
-| DS (distill-style) | ❌ 未实现 | 实现 6 条口语化规则 |
-| CH (chapter visual) | ❌ 未实现 | 实现 6 条视觉规则 |
-| SB (storyboard design) | ❌ 未实现 | 实现 5 条分镜规则 |
+| DS (distill-style) | ✅ 已实现 (2026-05-30) | 6 条口语化规则 via @rule 装饰器 |
+| CH (chapter visual) | ✅ 已实现 (2026-05-30) | 6 条视觉规则 via @rule 装饰器 |
+| SB (storyboard design) | ✅ 已实现 (2026-05-30) | 5 条分镜规则 via @rule 装饰器 |
 
 **参考**: ARCHITECTURE.md 中 DS-001~006、CH-001~006、SB-001~005 规则定义。
 
@@ -63,10 +63,12 @@ Released 2026-05-30.
 > 目标：用 darwin-skill 自主进化系统对 Recastory 的确定性 skills 进行量化评估与定向优化。
 > 豁免：critique / humanizer-zh / nuwa-skill / perspectives / web-video-presentation 为 LLM 创意型 skill，不参与 darwin-skill 自动优化，保留人工审计。
 
-#### Phase 1: 测试资产补齐（本周）
+#### Phase 1: 测试资产补齐（✅ 已完成 2026-05-30）
 
-- [ ] 为 5 个豁免 skills 补 test-prompts.json（或标记 `darwin-exempt: true`）
-- [ ] 审计现有 9 个 skills 的 test-prompts.json 质量（happy path + edge case 覆盖）
+- [x] 为 5 个豁免 skills 补 test-prompts.json（或标记 `darwin-exempt: true`）
+- [x] 审计现有 9 个 skills 的 test-prompts.json 质量（happy path + edge case 覆盖）
+
+**结果**: critique/humanizer-zh 各 3 条 test-prompts。nuwa-skill/perspectives/web-video-presentation 标记 `darwin-exempt: true`。
 
 #### Phase 2: 基线评估（✅ 已完成 2026-05-30）
 
@@ -102,9 +104,11 @@ Released 2026-05-30.
 - `docs/skill-evolution/result-card-ingest.html` — ingest 深度卡片（82→91.3）
 - PNG 截图待 Chrome 环境就绪后生成
 
-### VV_RULE_IDS 自动收集
+### VV_RULE_IDS 自动收集（✅ 已完成 2026-05-30）
 
 **目标**: 消除手动维护规则 ID 列表的风险。
 
-- AST 扫描或装饰器自动收集 rules.py 中的规则 ID
+- [x] `@rule` 装饰器自动注册规则到 `_RULE_REGISTRY`
+- [x] `VV_RULE_IDS` / `ALL_RULE_IDS` 从 registry 自动导出
+- [x] `list_all_rules()` 函数输出所有注册规则（function + decorator）
 - 替代 VV_RULE_IDS 手动列表

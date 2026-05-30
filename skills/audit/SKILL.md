@@ -1,7 +1,7 @@
 ---
 name: audit
 version: 1.0.0
-description: 运行确定性反模式规则检查（25 条规则），解读结果并指导修复。用于产出文件的质量门控，在 critique（LLM 深度审查）之前运行。触发词：/recastory audit、"检查质量"、"跑审计"。
+description: 运行确定性反模式规则检查（37 条规则），解读结果并指导修复。用于产出文件的质量门控，在 critique（LLM 深度审查）之前运行。触发词：/recastory audit、"检查质量"、"跑审计"。
 ---
 
 # Skill: audit
@@ -58,7 +58,7 @@ python -m tools.audit workspace/<pipeline_id>/ --json
 > ```text
 > [dry_run] 将执行审计：
 >   目录: workspace/rm-test-001/
->   规则集: TR-001~005, CD-001/002/003/005/006, VO-001~004, SL-001~006, VV-001~005
+>   规则集: TR-001~005, CD-001/002/003/005/006, VO-001~004, SL-001~006, VV-001~005, DS-001~006, CH-001~006, SB-001~005
 >   扫描文件: article.md, script.md, outline.md, audio-segments.json
 > [dry_run] 预估耗时: ~5 秒
 > [dry_run] 完成。实际审计请移除 dry_run 标志。
@@ -92,7 +92,7 @@ python -m tools.audit workspace/<pipeline_id>/ --json
 | 要求跳过 Critical | 阻断，Critical 不可跳过（IRON LAW） |
 | 终止 / 取消 | 保留审计报告，更新 plan.json 状态为 audit_failed |
 
-**规则覆盖表**（25 条）：
+**规则覆盖表**（37 条）：
 
 | 规则组 | 规则 ID | 检测文件 | 说明 | 典型检测示例 |
 | ------ | ------- | ------- | ---- | ----------- |
@@ -101,6 +101,9 @@ python -m tools.audit workspace/<pipeline_id>/ --json
 | 配音 | VO-001~004 | audio-segments.json | 语速、句长、多音字、停顿 | VO-001: 语速 <120 或 >180 字/分 |
 | AI Slop | SL-001~006 | *.md | 假共情、假深刻、自我标榜等 | SL-001: "我知道你..." 假共情模式 |
 | 视觉 | VV-001~005 | screenshots/*.png | 视觉一致性（需 mmx vision） | VV-001: 章节间主题不一致 |
+| 口语化 | DS-001~006 | script.md, article.md | 信息保留、单句长度、人称、钩子、结构词、数字 | DS-002: 单句 >20 字 |
+| 章节视觉 | CH-001~006 | *.tsx, *.jsx, *.css | 纯文字、列表揭示、AI 指纹、假数据、动画 | CH-003: 紫粉渐变 AI 指纹 |
+| 分镜设计 | SB-001~005 | narrations.ts, theme.css | 字数、主题、对比度、动画数、占位图 | SB-005: placeholder 占位图 |
 
 ### 3. 指导修复
 
@@ -160,7 +163,7 @@ python -m tools.audit workspace/<pipeline_id>/
 
 | 资源 | 路径 | 用途 |
 | ---- | ---- | ---- |
-| 审计工具 | `tools/audit/` | 确定性规则引擎（25 条规则） |
+| 审计工具 | `tools/audit/` | 确定性规则引擎（37 条规则） |
 | 测试用例 | `skills/audit/test-prompts.json` | 典型 prompt 和期望输出 |
 
 ## Anti-Patterns
